@@ -98,6 +98,60 @@ Home Assistant ofrece cuatro métodos oficiales de instalación. Se debe elegir 
 Se ha seleccionado el despliegue mediante \textbf{Home Assistant Container (Docker)} sobre Raspberry Pi OS Lite. Esta decisión técnica se fundamenta en:
 \begin{enumerate}
     \item \textbf{Acceso a nivel de sistema operativo:} vital para la ejecución de scripts en Python personalizados fuera de las restricciones impuestas por el sistema operativo cerrado de HA OS.
-    \item \textbf{Arquitectura de microservicios:} mediante \textit{Docker Compose}, se aíslan los componentes (broker MQTT, base de datos, motor analítico), asegurando que una caída en un servicio no comprometa el núcleo domótico.
+    \item \textbf{Arquitectura de microservicios:} mediante \textit{Docker Compose}, se aíslan y gestionan de forma independiente los servicios críticos (el núcleo de Home Assistant Container, el entorno de desarrollo y compilación ESPHome, y el panel de control Portainer), lo que permite que las tareas de administración no afecten a la automatización del hogar.
     \item \textbf{Eficiencia:} al prescindir de la sobrecarga del supervisor integrado en HA OS, se reduce drásticamente la huella de memoria RAM, liberando recursos para la algoritmia.
 \end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node/.style={
+            rectangle,
+            draw=gray!80,
+            fill=gray!5,
+            rounded corners=5pt,
+            thick,
+            minimum width=12.0cm,
+            minimum height=4.8cm,
+            align=left,
+            font=\bfseries\small
+        },
+        container/.style={
+            rectangle,
+            draw=Azul!80,
+            fill=Azul!10,
+            rounded corners=2pt,
+            thick,
+            minimum width=2.6cm,
+            minimum height=1.4cm,
+            align=center,
+            font=\bfseries\scriptsize
+        },
+        net/.style={
+            draw=Verde!80,
+            dashed,
+            very thick
+        }
+    ]
+        % Main Node (Raspberry Pi 4)
+        \node[node] (rpi) at (0, 0) {};
+        \node[anchor=north west, font=\bfseries\small, text=gray!80] at ([xshift=0.3cm, yshift=-0.3cm]rpi.north west) {Servidor Central: Raspberry Pi 4 (Raspberry Pi OS Lite)};
+        \node[anchor=north west, font=\bfseries\scriptsize\itshape, text=Azul!80] at ([xshift=0.3cm, yshift=-0.7cm]rpi.north west) {Motor de Contenedores Docker};
+
+        % Containers (Portainer, ESPHome, Home Assistant)
+        \node[container, fill=Cyan!15, draw=Cyan!80] (portainer) at (-3.6, -0.2) {Portainer\\(Gestión)\\{\normalfont\tiny Puerto: 9000}};
+        \node[container, fill=Verde!15, draw=Verde!80] (esphome) at (0, -0.2) {ESPHome\\(Firmware)\\{\normalfont\tiny Puerto: 6052}};
+        \node[container, fill=Azul!15, draw=Azul!80] (ha) at (3.6, -0.2) {Home Assistant\\(Núcleo)\\{\normalfont\tiny Puerto: 8123}};
+
+        % Virtual network line
+        \draw[net] (-4.9, -1.8) -- (4.9, -1.8) node[above, midway, font=\bfseries\tiny, text=Verde!80] {Docker Bridge Network (172.18.0.0/16)};
+        
+        % Connections
+        \draw[thick, draw=gray!60] (portainer.south) -- (-3.6, -1.8);
+        \draw[thick, draw=gray!60] (esphome.south) -- (0, -1.8);
+        \draw[thick, draw=gray!60] (ha.south) -- (3.6, -1.8);
+        
+    \end{tikzpicture}
+    \caption{Arquitectura de despliegue basada en microservicios mediante Docker Container en el servidor central.}
+    \label{fig:despliegue_docker}
+\end{figure}
