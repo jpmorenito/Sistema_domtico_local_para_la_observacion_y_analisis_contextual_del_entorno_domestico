@@ -1,0 +1,103 @@
+\newpage
+\section{Selección de tecnologías e integración}
+\label{cap:seleccion_tecnologias}
+
+En este capítulo se fundamenta la elección de cada componente hardware y software utilizado en el sistema, justificando las decisiones técnicas adoptadas en base a los requisitos de eficiencia, coste y privacidad del proyecto.
+
+\subsection{Selección del centro de procesamiento (hardware)}
+Para el servidor central encargado de ejecutar la orquestación domótica y la base de datos, se ha elegido la \textbf{Raspberry Pi 4 Model B}. La selección se justifica tras compararla frente a un modelo predecesor y frente a una alternativa tope de gama en computación embebida (Orange Pi 5 Plus).
+
+\begin{table}[H]
+    \centering
+    \setlength{\tabcolsep}{3pt}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        \rowcolor[gray]{0.9} 
+        \parbox[c]{4.6cm}{\vspace{0.2cm}\centering\textbf{Características}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering\textbf{Raspberry Pi 4B}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering\textbf{Raspberry Pi 3B+}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering\textbf{Orange Pi 5 Plus}\vspace{0.2cm}} \\ \hline
+        \parbox[c]{4.6cm}{\vspace{0.2cm}\centering\textbf{Procesador (CPU)}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Cortex-A72 (4x @ 1.5GHz)\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Cortex-A53 (4x @ 1.4GHz)\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering RK3588 (Octa Core)\vspace{0.2cm}} \\ \hline
+        \parbox[c]{4.6cm}{\vspace{0.2cm}\centering\textbf{Memoria RAM}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering 1GB (LPDDR4)\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering 1GB (LPDDR2)\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering 8GB/\allowbreak 16GB\vspace{0.2cm}} \\ \hline
+        \parbox[c]{4.6cm}{\vspace{0.2cm}\centering\textbf{Almacenamiento}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering MicroSD / USB 3.0\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering MicroSD / USB 2.0\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Ranura M.2 NVMe\vspace{0.2cm}} \\ \hline
+        \parbox[c]{4.6cm}{\vspace{0.2cm}\centering\textbf{Consumo}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering 3W / 6W\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering 2.5W / 5W\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering 5W / 12W+\vspace{0.2cm}} \\ \hline
+        \parbox[c]{4.6cm}{\vspace{0.2cm}\centering\textbf{Inteligencia artificial}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Procesamiento CPU\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Inviable\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering NPU (6 TOPS)\vspace{0.2cm}} \\ \hline
+        \parbox[c]{4.6cm}{\vspace{0.2cm}\centering\textbf{Soporte software}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Excelente\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Excelente\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Limitado/\allowbreak Fragmentado\vspace{0.2cm}} \\ \hline
+        \parbox[c]{4.6cm}{\vspace{0.2cm}\centering\textbf{Coste aprox.}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Medio (45-55€)\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Bajo (35€)\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Alto (140-160€)\vspace{0.2cm}} \\ \hline
+    \end{tabular}
+    \caption{Comparativa de hardware para el nodo central.}
+    \label{tab:hw_central}
+\end{table}
+
+A pesar de la superioridad en especificaciones puras de la Orange Pi 5 Plus, la Raspberry Pi 4B resulta óptima debido a su eficiencia energética (vital para maximizar la autonomía del SAI ante cortes eléctricos) y la estabilidad de su ecosistema de software. Su arquitectura y cantidad de memoria RAM física (1 GB) son suficientes para ejecutar con solvencia los servicios del motor de inferencia y la base de datos en tiempo real, garantizando una alta estabilidad sin necesidad de sobredimensionar los recursos de la infraestructura (\textit{overprovisioning}).
+
+\subsection{Tecnología de recolección de contexto (sensores)}
+Se ha descartado el uso de sensores infrarrojos pasivos (PIR) tradicionales en favor del radar de ondas milimétricas (mmWave) \textbf{HLK-LD2410C} operando en la banda de 24 GHz bajo tecnología FMCW.
+
+\begin{table}[H]
+    \centering
+    \setlength{\tabcolsep}{4pt}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \rowcolor[gray]{0.9} 
+        \parbox[c]{3.2cm}{\vspace{0.2cm}\centering\textbf{Métrica}\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering\textbf{Sensor infrarrojo (PIR)}\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering\textbf{Radar mmWave (HLK-LD2410C)}\vspace{0.2cm}} \\ \hline
+        \parbox[c]{3.2cm}{\vspace{0.2cm}\centering\textbf{Principio}\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Radiación térmica (infrarrojo)\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Radiofrecuencia modulada (FMCW 24 GHz)\vspace{0.2cm}} \\ \hline
+        \parbox[c]{3.2cm}{\vspace{0.2cm}\centering\textbf{Detección estática}\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Nula (falsos negativos frecuentes)\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Alta (detecta micromovimientos y respiración)\vspace{0.2cm}} \\ \hline
+        \parbox[c]{3.2cm}{\vspace{0.2cm}\centering\textbf{Precisión espacial}\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Binaria (presencia/ausencia)\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Cuantitativa (distancia en cm)\vspace{0.2cm}} \\ \hline
+        \parbox[c]{3.2cm}{\vspace{0.2cm}\centering\textbf{Sensibilidad ambiental}\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Propenso a falsos positivos (sol, calor)\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Inmune a cambios térmicos\vspace{0.2cm}} \\ \hline
+        \parbox[c]{3.2cm}{\vspace{0.2cm}\centering\textbf{Ocultación}\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Requiere línea de visión directa\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Alta penetración (atraviesa plásticos)\vspace{0.2cm}} \\ \hline
+    \end{tabular}
+    \caption{Comparativa técnica entre sensores PIR y radares FMCW.}
+    \label{tab:pir_vs_mmwave_comp}
+\end{table}
+
+Tal y como se detalló en el capítulo del estado del arte, la tecnología FMCW aprovecha el efecto Doppler a alta frecuencia para discriminar pequeñas variaciones de la caja torácica humana durante la respiración, eliminando los falsos negativos que sufren los sensores PIR cuando un usuario se encuentra inmóvil.
+
+\subsection{Software de orquestación domótica}
+Se requiere un software para la gestión del estado del sistema. La comparativa evalúa las principales soluciones de código abierto del mercado frente a ecosistemas comerciales propietarios.
+
+\begin{table}[H]
+    \centering
+    \setlength{\tabcolsep}{3pt}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        \rowcolor[gray]{0.9} 
+        \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Características}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering\textbf{Home Assistant}\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering\textbf{OpenHAB}\vspace{0.2cm}} & \parbox[c]{2.1cm}{\vspace{0.2cm}\centering\textbf{Domoticz}\vspace{0.2cm}} & \parbox[c]{2.5cm}{\vspace{0.2cm}\centering\textbf{Ecosistemas comerciales}\vspace{0.2cm}} \\ \hline
+        \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Arquitectura}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering Dirigido por eventos (Python)\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering Java (pesado)\vspace{0.2cm}} & \parbox[c]{2.1cm}{\vspace{0.2cm}\centering C++ (ligero)\vspace{0.2cm}} & \parbox[c]{2.5cm}{\vspace{0.2cm}\centering Basado en la nube\vspace{0.2cm}} \\ \hline
+        \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Primero local}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering Nativo (sin internet)\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering Nativo\vspace{0.2cm}} & \parbox[c]{2.1cm}{\vspace{0.2cm}\centering Nativo\vspace{0.2cm}} & \parbox[c]{2.5cm}{\vspace{0.2cm}\centering No\vspace{0.2cm}} \\ \hline
+        \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Integraciones}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering +2500\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering +/- 400\vspace{0.2cm}} & \parbox[c]{2.1cm}{\vspace{0.2cm}\centering +/- 300\vspace{0.2cm}} & \parbox[c]{2.5cm}{\vspace{0.2cm}\centering Limitadas\vspace{0.2cm}} \\ \hline
+        \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Automatización}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering UI avanzada + YAML\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering Scripts complejos\vspace{0.2cm}} & \parbox[c]{2.1cm}{\vspace{0.2cm}\centering LUA/\allowbreak Blockly\vspace{0.2cm}} & \parbox[c]{2.5cm}{\vspace{0.2cm}\centering Rutinas básicas\vspace{0.2cm}} \\ \hline
+        \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Interfaz API}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering WebSocket (tiempo real)\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering REST API\vspace{0.2cm}} & \parbox[c]{2.1cm}{\vspace{0.2cm}\centering JSON/\allowbreak MQTT\vspace{0.2cm}} & \parbox[c]{2.5cm}{\vspace{0.2cm}\centering REST API\vspace{0.2cm}} \\ \hline
+    \end{tabular}
+    \caption{Comparativa de ecosistemas de orquestación domótica.}
+    \label{tab:sw_domotica}
+\end{table}
+
+\textbf{Home Assistant} se consolida como la solución idónea. Frente a los ecosistemas propietarios (Google/Alexa), Home Assistant garantiza un procesamiento \textit{edge} 100\% local sin depender de servidores en la nube, mitigando latencias y protegiendo la privacidad. Frente a OpenHAB, la arquitectura basada en Python de Home Assistant permite compartir el mismo entorno de ejecución con los scripts analíticos de este proyecto (facilitando el uso de NumPy y Pandas), evitando la pesada sobrecarga de la máquina virtual de Java (JVM) en un hardware de recursos restringidos.
+
+\subsection{Estrategia de despliegue}
+Home Assistant ofrece cuatro métodos oficiales de instalación. Se debe elegir el método que brinde mayor control y menor impacto sobre el rendimiento.
+
+\begin{table}[H]
+    \centering
+    \setlength{\tabcolsep}{3pt}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        \rowcolor[gray]{0.9} 
+        \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Características}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering\textbf{HA Container (Docker)}\vspace{0.2cm}} & \parbox[c]{1.9cm}{\vspace{0.2cm}\centering\textbf{HA OS}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering\textbf{HA Core (venv)}\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering\textbf{HA Supervised}\vspace{0.2cm}} \\ \hline
+        \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Acceso al SO}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering Total (Raspberry OS)\vspace{0.2cm}} & \parbox[c]{1.9cm}{\vspace{0.2cm}\centering Nulo (cerrado)\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering Total\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering Total\vspace{0.2cm}} \\ \hline
+        \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Gestión de dependencias}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering Aislada (contenedor)\vspace{0.2cm}} & \parbox[c]{1.9cm}{\vspace{0.2cm}\centering SO\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering Manual\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering Supervisor\vspace{0.2cm}} \\ \hline
+        \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Tienda de complementos}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering No (contenedores)\vspace{0.2cm}} & \parbox[c]{1.9cm}{\vspace{0.2cm}\centering Sí (1 clic)\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering No\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering Sí\vspace{0.2cm}} \\ \hline
+        \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Flexibilidad}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering Máxima (microservicios)\vspace{0.2cm}} & \parbox[c]{1.9cm}{\vspace{0.2cm}\centering Baja\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering Alta\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering Media\vspace{0.2cm}} \\ \hline
+    \end{tabular}
+    \caption{Comparativa de los métodos de instalación de Home Assistant.}
+    \label{tab:ha_instalacion}
+\end{table}
+
+Se ha seleccionado el despliegue mediante \textbf{Home Assistant Container (Docker)} sobre Raspberry Pi OS Lite. Esta decisión técnica se fundamenta en:
+\begin{enumerate}
+    \item \textbf{Acceso a nivel de sistema operativo:} vital para la ejecución de scripts en Python personalizados fuera de las restricciones impuestas por el sistema operativo cerrado de HA OS.
+    \item \textbf{Arquitectura de microservicios:} mediante \textit{Docker Compose}, se aíslan los componentes (broker MQTT, base de datos, motor analítico), asegurando que una caída en un servicio no comprometa el núcleo domótico.
+    \item \textbf{Eficiencia:} al prescindir de la sobrecarga del supervisor integrado en HA OS, se reduce drásticamente la huella de memoria RAM, liberando recursos para la algoritmia.
+\end{enumerate}

@@ -1,0 +1,186 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[utf8]{inputenc}
+\makeatletter
+\providecommand\IfFormatAtLeastT[2]{}
+\providecommand\IfDocumentMetadataT[1]{}
+\def\H@refstepcounter#1{%
+  \stepcounter{#1}%
+  \protected@edef\@currentlabel{\csname p@#1\endcsname\csname the#1\endcsname}%
+}
+\makeatother
+\usepackage[left = 35mm, right = 25mm, top = 25mm, height = 206mm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{lipsum}
+\usepackage[square,numbers]{natbib}
+\usepackage[skip=12pt,font=small]{caption}  %Tamaño de la leyenda
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{afterpage}
+\usepackage{titlesec}
+\usepackage{array}
+\usepackage[table]{xcolor}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{eurosym}
+\usepackage{enumitem}
+\usepackage{amssymb}
+\usepackage{wrapfig}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{url}
+\usepackage{eurosym}
+\usepackage[titletoc,title]{appendix}
+\renewcommand{\appendixtocname}{Apéndices}
+\renewcommand{\appendixpagename}{Apéndices}
+\usepackage{pdfpages}
+\usepackage{pdflscape} %poner pdf horizontal
+\usepackage[hidelinks]{hyperref}%para el hiperlink de las secciones
+\usepackage[newfloat]{minted}
+\usepackage[nottoc]{tocbibind}
+\usepackage{glossaries}
+\usepackage{diagbox} % Para la línea diagonal en la primera celda de la tabla
+
+\usepackage{tikz} % Diagramas de flujo
+\usetikzlibrary{shapes.geometric, arrows, positioning, babel} %Libería de flechas y posicionamiento
+
+\usepackage{datetime}
+\newdateformat{monthyeardate}{\monthname, \THEYEAR}
+
+
+\graphicspath{ {Imagenes/} }
+
+
+\input{Configuracion/confg_colores}
+%----------------------------------------------------------------------------------------
+%	ENCABEZADOS Y PIE DE PAGINA
+%----------------------------------------------------------------------------------------
+
+\pagestyle{fancy}
+	\fancypagestyle{cuerpo}{
+      \fancyfoot{}
+      \fancyfoot[L]{Trabajo Final de Grado} %Autor
+      \fancyfoot[C]{}
+      \fancyfoot[R]{- \thepage \ -}
+      \fancyhead{}
+      \fancyhead[L]{Trabajo Final de Grado} %Nombre del documento
+      \fancyhead[R]{\includegraphics[height=1.8cm]{Portada/Img/uco_escudo.png}} %Logo Universidad
+      \renewcommand{\headrulewidth}{0.4pt}
+      \renewcommand{\footrulewidth}{0.4pt}
+      \setlength{\headheight}{65pt}
+    }
+    \fancypagestyle{indice}{
+      \fancyfoot{}
+      \fancyfoot[L]{\AutorTFG} %Autor
+      \fancyfoot[R]{- \thepage \ -} %Asignatura
+      \fancyhead{}
+      \fancyhead[L]{\leftmark} %Nombre del documento
+      \fancyhead[R]{\includegraphics[height=1.8cm]{Portada/Img/uco_escudo.png}} %Logo
+      \renewcommand{\headrulewidth}{0.4pt}
+      \renewcommand{\footrulewidth}{0.4pt}
+      \setlength{\headheight}{65pt}
+      }
+      
+    \fancypagestyle{plain}{% % <-- this is new
+     \fancyfoot{}
+      \fancyfoot[L]{Trabajo Final de Grado} %Autor
+      \fancyfoot[C]{} %ecc
+      \fancyfoot[R]{- \thepage \ -}
+      \fancyhead{}
+      \fancyhead[L]{\leftmark} %Nombre del documento
+      \fancyhead[R]{\includegraphics[height=1.8cm]{Portada/Img/uco_escudo.png}} %Logo Universidad
+      \renewcommand{\headrulewidth}{0.4pt}
+      \renewcommand{\footrulewidth}{0.4pt}
+      \setlength{\headheight}{65pt}
+    }
+  
+\setcounter{secnumdepth}{4}
+
+% \pagenumbering{empty}
+
+\raggedbottom  % Quita huecos grandes en blanco
+
+\makeatletter
+\def\H@refstepcounter#1{%
+  \stepcounter{#1}%
+  \protected@edef\@currentlabel{\csname p@#1\endcsname\csname the#1\endcsname}%
+}
+\makeatother
+
+\begin{document}
+\setlength{\parskip}{5mm} %Espacio entre párrafos
+
+%%%%%%%%%%%
+% PORTADA %
+%%%%%%%%%%%
+\input{Portada/cover}
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%
+% INDICE GENERAL %
+%%%%%%%%%%%%%%%%%%
+\pagenumbering{Roman} % para comenzar la numeracion de paginas en numeros romanos
+\pagestyle{indice}
+\thispagestyle{indice}
+\tableofcontents
+
+%---------------------%
+%	CUERPO DE TEXTO   %
+%---------------------%
+
+\newpage
+\newpage
+
+\pagestyle{cuerpo}
+\thispagestyle{cuerpo}
+
+\pagenumbering{arabic}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                         ESTRUCTURA CONTENIDO                      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%------------------%
+%   CAPÍTULOS      %
+%------------------%
+
+\input{1_introduccion}
+\input{2_contexto_estado_arte}
+\input{3_analisis_requisitos}
+\input{4_diseno_sistema}
+\input{5_seleccion_tecnologias}
+\input{6_plan_implantacion}
+\input{7_evaluacion_sistema}
+\input{8_presupuesto}
+\input{9_planos_esquemas}
+\input{10_conclusiones}
+
+% Comentar en la versión final
+
+
+
+%------------------%
+% BIBLIOGRAFIA     %
+%------------------%
+
+% Estilo de la bibliografía (formato numérico estándar IEEE/Ingeniería)
+\newpage
+\bibliographystyle{ieeetr} 
+
+% Invocación del archivo .bib (debe existir un archivo llamado bibliografia.bib en la misma carpeta)
+\bibliography{referencias}
+
+%------------------%
+%   ANEXOS         %
+%------------------%
+\appendix
+\clearpage
+\addappheadtotoc
+\appendixpage
+\input{A_manual_usuario}
+\input{B_manual_tecnico_codigo}
+\input{C_datasheets}
+
+\end{document}

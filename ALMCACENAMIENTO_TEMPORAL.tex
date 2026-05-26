@@ -1,0 +1,67 @@
+----------------------------------------------------------
+|                     INTRODUCCION                       |
+----------------------------------------------------------
+
+\newpage
+\section{Introducción}
+\label{sec:introduccion}
+
+Este documento presenta la memoria del Trabajo Fin de Grado titulado \textit{<<\TituloTFG>>}, desarrollado en la Escuela Politécnica Superior de la Universidad de Córdoba. En este primer capítulo se detalla el marco general en el que se engloba el proyecto, definiendo la motivación subyacente, los objetivos perseguidos, el alcance de la implementación y la metodología aplicada durante su desarrollo.
+
+\subsection{Contexto del proyecto}
+En la última década, el paradigma del Internet de las Cosas (IoT, por sus siglas en inglés) ha experimentado una penetración masiva en el entorno doméstico, dando lugar a lo que comúnmente se conoce como hogares inteligentes o \textit{Smart Homes}. La sensorización de los espacios habitables permite hoy en día la automatización de tareas rutinarias, la optimización del consumo energético y la mejora del confort y la seguridad de los usuarios.
+
+Sin embargo, la gran mayoría de las soluciones domóticas comerciales actuales basan su arquitectura en servicios \textit{Cloud} (en la nube). En este modelo, los datos capturados por los sensores del hogar son enviados a servidores externos propiedad de terceros para su procesamiento, antes de devolver una orden de actuación (como encender una luz o activar un relé). Este enfoque presenta deficiencias significativas: dependencia absoluta de la conexión a internet, aumento de la latencia en la respuesta y, sobre todo, una grave vulnerabilidad respecto a la privacidad y la soberanía de los datos generados dentro del ámbito más privado del usuario: su propio hogar.
+
+Frente a esta problemática, surge la necesidad de desarrollar ecosistemas de automatización de código abierto (\textit{Open Source}) que operen de forma 100\% local, donde el procesamiento de la información se realice dentro de la red del usuario (\textit{Edge Computing}), garantizando la funcionalidad del sistema incluso ante caídas del servicio de internet externo.
+
+\subsection{Justificación e interés técnico}
+El interés técnico de este proyecto radica en la superación de las limitaciones mencionadas mediante el diseño de hardware a medida y la implementación de protocolos de comunicación locales. 
+
+Desde el punto de vista sensorial, los sistemas de intrusión y automatización tradicionales dependen de sensores infrarrojos pasivos (PIR), los cuales presentan una tasa alta de falsos negativos ante presencias estáticas (por ejemplo, una persona leyendo o durmiendo). Para resolver esto, el presente proyecto propone la integración de tecnologías de radar de ondas milimétricas (mmWave) a 24 GHz, capaces de detectar micromovimientos como la respiración humana, combinados con sensores térmicos digitales de alta precisión inmunes al ruido electromagnético.
+
+\subsection{Objetivos del proyecto}
+
+\subsubsection{Objetivo general}
+El objetivo principal de este trabajo es diseñar, ensamblar y programar un sistema IoT distribuido para la monitorización ambiental y el control de potencia en entornos domésticos, integrando sensores avanzados y actuadores bajo una arquitectura de procesamiento estrictamente local mediante el uso de microcontroladores ESP32 y la plataforma Home Assistant.
+
+\subsubsection{Objetivo específicos}
+Para alcanzar el objetivo principal, se establecen los siguientes objetivos específicos:
+\begin{itemize}
+    \item Diseñar un nodo de sensorización utilizando el SoC ESP32, resolviendo las limitaciones físicas de alimentación y mapeo de pines (\textit{strapping pins}).
+    \item Integrar y calibrar un sensor de radar mmWave (LD2410) para la detección de presencia estática y dinámica.
+    \item Implementar la lectura precisa de temperatura ambiente mediante el bus de datos 1-Wire utilizando el sensor DS18B20.
+    \item Desarrollar un módulo de actuación basado en un relé electromecánico para el control seguro de cargas en corriente alterna.
+    \item Programar el \textit{firmware} de los nodos utilizando el \textit{framework} ESPHome, garantizando comunicaciones locales y cifradas.
+    \item Configurar un servidor centralizado (Home Assistant) para la recolección de datos, creación de interfaces de visualización (\textit{Dashboards}) y programación de automatizaciones lógicas.
+\end{itemize}
+
+\subsection{Alcance y limitaciones}
+El alcance de este proyecto abarca el diseño hardware del nodo sensor, el desarrollo del \textit{firmware} necesario y la configuración del entorno de servidor local para la gestión de dicho nodo. Se incluye la validación funcional del sistema completo en un entorno de pruebas real, comprobando la latencia de actuación y la precisión de las lecturas.
+
+Quedan excluidos del alcance de este proyecto el diseño y fabricación de placas de circuito impreso (PCB) personalizadas a nivel industrial, limitándose el prototipado al uso de placas de desarrollo y componentes modulares comerciales. Asimismo, el control de instalaciones de climatización centralizadas (HVAC) queda fuera del alcance, limitando la actuación de potencia a circuitos de iluminación o enchufes simples.
+
+\subsection{Metodología empleada}
+El desarrollo del proyecto se ha regido por una metodología iterativa e incremental, típica de la ingeniería de sistemas informáticos y electrónicos. Se ha partido de un análisis de requisitos funcionales, seguido de fases de prototipado rápido en placa de pruebas (\textit{breadboard}). Cada componente (radar, temperatura, relé) ha sido validado de manera aislada antes de proceder a la integración final del sistema. Las pruebas de \textit{software} han incluido la revisión exhaustiva de registros (\textit{logs}) de compilación en ESPHome para garantizar la estabilidad operativa de los microcontroladores.
+
+\subsection{Estructura del documento}
+La presente memoria se estructura en los siguientes capítulos:
+\begin{itemize}
+    \item \textbf{Capítulo 2. Contexto y Estado del Arte:} Analiza las tecnologías de conectividad y plataformas domóticas actuales.
+    \item \textbf{Capítulo 3. Análisis de Requisitos:} Define las restricciones técnicas y funcionales que debe cumplir el sistema.
+    \item \textbf{Capítulo 4. Diseño del Sistema:} Describe la arquitectura hardware y software propuesta, incluyendo los diagramas lógicos.
+    \item \textbf{Capítulo 5. Selección de Tecnologías:} Justifica las herramientas y componentes escogidos frente a otras alternativas.
+    \item \textbf{Capítulo 6. Plan de Implantación:} Detalla las fases para el despliegue físico y configuración del sistema.
+    \item \textbf{Capítulo 7. Evaluación del Sistema:} Presenta los resultados de las pruebas de rendimiento y fiabilidad.
+    \item \textbf{Capítulo 8. Presupuesto:} Desglosa los costes asociados al desarrollo e implantación.
+    \item \textbf{Capítulos 9 y 10:} Recogen los planos finales, las conclusiones extraídas del trabajo y las posibles líneas de futuro.
+\end{itemize}
+
+
+----------------------------------------------------------
+|                     ESTADO ARTE                        |
+----------------------------------------------------------
+
+
+
+
