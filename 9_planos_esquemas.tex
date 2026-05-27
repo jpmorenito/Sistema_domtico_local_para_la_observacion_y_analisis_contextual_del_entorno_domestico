@@ -12,7 +12,7 @@ El sistema ha sido desplegado y evaluado en una habitación de estudio con una g
 \begin{itemize}
     \item \textbf{Nodo 1 (Nodo Ambiente - $N_1$):} Ubicado a la derecha del escritorio sobre la pared norte de la estancia. Esta posición elevada permite realizar lecturas térmicas, acústicas y lumínicas representativas del volumen general de la estancia sin obstrucciones.
     \item \textbf{Nodo 2 (Nodo Escritorio - $N_2$):} Situado en el extremo derecho del escritorio de trabajo. Este nodo alberga el radar de ondas milimétricas (FMCW) HLK-LD2410C, orientado diagonalmente hacia la silla de estudio. Su cono de detección angular (de aproximadamente $120^\circ$) cubre la zona espacial de permanencia del usuario, permitiendo discriminar micromovimientos asociados a la respiración.
-    \item \textbf{Nodo 3 (Nodo Puerta - $N_3$):} Instalado directamente en la esquina inferior derecha, sobre el marco de la puerta de acceso. Gobierna el sensor de contacto magnético (reed switch) y el diodo láser emisor que proyecta el haz de barrera óptica transversal al umbral.
+    \item \textbf{Nodo 3 (Nodo Puerta - $N_3$):} Instalado directamente en la esquina inferior derecha, sobre la pared lateral derecha en el marco superior de la puerta de acceso. Gobierna el sensor de contacto de la puerta y el diodo láser emisor de la barrera óptica.
 \end{itemize}
 
 La distribución espacial de estos componentes, el mobiliario y la zona activa de influencia del transductor radar se representan vectorialmente en el plano de la estancia de la Figura~\ref{fig:plano_distribucion_planta}.
@@ -26,19 +26,22 @@ La distribución espacial de estos componentes, el mobiliario y la zona activa d
         radar_cone/.style={draw=Verde, fill=Verde!10, fill opacity=0.3, dashed}
     ]
         % Muros exteriores (escala aprox 1.5 cm = 1 m)
-        \draw[wall] (0,0) -- (6,0) -- (6,5.25) -- (0,5.25) -- cycle;
+        % Muro inferior continuo
+        \draw[wall] (0,0) -- (6,0);
+        % Muros izquierdo y superior continuos
+        \draw[wall] (0,0) -- (0,5.25) -- (6,5.25);
         
-        % Puerta (hueco en pared inferior, esquina derecha: de x=4.5 a x=5.7)
-        \draw[wall] (0,0) -- (4.5,0);
-        \draw[wall] (5.7,0) -- (6,0);
-        % Puerta física abierta a 90 grados hacia el interior izquierdo
-        \draw[thick, draw=black!70] (5.7,0) -- (5.7,1.2);
-        \draw[thin, dashed, draw=black!50] (5.7,1.2) arc (90:180:1.2);
+        % Muro derecho con ventana en el medio y puerta en la zona inferior
+        \draw[wall] (6,0) -- (6,0.2);
+        % Puerta física abierta a 90 grados en la pared derecha (de y=0.2 a y=1.4)
+        % Hinge at (6, 0.2), opens against the bottom wall (y=0)
+        \draw[thick, draw=black!70] (6,0.2) -- (4.8,0.2);
+        \draw[thin, dashed, draw=black!50] (6,1.4) arc (90:180:1.2);
         
-        % Ventana (pared derecha, de y=1.5 a y=3.5)
-        \draw[wall] (6,0) -- (6,1.5);
+        \draw[wall] (6,1.4) -- (6,2.2);
+        % Ventana (pared derecha, de y=2.2 a y=3.5)
+        \draw[thick, double, draw=black!70] (6,2.2) -- (6,3.5);
         \draw[wall] (6,3.5) -- (6,5.25);
-        \draw[thick, double, draw=black!70] (6,1.5) -- (6,3.5);
         
         % Mobiliario: Cama pegada en la zona superior izquierda en VERTICAL
         \node[furniture, minimum width=1.35cm, minimum height=2.85cm, anchor=north west] (cama) at (0.15, 5.1) {Cama};
@@ -46,28 +49,25 @@ La distribución espacial de estos componentes, el mobiliario y la zona activa d
         \draw[draw=black!50, fill=white] (0.25, 4.3) rectangle (1.4, 4.9);
         
         % Mesa de estudio / Escritorio a la derecha de la cama, pegado a la pared superior
-        \node[furniture, minimum width=2.25cm, minimum height=1.1cm, anchor=north west] (mesa) at (1.8, 5.1) {Escritorio};
+        \node[furniture, minimum width=2.25cm, minimum height=1.10cm, anchor=north west] (mesa) at (1.8, 5.1) {Escritorio};
         
         % Silla de estudio debajo del escritorio
         \draw[thick, draw=black!60, fill=gray!20] (2.9, 3.2) circle (0.35);
         \node[font=\tiny] at (2.9, 3.2) {Silla};
         
-        % Ubicación de los nodos
+        % Ubicación de los nodos (con identificador interno, sin etiquetas externas para evitar solapamientos)
         % Nodo 2 (Escritorio) en el extremo derecho del escritorio
         \node[node_icon, fill=Verde] (N2) at (3.9, 4.8) {$N_2$};
-        \node[anchor=north, font=\scriptsize] at (3.9, 4.5) {Nodo Escritorio ($N_2$)};
         
         % Nodo 1 (Ambiente) a la derecha del escritorio en la pared
         \node[node_icon, fill=Azul] (N1) at (5.0, 4.8) {$N_1$};
-        \node[anchor=north, font=\scriptsize] at (5.0, 4.5) {Nodo Ambiente ($N_1$)};
         
-        % Nodo 3 (Puerta) en la puerta (esquina inferior derecha)
-        \node[node_icon, fill=Rojo] (N3) at (5.7, 0.15) {$N_3$};
-        \node[anchor=east, font=\scriptsize] at (5.5, 0.4) {Nodo Puerta ($N_3$)};
+        % Nodo 3 (Puerta) en el marco de la puerta (pared derecha inferior)
+        \node[node_icon, fill=Rojo] (N3) at (5.95, 1.4) {$N_3$};
         
-        % Haz láser cruzando la puerta hacia el marco izquierdo
-        \draw[red, dashed, thick] (5.7, 0.15) -- (4.5, 0.15);
-        \node[red, font=\tiny, anchor=south] at (5.1, 0.15) {Barrera Láser};
+        % Haz láser de barrera óptica cruzando la puerta de marco a marco
+        \draw[red, dashed, thick] (5.95, 1.4) -- (5.95, 0.2);
+        \node[red, font=\tiny, anchor=west] at (5.95, 0.8) {Láser};
         
         % Cono del radar mmWave (120º desde el nodo N2 diagonalmente hacia la Silla)
         \begin{scope}
@@ -76,6 +76,17 @@ La distribución espacial de estos componentes, el mobiliario y la zona activa d
         \end{scope}
         \node[font=\tiny\bfseries, color=Verde!80!black, align=center] at (2.0, 2.5) {Cobertura Radar\\mmWave (120º)};
         
+        % Leyenda de los Nodos fuera del plano (horizontal, debajo de la estancia - ampliado a 10cm para evitar solapamientos)
+        \draw[draw=black!30, fill=white, rounded corners=2pt, thick] (-2.0, -0.8) rectangle (8.0, -0.2);
+        
+        \node[circle, draw=white, fill=Azul, text=white, font=\bfseries\tiny, inner sep=1.5pt] (leg_n1) at (-1.5, -0.5) {$N_1$};
+        \node[anchor=west, font=\tiny] at (-1.2, -0.5) {Nodo Ambiente};
+        
+        \node[circle, draw=white, fill=Verde, text=white, font=\bfseries\tiny, inner sep=1.5pt] (leg_n2) at (2.0, -0.5) {$N_2$};
+        \node[anchor=west, font=\tiny] at (2.3, -0.5) {Nodo Escritorio};
+        
+        \node[circle, draw=white, fill=Rojo, text=white, font=\bfseries\tiny, inner sep=1.5pt] (leg_n3) at (5.5, -0.5) {$N_3$};
+        \node[anchor=west, font=\tiny] at (5.8, -0.5) {Nodo Puerta};
     \end{tikzpicture}
     \caption{Plano en planta de la habitación de estudio, mobiliario y distribución física de los nodos de control.}
     \label{fig:plano_distribucion_planta}
@@ -86,7 +97,7 @@ La distribución espacial de estos componentes, el mobiliario y la zona activa d
 
 La interconexión eléctrica de los componentes electrónicos y transductores con las placas de desarrollo ESP32 se ha estructurado de modo que se respeten estrictamente las especificaciones de tensión e inmunidad al ruido. Cada nodo de hardware opera con una tensión lógica máxima de $3.3\,\text{V}$ en sus puertos GPIO, implementando circuitos acondicionadores cuando es preciso.
 
-En la Figura~\ref{fig:esquema_amb_puerta} se detallan las conexiones electrónicas correspondientes al Nodo 1 (Ambiente) y al Nodo 3 (Puerta). Para evitar superposiciones de textos y líneas, el esquema se ha organizado en dos secciones verticales, cada una con un rango de espaciado óptimo de $1.45\,\text{cm}$ entre los sensores y el cuerpo del microcontrolador.
+En la Figura~\ref{fig:esquema_amb_puerta} se detallan las conexiones electrónicas correspondientes al Nodo 1 (Ambiente) y al Nodo 3 (Puerta). El esquema se ha organizado en dos secciones verticales de gran amplitud, asignando una separación de $4.5\,\text{cm}$ en el eje horizontal y de $1.7\,\text{cm}$ en el eje vertical entre sensores, lo que elimina cualquier solapamiento en las etiquetas de los pines.
 
 \begin{figure}[H]
     \centering
@@ -99,39 +110,39 @@ En la Figura~\ref{fig:esquema_amb_puerta} se detallan las conexiones electrónic
         % ================= NODO 1: AMBIENTE (PARTE SUPERIOR) =================
         \node[block, draw=Azul!90, fill=Azul!2] (esp_amb) at (0, 2.2) {ESP32\\Nodo 1\\(Ambiente)};
         
-        \node[sensor] (dht) at (-3.6, 3.4) {DHT11\\(Clima)};
-        \node[sensor] (ldr) at (-3.6, 2.2) {Circuito LDR\\(Analógico)};
-        \node[sensor] (sound) at (-3.6, 1.0) {Sensor Sonido\\(Big Sound)};
-        \node[actuator] (ssr) at (3.6, 2.2) {Relé SSR\\(Actuador)};
+        \node[sensor] (dht) at (-5.5, 4.2) {DHT11\\(Clima)};
+        \node[sensor] (ldr) at (-5.5, 2.2) {Circuito LDR\\(Analógico)};
+        \node[sensor] (sound) at (-5.5, 0.2) {Sensor Sonido\\(Big Sound)};
+        \node[actuator] (ssr) at (5.5, 2.2) {Relé SSR\\(Actuador)};
         
-        \draw[arrow] (dht.east) -- node[above, font=\tiny] {GPIO 4} (esp_amb.150);
-        \draw[arrow] (ldr.east) -- node[above, font=\tiny] {GPIO 32} (esp_amb.180);
-        \draw[arrow] (sound.east) -- node[above, font=\tiny] {GPIO 27} (esp_amb.210);
-        \draw[arrow] (esp_amb.0) -- node[above, font=\tiny] {GPIO 26} (ssr.west);
+        \draw[arrow] (dht.east) -- node[above=3pt, midway, font=\tiny\bfseries] {GPIO 4} (esp_amb.150);
+        \draw[arrow] (ldr.east) -- node[above=3pt, midway, font=\tiny\bfseries] {GPIO 32} (esp_amb.180);
+        \draw[arrow] (sound.east) -- node[above=3pt, midway, font=\tiny\bfseries] {GPIO 27} (esp_amb.210);
+        \draw[arrow] (esp_amb.0) -- node[above=3pt, midway, font=\tiny\bfseries] {GPIO 26} (ssr.west);
         
-        \node[anchor=west, font=\bfseries\small, color=Azul!80!black] at (-5.0, 4.3) {NODO 1: MONITORIZACIÓN AMBIENTAL};
+        \node[anchor=west, font=\bfseries\small, color=Azul!80!black] at (-5.5, 5.4) {NODO 1: MONITORIZACIÓN AMBIENTAL};
         
         % Línea de separación estética
-        \draw[dashed, gray!45, thick] (-5.0, 0.0) -- (5.0, 0.0);
+        \draw[dashed, gray!45, thick] (-6.0, -0.6) -- (6.0, -0.6);
         
         % ================= NODO 3: PUERTA (PARTE INFERIOR) =================
-        \begin{scope}[yshift=-2.2cm]
+        \begin{scope}[yshift=-3.8cm]
             \node[block, draw=Rojo!90, fill=Rojo!2] (esp_puerta) at (0, 0) {ESP32\\Nodo 3\\(Puerta)};
             
-            \node[sensor] (reed) at (-3.6, 0.5) {Interruptor Reed\\(Contacto)};
-            \node[actuator] (laser) at (3.6, -0.5) {Diodo Láser\\(Disuasión)};
+            \node[sensor] (reed) at (-5.5, 0) {Interruptor Reed\\(Contacto)};
+            \node[actuator] (laser) at (5.5, 0) {Diodo Láser\\(Disuasión)};
             
-            \draw[arrow] (reed.east) -- node[above, font=\tiny] {GPIO 4 (Pull-up)} (esp_puerta.170);
-            \draw[arrow] (esp_puerta.350) -- node[above, font=\tiny] {GPIO 5} (laser.west);
+            \draw[arrow] (reed.east) -- node[above=3pt, midway, font=\tiny\bfseries] {GPIO 4 (Pull-up)} (esp_puerta.180);
+            \draw[arrow] (esp_puerta.0) -- node[above=3pt, midway, font=\tiny\bfseries] {GPIO 5} (laser.west);
             
-            \node[anchor=west, font=\bfseries\small, color=Rojo!80!black] at (-5.0, 1.5) {NODO 3: SEGURIDAD DE ACCESO};
+            \node[anchor=west, font=\bfseries\small, color=Rojo!80!black] at (-5.5, 2.2) {NODO 3: SEGURIDAD DE ACCESO};
         \end{scope}
     \end{tikzpicture}
-    \caption{Esquema de conexionado electrónico y asignación de pines GPIO para el Nodo 1 (Ambiente) y el Nodo 3 (Puerta) con distribución vertical anti-solapamiento.}
+    \caption{Esquema de conexionado electrónico y puertos GPIO para el Nodo 1 (Ambiente) y el Nodo 3 (Puerta) con distribución vertical espaciada anti-solapamiento.}
     \label{fig:esquema_amb_puerta}
 \end{figure}
 
-Por otro lado, la comunicación del Nodo 2 (Escritorio) con el radar mmWave HLK-LD2410C se implementa mediante comunicación serie UART. En la Figura~\ref{fig:esquema_uart_escritorio} se detalla este circuito, empleando una ruta externa superior para la alimentación positiva y una inferior para el retorno a tierra (GND), aislando las dos líneas serie de datos en la zona central para asegurar una lectura limpia del conexionado.
+Por otro lado, la comunicación del Nodo 2 (Escritorio) con el radar mmWave HLK-LD2410C se implementa mediante comunicación serie UART. En la Figura~\ref{fig:esquema_uart_escritorio} se detalla este circuito. Se ha incrementado la separación horizontal entre los bloques a $7.5\,\text{cm}$, ofreciendo un espacio de holgura de $4.7\,\text{cm}$ en el centro del bus serie que permite representar las etiquetas de transmisión (TX2) y recepción (RX2) de forma clara y sin colisiones con los bordes de los dispositivos.
 
 \begin{figure}[H]
     \centering
@@ -140,27 +151,27 @@ Por otro lado, la comunicación del Nodo 2 (Escritorio) con el radar mmWave HLK-
         radar/.style={rectangle, draw=Verde!80, fill=Verde!5, thick, minimum width=2.8cm, minimum height=3.2cm, align=center, font=\bfseries\small},
         connect/.style={thick, draw=black!80}
     ]
-        % Bloques
+        % Bloques con separación horizontal aumentada a 7.5cm
         \node[block, draw=Azul!90, fill=Azul!2] (esp) at (0,0) {ESP32\\Nodo 2\\(Escritorio)};
-        \node[radar] (rad) at (6.5,0) {Radar mmWave\\HLK-LD2410C};
+        \node[radar] (rad) at (7.5,0) {Radar mmWave\\HLK-LD2410C};
         
         % Conexión 5V (Ruta superior externa)
-        \draw[connect, color=red, thick] (esp.north) -- ++(0,0.7) -| node[above, pos=0.25, font=\footnotesize\bfseries] {5V / VIN (Alimentación)} (rad.north);
+        \draw[connect, color=red, thick] (esp.north) -- ++(0,0.9) -| node[above, pos=0.5, font=\footnotesize\bfseries] {5V / VIN (Alimentación)} (rad.north);
         
-        % Conexión GND (Ruta inferior externa)
-        \draw[connect, color=black, thick] (esp.south) -- ++(0,-0.7) -| node[below, pos=0.25, font=\footnotesize\bfseries] {GND (Tierra Común)} (rad.south);
+        % Conexión GND (Ruta inferior externa, etiqueta por encima de la línea)
+        \draw[connect, color=black, thick] (esp.south) -- ++(0,-0.9) -| node[above, pos=0.5, font=\footnotesize\bfseries] {GND (Tierra Común)} (rad.south);
         
-        % Buses de comunicación serie cruzados en la zona central
-        \draw[connect, ->, >=stealth, color=blue, thick] (esp.15) -- node[above, midway, font=\footnotesize\bfseries] {TX2 (GPIO 17) $\rightarrow$ RXD} (rad.165);
-        \draw[connect, <-, >=stealth, color=orange!80!black, thick] (esp.-15) -- node[below, midway, font=\footnotesize\bfseries] {RX2 (GPIO 16) $\leftarrow$ TXD} (rad.195);
+        % Buses de comunicación serie cruzados en la zona central con espacio ampliado
+        \draw[connect, ->, >=stealth, color=blue, thick] (esp.15) -- node[above, midway, font=\footnotesize\bfseries, fill=white, inner sep=2pt] {TX2 (GPIO 17) $\rightarrow$ RX} (rad.165);
+        \draw[connect, <-, >=stealth, color=orange!80!black, thick] (esp.-15) -- node[below, midway, font=\footnotesize\bfseries, fill=white, inner sep=2pt] {RX2 (GPIO 16) $\leftarrow$ TX} (rad.195);
         
-        % Caja de anotación
-        \node[anchor=north, align=center, font=\scriptsize\itshape, draw=gray!30, fill=gray!5, rounded corners=2pt, inner sep=5pt] at (3.25,-2.2) {
+        % Caja de anotación (desplazada por debajo de la línea GND para evitar cruces)
+        \node[anchor=north, align=center, font=\scriptsize\itshape, draw=gray!30, fill=gray!5, rounded corners=2pt, inner sep=5pt] at (3.75,-2.9) {
             Tasa de transferencia: 256\,000 baudios\\
             Nivel de tensión de señal: 3.3\,V TTL (Compatibilidad directa)
         };
     \end{tikzpicture}
-    \caption{Esquema detallado de la conexión serie UART y alimentación entre el ESP32 y el radar HLK-LD2410C con rutas de señal desacopladas.}
+    \caption{Esquema detallado de la conexión serie UART y alimentación entre el ESP32 y el radar HLK-LD2410C con espacio de bus ampliado.}
     \label{fig:esquema_uart_escritorio}
 \end{figure}
 
@@ -175,72 +186,68 @@ El intercambio de información y la orquestación contextual se estructuran sobr
     \item \textbf{Canal de Telemetría Remota Segura (Tailscale VPN):} Con el fin de habilitar el acceso remoto y el control del panel Lovelace desde el exterior de la vivienda sin vulnerar la red local (evitando la redirección de puertos entrantes en el router), se despliega un túnel de cifrado extremo a extremo basado en la VPN Tailscale (protocolo WireGuard). Tanto el servidor Raspberry Pi como los terminales autorizados de administración se integran en la misma malla segura de red privada (\textit{Tailnet}), garantizando el acceso cifrado mediante protocolo HTTPS.
 \end{enumerate}
 
-La arquitectura lógica de red del sistema se ilustra en la Figura~\ref{fig:topologia_red_sistema}. Para evitar colisiones y cruces de líneas de datos, se ha diseñado una topología de flujo izquierda-derecha, situando las fuentes de datos físicas (nodos sensores) en el eje izquierdo, el procesador lógico (Raspberry Pi) en el eje derecho, y enrutando los planos de transporte local e internet por encima y por debajo del eje central de datos.
+La arquitectura lógica de red del sistema se ilustra en la Figura~\ref{fig:topologia_red_sistema}. Para evitar solapamientos y cruces de líneas sobre los bloques de red, se ha diseñado una topología de flujo ordenada izquierda-derecha con enrutamientos perimetrales superior e inferior. El Router de acceso Wi-Fi se ubica a la izquierda, la columna de microcontroladores se sitúa en el centro, y los elementos de procesamiento en el borde y acceso VPN ocupan el flanco derecho del diagrama.
 
 \begin{figure}[H]
     \centering
+    \shorthandoff{<}\shorthandoff{>}
+    \resizebox{\textwidth}{!}{%
     \begin{tikzpicture}[
         device/.style={rectangle, draw=black!80, fill=gray!5, thick, minimum width=2.2cm, minimum height=1.0cm, align=center, font=\bfseries\scriptsize},
-        srv/.style={rectangle, draw=Azul!90, fill=Azul!5, thick, minimum width=3.6cm, minimum height=2.6cm, align=center, font=\bfseries\scriptsize},
+        srv/.style={rectangle, draw=Azul!90, fill=Azul!5, thick, minimum width=3.5cm, minimum height=2.6cm, align=center, font=\bfseries\scriptsize},
         rtr/.style={circle, draw=Naranja!80, fill=Naranja!10, thick, minimum size=1.8cm, align=center, font=\bfseries\scriptsize},
         cloud_node/.style={rectangle, rounded corners=6pt, draw=gray!50, fill=gray!5, thick, minimum width=2.2cm, minimum height=1.2cm, align=center, font=\bfseries\scriptsize},
         eth/.style={thick, draw=blue!80, line width=1.5pt},
         wifi/.style={thick, draw=green!60!black, dashed, line width=1.2pt},
-        tunnel/.style={draw=red!70, line width=1.8pt, dashed, <->, >=stealth},
+        tunnel/.style={draw=red!70, line width=1.8pt, dashed, arrows={stealth-stealth}, shorten >=2pt, shorten <=2pt},
         line/.style={thick, draw=black!60}
-    ]
-        % ================= EJE CENTRAL DE DATOS =================
-        
-        % 1. Enrutador local (a la izquierda)
-        \node[rtr] (router) at (-3.8, 0) {Router\\Doméstico\\(192.168.1.1)};
-        
+    ]%
+        % ================= NODO DE APORTACIÓN FÍSICA E INSTALACIONES (EJE CENTRAL) =================
+        % 1. Enrutador local (a la izquierda de la escena)
+        \node[rtr] (router) at (-6.5, 0) {Router\\Doméstico\\(192.168.1.1)};
         % 2. Tres nodos sensores en la columna central
-        \node[device] (n1) at (0, 1.6) {Nodo 1 (Ambiente)\\ESP32\\IP: 192.168.1.150};
-        \node[device] (n2) at (0, 0) {Nodo 2 (Escritorio)\\ESP32\\IP: 192.168.1.151};
-        \node[device] (n3) at (0, -1.6) {Nodo 3 (Puerta)\\ESP32\\IP: 192.168.1.152};
-        
-        % 3. Servidor central (a la derecha)
-        \node[srv] (rpi) at (4.0, 0) {Raspberry Pi 4 (Servidor)\\IP Local: 192.168.1.100\\[0.3cm]
-            \parbox{3.3cm}{\centering\color{black!80}\bfseries\tiny
+        \node[device] (n1) at (-1.5, 1.8) {Nodo 1 (Ambiente)\\ESP32\\IP: 192.168.1.150};
+        \node[device] (n2) at (-1.5, 0) {Nodo 2 (Escritorio)\\ESP32\\IP: 192.168.1.151};
+        \node[device] (n3) at (-1.5, -1.8) {Nodo 3 (Puerta)\\ESP32\\IP: 192.168.1.152};
+        % 3. Servidor central en el borde (a la derecha)
+        \node[srv] (rpi) at (4.5, -0.6) {Raspberry Pi 4 (Servidor)\\IP Local: 192.168.1.100\\[0.2cm]
+            \parbox{2.9cm}{\centering\color{black!80}\bfseries\tiny
             \begin{tabular}{|c|}
             \hline
             \textbf{Entorno Docker} \\
-            Home Assistant (Puerto 8123) \\
-            ESPHome API (Puerto 6053) \\
-            Persistencia SQLite \\
-            Cliente Tailscale VPN \\
+            Home Assistant (8123) \\
+            ESPHome API (6053) \\
+            SQLite DB \\
+            Tailscale VPN \\
             \hline
-            \end{tabular}
-            }
+            \end{tabular}%
+            }%
         };
-        
-        % ================= ENLACES Wi-Fi (LADO IZQUIERDO) =================
+        % ================= CONEXIONES WI-FI (LADO IZQUIERDO Y DIAGONALES) =================
         \draw[wifi] (router) -- node[above left, font=\tiny\bfseries, color=green!50!black] {Wi-Fi} (n1);
         \draw[wifi] (router) -- node[above, font=\tiny\bfseries, color=green!50!black] {Wi-Fi} (n2);
         \draw[wifi] (router) -- node[below left, font=\tiny\bfseries, color=green!50!black] {Wi-Fi} (n3);
-        
-        % ================= ENLACES LÓGICOS API (LADO DERECHO) =================
-        \draw[thick, <->, >=stealth, color=purple!80, line width=1.0pt] (n1.east) to[bend left=15] node[above, midway, font=\tiny\bfseries] {API (TCP 6053)} (rpi.140);
-        \draw[thick, <->, >=stealth, color=purple!80, line width=1.0pt] (n2.east) -- (rpi.180);
-        \draw[thick, <->, >=stealth, color=purple!80, line width=1.0pt] (n3.east) to[bend right=15] node[below, midway, font=\tiny\bfseries] {API (TCP 6053)} (rpi.220);
-        
-        % ================= RED TRONCAL E INTERNET (SUPERIOR / EXTERNO) =================
-        
-        % Enlace Ethernet Gigabit (Ruta aérea superior rodeando el centro)
-        \draw[eth] (router.north) -- ++(0, 2.3) -| node[above, pos=0.25, font=\tiny\bfseries, color=blue!80!black] {Ethernet Cat6 (Gigabit)} (rpi.north);
-        
-        % Elementos remotos (Lado superior derecho)
-        \node[cloud_node] (cloud) at (4.0, 2.4) {Internet\\(Red Pública)};
-        \node[device] (client) at (7.0, 2.4) {Dispositivo Cliente\\(Smartphone / PC)\\IP VPN: 100.75.10.20};
-        
-        % Enlaces públicos
-        \draw[line] (rpi.east) -- ++(1.0, 0) |- (cloud.west); % Conexión lógica WAN del servidor
-        \draw[line] (client) -- (cloud);
-        
-        % Túnel seguro VPN Tailscale (WireGuard)
-        \draw[tunnel] (client) .. controls (7.0, 1.2) and (5.8, 0.8) .. node[right, midway, font=\tiny\bfseries, color=red!80!black] {VPN Tailscale} (rpi.30);
-        
-    \end{tikzpicture}
-    \caption{Topología general de red del sistema domótico perimetral y túnel lógico de acceso remoto con distribución de flujos paralelos.}
+        % ================= CONEXIONES DE API LÓGICA (LADO DERECHO) =================
+        \draw[thick, arrows={stealth-stealth}, color=purple!80, line width=1.0pt] (n1.east) to[bend left=5] node[above, midway, sloped, font=\tiny\bfseries] {API (TCP 6053)} (rpi.130);
+        \draw[thick, arrows={stealth-stealth}, color=purple!80, line width=1.0pt] (n2.east) -- (rpi.170);
+        \draw[thick, arrows={stealth-stealth}, color=purple!80, line width=1.0pt] (n3.east) to[bend right=5] node[below, midway, sloped, font=\tiny\bfseries] {API (TCP 6053)} (rpi.210);
+        % ================= CONEXIÓN CABLEADA E INTERNET (BLES Y RUTA PERIMETRAL) =================
+        % Enlace Ethernet Gigabit (Ruta inferior perimetral por debajo de n3, pos=0.35 para centrar en el espacio)
+        \draw[eth] (router.south) -- ++(0, -1.6) -| node[above, pos=0.35, font=\tiny\bfseries, color=blue!80!black] {Ethernet Cat6} (rpi.south);
+        % Conexión lógica WAN a Internet (Ruta superior perimetral por encima de n1, pos=0.35 para centrar en el espacio)
+        \node[cloud_node] (cloud) at (4.5, 1.8) {Internet\\(Red Pública)};
+        \draw[line] (router.north) -- ++(0, 1.8) -| node[above, pos=0.35, font=\tiny\bfseries] {Internet WAN} (cloud.north);
+        % Conexión directa Servidor - Nube (línea vertical sin cruces)
+        \draw[line] (rpi.north) -- (cloud.south);
+        % Terminal de Administración de Cliente (más a la derecha para dejar espacio)
+        \node[device] (client) at (9.5, 0.6) {Dispositivo Cliente\\(Smartphone / PC)\\IP VPN: 100.75.10.20};
+        % Enlace del Cliente a Internet
+        \draw[line] (client.north) |- (cloud.east);
+        % Túnel seguro VPN Tailscale (Ruta por flanco derecho, etiqueta centrada debajo de la sección horizontal)
+        \draw[tunnel] (client.south) -- ++(0, -0.7) -- node[below, midway, font=\tiny\bfseries, color=red!80!black] {VPN Tailscale} (rpi);
+    \end{tikzpicture}%
+    }
+    \shorthandon{<}\shorthandon{>}
+    \caption{Topología general de red del sistema domótico perimetral y túnel lógico de acceso remoto con desacoplamiento espacial de flujos y control anti-cruce.}
     \label{fig:topologia_red_sistema}
 \end{figure}

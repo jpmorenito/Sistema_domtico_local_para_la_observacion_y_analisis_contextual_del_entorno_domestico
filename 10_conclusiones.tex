@@ -2,11 +2,39 @@
 \section{Conclusiones y trabajo futuro}
 \label{cap:conclusiones}
 
+En este capítulo final se recapitulan las principales aportaciones del Trabajo Fin de Grado, contrastando los resultados experimentales obtenidos con los objetivos generales planteados en la fase inicial del proyecto. Asimismo, se exponen de manera crítica las limitaciones del prototipo desarrollado y se definen las directrices de investigación y mejora que guiarán el trabajo futuro.
+
 \subsection{Síntesis de resultados y objetivos cumplidos}
-% TODO: Rellenar contenido
+
+La culminación de la fase de evaluación técnica y validación funcional confirma el éxito en el diseño y despliegue del sistema domótico local. La integración de los paradigmas de computación en el borde (\textit{Edge Computing}) y la inteligencia ambiental ha permitido alcanzar la totalidad de los objetivos específicos propuestos:
+
+\begin{itemize}
+    \item \textbf{Desarrollo de hardware y adquisición local de señales:} Se diseñaron y ensamblaron tres nodos perimetrales autónomos basados en el SoC ESP32. Cada uno de ellos integra transductores climáticos, lumínicos, acústicos, de presencia y de control de accesos, garantizando la cobertura de sensado espacial necesaria sin requerir un sobredimensionamiento del coste material.
+    \item \textbf{Implementación del firmware declarativo y filtrado local:} Mediante el empleo de ESPHome, se generó un \textit{firmware} altamente optimizado en C++ para cada microcontrolador. Esto ha permitido realizar tareas críticas de filtrado temporal en el propio origen del sensado (como el retardo contra rebotes acústicos o el filtrado de vibraciones en la barrera de puerta), reduciendo significativamente la sobrecarga de paquetes en la red inalámbrica local.
+    \item \textbf{Diseño de un motor lógicos de contexto tolerante a fallos:} Se modeló e implementó una máquina de estados finitos (FSM) en Home Assistant que realiza tareas de fusión sensorial redundante. La combinación inteligente de la telemetría espacial del radar mmWave y la iluminancia del sensor LDR demostró ser capaz de discriminar con precisión los estados conductuales del usuario (\texttt{Estudio}, \texttt{Descanso}, \texttt{Ausente} y \texttt{Entrada/Salida}), anulando las limitaciones típicas de los detectores PIR comerciales y superando con éxito condiciones de fallo inducido en sensores analógicos individuales.
+    \item \textbf{Privacidad y seguridad en las comunicaciones:} Toda la información capturada por el sistema permanece encapsulada dentro de la frontera física del hogar. La comunicación local entre nodos y servidor está cifrada nativamente con el protocolo Noise (mediante sockets TCP en la API de ESPHome). El acceso remoto administrativo y la visualización del cuadro de mandos Lovelace se resuelven de forma segura mediante un túnel de cifrado extremo a extremo utilizando la VPN Tailscale (sobre protocolo WireGuard), lo que evita la exposición pública de puertos en el enrutador local y neutraliza ataques masivos desde la red pública.
+    \item \textbf{Métricas operacionales sobresalientes:} Los ensayos empíricos revelaron una latencia de conmutación de extremo a extremo de solo \textbf{115\,ms}, lo que supone una respuesta entre 8 y 10 veces más rápida que las soluciones comerciales basadas en nubes públicas extranjeras (como Tuya Cloud o Sonoff Cloud). El impacto computacional se estabilizó en valores mínimos (uso de CPU inferior al 5\,\% y consumo de RAM de 620\,MB en la Raspberry Pi 4), demostrando la viabilidad de plataformas de bajo coste en la periferia de red.
+    \item \textbf{Sostenibilidad y bajo coste operativo:} Con una potencia combinada de tan solo 5.15\,W, el coste operacional proyectado es inferior a **9.02\,\euro/año**, logrando una alta eficiencia ecológica y económica al prescindir de servidores remotos y simplificar la red.
+\end{itemize}
 
 \subsection{Limitaciones encontradas}
-% TODO: Rellenar contenido
+
+A pesar de la consecución de los objetivos generales, el desarrollo práctico y las pruebas del prototipo han puesto de manifiesto diversas limitaciones técnicas y estructurales que deben ser consideradas:
+
+\begin{itemize}
+    \item \textbf{Restricciones en la precisión de la sensórica física:} El uso de sensores de bajo coste introduce márgenes de error que limitan el análisis analítico. El DHT11 presenta una lenta tasa de muestreo (cada 2 segundos) y una tolerancia térmica de $\pm 2^\circ\text{C}$, lo que resulta impreciso para auditorías climáticas finas. Asimismo, la LDR posee una curva de respuesta no lineal muy sensible a su colocación, lo que exige calibraciones ad-hoc según la posición del mobiliario y la iluminación natural de la estancia.
+    \item \textbf{Vulnerabilidad física del almacenamiento perimetral:} El servidor central utiliza una tarjeta MicroSD como medio de almacenamiento secundario. A pesar de haber optimizado el motor de base de datos SQLite y limitado la persistencia histórica de estados a 10 días, el volumen continuo de lecturas analógicas (sobre todo de los sensores LDR y acústicos) ejerce un estrés de escritura constante que incrementa el riesgo de fallo físico de las celdas de memoria flash a medio plazo.
+    \item \textbf{Aislamiento y dependencias de la banda ISM de 2.4\,GHz:} Al utilizar redes inalámbricas Wi-Fi convencionales para enlazar los nodos sensores, el sistema depende de la disponibilidad del espectro radioeléctrico en la banda de 2.4\,GHz. En entornos densos o zonas urbanas, la saturación del espectro puede provocar interferencias electromagnéticas puntuales, aumentando la tasa de reintentos y degradando temporalmente la latencia.
+    \item \textbf{Requisitos de orientación y línea de visión del radar:} El radar FMCW HLK-LD2410C requiere una calibración y ubicación extremadamente precisas en el escritorio. Al operar por micro-detección de fluctuaciones electromagnéticas, la presencia de elementos en movimiento pasivo (como corrientes de aire moviendo cortinas o las aspas de un ventilador) genera interferencias de movimiento interpretadas erróneamente como presencia humana si no se configuran correctamente las compuertas de distancia (\textit{distance gates}).
+\end{itemize}
 
 \subsection{Futuras mejoras y líneas de investigación}
-% TODO: Rellenar contenido
+
+Para superar las limitaciones expuestas y expandir la versatilidad de la infraestructura inteligente local, se proponen las siguientes líneas de trabajo futuro:
+
+\begin{itemize}
+    \item \textbf{Migración a redes de malla de bajo consumo (Zigbee / Matter):} Reemplazar la red troncal Wi-Fi de los nodos sensores por el estándar IEEE 802.15.4 (mediante protocolos como Zigbee o Thread). Esto liberará la banda Wi-Fi doméstica, reducirá drásticamente el consumo eléctrico y permitirá diseñar nodos sensores ultra-compactos alimentados mediante baterías de larga duración o celdas solares.
+    \item \textbf{Implementación de modelos predictivos locales (TinyML):} Incorporar algoritmos de aprendizaje automático directamente en los microcontroladores ESP32 (mediante TensorFlow Lite for Microcontrollers). Esto posibilitaría la clasificación local de patrones acústicos complejos (ej. detección de rotura de cristales o patrones de tos) o la predicción de hábitos de ocupación diarios sin depender de un motor lógico centralizado.
+    \item \textbf{Redundancia física y almacenamiento externo:} Configurar copias de seguridad automatizadas y cifradas de la base de datos de Home Assistant hacia un servidor de almacenamiento conectado en red (NAS) local, o migrar el almacenamiento de la Raspberry Pi 4 de una MicroSD a una unidad de estado sólido (SSD) conectada por USB 3.0, eliminando el punto único de fallo del soporte de almacenamiento físico.
+    \item \textbf{Procesamiento local de voz offline:} Integrar en el servidor central la suite Home Assistant Assist con reconocimiento de voz y síntesis de audio 100\,\% locales (usando modelos Whisper y Piper optimizados). Esto posibilitará el control por comandos de voz de la vivienda de manera local, ágil y totalmente independiente de plataformas comerciales externas en la nube.
+\end{itemize}
