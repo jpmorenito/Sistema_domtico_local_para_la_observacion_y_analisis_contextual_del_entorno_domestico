@@ -9,7 +9,7 @@ Para garantizar la modularidad, la mantenibilidad y el aislamiento perimetral ex
 
 \begin{itemize}
     \item \textbf{Capa de adquisición y actuación física:} constituida por los microcontroladores distribuidos (nodos ESP32) y sus respectivos transductores analógicos y digitales (radar FMCW, fotorresistor LDR, sensores climáticos y relés de estado sólido). Su función se limita a la digitalización de variables físicas y a la ejecución inmediata de comandos eléctricos.
-    \item \textbf{Capa de transporte y red:} configurada sobre una topología en estrella segmentada dentro de la red de área local (WLAN). Utiliza el protocolo de transporte TCP/IP sobre enlaces Wi-Fi para dar soporte al modelo de mensajería asíncrona del protocolo MQTT. Un agente central (\textit{broker}) gestiona el enrutamiento de los mensajes sin que los nodos conozcan el estado global del sistema.
+    \item \textbf{Capa de transporte y red:} configurada sobre una topolog\'ia en estrella segmentada dentro de la red de \'area local (WLAN). Utiliza el protocolo de transporte TCP/IP sobre enlaces Wi-Fi para dar soporte a la comunicaci\'on bidireccional punto a punto mediante la API nativa de ESPHome. Las conexiones directas de red garantizan el intercambio inmediato de estados e informaci\'on de sensores sin necesidad de intermediarios.
     \item \textbf{Capa de orquestación y lógica contextual:} representa el núcleo computacional del proyecto (motor de contexto), centralizado en la plataforma Home Assistant sobre el servidor perimetral (Raspberry Pi 4). Esta capa unifica las lecturas heterogéneas de la capa física, ejecuta las máquinas de estado y gobierna la proactividad del entorno mediante el disparo de las automatizaciones programadas.
     \item \textbf{Capa de persistencia y aplicación:} encargada del almacenamiento de las series temporales de telemetría en una base de datos local optimizada y de la representación gráfica del estado del sistema a través de una interfaz de usuario centralizada o \textit{dashboard} accesible por el administrador.
 \end{itemize}
@@ -38,7 +38,7 @@ Para garantizar la modularidad, la mantenibilidad y el aislamiento perimetral ex
         % Nodes with increased vertical spacing (3.0cm intervals)
         \node[layer, fill=Morado!10, draw=Morado!80] (l4) at (0, 9.0) {Capa de persistencia y aplicación\\{\normalfont\footnotesize (Base de datos de series temporales en memoria y Dashboard de usuario)}};
         \node[layer, fill=Azul!10, draw=Azul!80] (l3) at (0, 6.0) {Capa de orquestación y lógica contextual\\{\normalfont\footnotesize (Motor de contexto, máquina de estados finitos y automatizaciones en Home Assistant)}};
-        \node[layer, fill=Verde!10, draw=Verde!80] (l2) at (0, 3.0) {Capa de transporte y red\\{\normalfont\footnotesize (Protocolo de mensajería asíncrona MQTT sobre Wi-Fi local)}};
+        \node[layer, fill=Verde!10, draw=Verde!80] (l2) at (0, 3.0) {Capa de transporte y red\\{\normalfont\footnotesize (API nativa de ESPHome sobre conexiones TCP en Wi-Fi local)}};
         \node[layer, fill=Naranja!10, draw=Naranja!80] (l1) at (0, 0.0) {Capa de adquisición y actuación física\\{\normalfont\footnotesize (Placas de desarrollo ESP32, fotorresistor LDR, sensor climático, radar mmWave y relés)}};
 
         % Arrows (with 1.6cm physical gap, preventing overlaps)
@@ -175,11 +175,11 @@ Para solventar contingencias críticas de hardware (como la degradación o fallo
 \end{figure}
 
 \subsection{Diseño de la base de datos y flujos de información}
-El flujo de información sigue un modelo asóncrono y distribuido basado en la arquitectura dirigida por eventos de MQTT \cite{al2015internet}. Los nodos sensores operan de forma autónoma, digitalizando las variables térmicas, lumínicas y espaciales a una frecuencia de muestreo parametrizada. Cada lectura se serializa en estructuras ligeras y se publica hacia tópicos específicos del \textit{broker} local, tales como \texttt{habitacion/\allowbreak ambiente/\allowbreak ldr}, \texttt{habitacion/\allowbreak escritorio/\allowbreak radar} o \texttt{habitacion/\allowbreak puerta/\allowbreak contacto}.
+El flujo de información sigue un modelo síncrono y bidireccional basado en la API nativa de ESPHome \cite{al2015internet}. Los nodos sensores operan de forma autónoma, digitalizando las variables térmicas, lumínicas y espaciales a una frecuencia de muestreo parametrizada. Cada lectura actualiza una entidad expuesta en el servidor a través de sockets TCP directos en el puerto 6053, sin necesidad de parsear tramas de texto complejas ni depender de brokers de mensajería intermedios.
 
-El orquestador central, suscrito a la totalidad del árbol de tópicos, captura estas tramas de datos de manera inmediata. Al recibir un nuevo evento, se despierta el hilo de ejecución del motor de contexto, que evalúa las condiciones de la FSM. Si se determina un cambio de estado, se genera un evento interno en el bus de Home Assistant que dispara dos acciones concurrentes:
+El orquestador central captura las actualizaciones de estado de manera inmediata. Al recibir un nuevo evento, se despierta el hilo de ejecución del motor de contexto, que evalúa las condiciones de la FSM. Si se determina un cambio de estado, se genera un evento interno en el bus de Home Assistant que dispara dos acciones concurrentes:
 \begin{enumerate}
-    \item \textbf{Actuación perimetral:} se publica un comando de control de vuelta hacia la red (ej. \texttt{habitacion/\allowbreak ambiente/\allowbreak rele/\allowbreak cmd}), forzando la conmutación física del relé.
+    \item \textbf{Actuación perimetral:} se invoca el servicio de conmutación correspondiente de vuelta hacia el nodo ESP32 a través del canal abierto de la API, forzando la activación física del relé.
     \item \textbf{Persistencia temporal:} el estado indexado y la telemetría asociada se envían al subsistema de almacenamiento local. La base de datos, estructurada como un motor de series temporales de ejecución en memoria con volcado cíclico al almacenamiento secundario local, registra la tupla compuesta por el identificador de la entidad, el valor transformado y la marca de tiempo precisa (\textit{timestamp}) proporcionada por el sistema operativo del servidor. Esto permite la auditoría posterior de las rutinas del usuario sin comprometer datos fuera de la red local.
 \end{enumerate}
 
@@ -192,7 +192,7 @@ El orquestador central, suscrito a la totalidad del árbol de tópicos, captura 
             fill=Azul!10,
             rounded corners=2pt,
             thick,
-            minimum width=2.8cm,
+            minimum width=3.2cm,
             minimum height=1.1cm,
             align=center,
             font=\bfseries\footnotesize
@@ -208,21 +208,19 @@ El orquestador central, suscrito a la totalidad del árbol de tópicos, captura 
             font=\scriptsize\itshape
         }
     ]
-        % Nodes with increased horizontal spacing (5.8cm) and vertical spacing (4.3cm)
-        \node[block, fill=Naranja!10, draw=Naranja!80] (sensores) at (-5.8, 2.5) {Nodos Sensores\\(ESP32)};
-        \node[block, fill=Verde!10, draw=Verde!80] (broker) at (0, 2.5) {Broker MQTT\\(Mosquitto)};
-        \node[block, fill=Azul!10, draw=Azul!80] (ha) at (5.8, 2.5) {Orquestador\\(Home Assistant)};
-        \node[block, fill=Morado!10, draw=Morado!80] (db) at (5.8, -1.8) {Persistencia\\(Base de Datos)};
-        \node[block, fill=Rojo!10, draw=Rojo!80] (rele) at (-5.8, -1.8) {Actuador\\(Módulo Relé)};
+        % Nodes
+        \node[block, fill=Naranja!10, draw=Naranja!80] (sensores) at (-4.0, 1.5) {Nodos de Control\\(ESP32)};
+        \node[block, fill=Azul!10, draw=Azul!80] (ha) at (4.0, 1.5) {Orquestador\\(Home Assistant)};
+        \node[block, fill=Morado!10, draw=Morado!80] (db) at (4.0, -1.8) {Persistencia\\(Base de Datos)};
+        \node[block, fill=Rojo!10, draw=Rojo!80] (rele) at (-4.0, -1.8) {Actuador\\(Módulo Relé)};
 
-        % Paths (perfectly separated, preventing overlaps)
-        \draw[arrow] (sensores) -- node[above, txt] {Publica\\telemetría\\(QoS 0)} (broker);
-        \draw[arrow] (broker) to[bend left=20] node[above, txt] {Distribuye\\eventos\\(Suscripción)} (ha);
-        \draw[arrow] (ha) to[bend left=20] node[below, txt] {Publica\\comando\\(QoS 1)} (broker);
-        \draw[arrow] (ha) -- node[right, txt] {Registra\\series\\temporales} (db);
-        \draw[arrow] (broker) -- node[below left, txt] {Conmutación\\eléctrica} (rele);
+        % Paths
+        \draw[arrow] (sensores) to[bend left=20] node[above, txt] {1. Actualiza estado\\(Socket TCP / ProtoBuf)} (ha);
+        \draw[arrow] (ha) to[bend left=20] node[below, txt] {2. Ordena conmutación\\(API nativa ESPHome)} (sensores);
+        \draw[arrow] (ha) -- node[right, txt] {3. Registra\\series\\temporales} (db);
+        \draw[arrow] (sensores) -- node[left, txt] {4. Conmutación\\física (GPIO)} (rele);
     \end{tikzpicture}
-    \caption{Diagrama de flujos de información y mensajería dirigida por eventos en la red local.}
+    \caption{Diagrama de flujos de información e integración mediante la API nativa de ESPHome en la red local.}
     \label{fig:flujo_informacion}
 \end{figure}
 
@@ -244,10 +242,10 @@ El flujo de información atraviesa dos pilas de protocolos distintas. Las placas
         \hline
         \rowcolor[gray]{0.9} 
         \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{Capa OSI}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering\textbf{Red sensórica (WPAN)}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering\textbf{Red troncal (WLAN)}\vspace{0.2cm}} \\ \hline
-        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{7. Aplicación}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Perfiles GAP / GATT (tramas \textit{advertising})\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering MQTT / API nativa ESPHome\vspace{0.2cm}} \\ \hline
-        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{6. Presentación}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Integrado en capa 7\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Codificación JSON / binario\vspace{0.2cm}} \\ \hline
-        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{5. Sesión}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Sin conexión (\textit{connectionless})\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Gestión de \textit{sockets} integrados\vspace{0.2cm}} \\ \hline
-        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{4. Transporte}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering No aplica en topología pasiva\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering TCP (Garantía de entrega QoS 1)\vspace{0.2cm}} \\ \hline
+        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{7. Aplicación}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Perfiles GAP / GATT (tramas \textit{advertising})\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering API nativa ESPHome\vspace{0.2cm}} \\ \hline
+        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{6. Presentación}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Integrado en capa 7\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Protocol Buffers (binario)\vspace{0.2cm}} \\ \hline
+        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{5. Sesión}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Sin conexión (\textit{connectionless})\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Sockets TCP persistentes\vspace{0.2cm}} \\ \hline
+        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{4. Transporte}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering No aplica en topología pasiva\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering TCP (con control de flujo)\vspace{0.2cm}} \\ \hline
         \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{3. Red}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering No aplica en topología punto a punto\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering IPv4 (Enrutamiento local)\vspace{0.2cm}} \\ \hline
         \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{1 y 2. Física / Enlace}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Direccionamiento MAC BLE. Modulación GFSK (banda 2.4 GHz).\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Direccionamiento MAC Wi-Fi. IEEE 802.11ax (OFDMA).\vspace{0.2cm}} \\ \hline
     \end{tabular}
@@ -255,5 +253,5 @@ El flujo de información atraviesa dos pilas de protocolos distintas. Las placas
     \label{tab:protocolos_osi}
 \end{table}
 
-\textbf{Configuración de calidad de servicio (QoS):}
-Para optimizar el ancho de banda del protocolo MQTT sobre TCP/IP, la telemetría continua se transmite con \textbf{QoS 0} (\textit{At most once}), sin requerir acuse de recibo. Los eventos críticos (actuadores y transiciones de presencia) se envían con \textbf{QoS 1} (\textit{At least once}), garantizando su entrega inmediata al servidor y asegurando la resiliencia de la domótica.
+\textbf{Mecanismo de consistencia y control de flujo:}
+Al operar sobre la API nativa de ESPHome, se prescinde de la capa de sobrecarga de QoS de MQTT. En su lugar, el protocolo de ESPHome emplea sockets TCP persistentes orientados a conexión que garantizan la entrega en orden de todas las tramas de datos. La API implementa un mecanismo de latido activo (\textit{keepalive}) para detectar desconexiones en un plazo inferior a 5 segundos, y un sistema de cola en memoria local para registrar eventos transitorios y retransmitirlos automáticamente al restablecer el enlace con el orquestador.

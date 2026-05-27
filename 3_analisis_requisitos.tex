@@ -19,7 +19,7 @@ El desarrollo e implantación del prototipo están sujetos a un conjunto de rest
 \end{figure} 
 \begin{itemize}
     \item \textbf{Restricciones de hardware y procesamiento:} La orquestación central se ejecuta sobre un microordenador Raspberry Pi 4 de recursos finitos. Esto impone una limitación directa sobre la complejidad computacional algorítmica y exige un control estricto sobre el uso de la memoria RAM y el desgaste de la unidad de almacenamiento.
-    \item \textbf{Restricciones de infraestructura de red:} El sistema exige cobertura ininterrumpida de red inalámbrica IEEE 802.11 (Wi-Fi) en la banda de 2.4 GHz para la transmisión de telemetría MQTT desde los nodos distribuidos, requiriendo un nivel de señal (RSSI) estable para evitar la pérdida de eventos lógicos.
+    \item \textbf{Restricciones de infraestructura de red:} El sistema exige cobertura ininterrumpida de red inalámbrica IEEE 802.11 (Wi-Fi) en la banda de 2.4 GHz para la transmisión de la telemetría a través de la API local de los nodos distribuidos, requiriendo un nivel de señal (RSSI) estable para evitar la pérdida de eventos lógicos.
 \end{itemize}
 
 \subsection{Identificación de actores del sistema}
@@ -78,7 +78,7 @@ Los requisitos no funcionales establecen los criterios de calidad, las métricas
 \begin{itemize}
     \item \textbf{RNF-01: Operatividad perimetral aislada (\textit{edge computing}).} El procesamiento algorítmico, las máquinas de estado y el registro en bases de datos deben ejecutarse estrictamente en la red local, garantizando la operatividad sin salida a internet.
     \item \textbf{RNF-02: Baja latencia transaccional.} El tiempo de respuesta entre el registro de un evento físico (ej. cruce del umbral de la puerta) y la ejecución de la acción en el actuador (ej. conmutación del relé) no debe exceder de 1000 milisegundos.
-    \item \textbf{RNF-03: Resiliencia ante caídas de red.} El servidor central debe identificar la desconexión abrupta de cualquier nodo sensor y aplicar un protocolo de contingencia mediante mecanismos de última voluntad (LWT) del protocolo MQTT.
+    \item \textbf{RNF-03: Resiliencia ante caídas de red.} El servidor central debe identificar la desconexión abrupta de cualquier nodo sensor y aplicar un protocolo de contingencia mediante el mecanismo de supervisión activa (\textit{keepalive}) de la API nativa de ESPHome.
     \item \textbf{RNF-04: Tolerancia a fallos lógicos.} El motor de contexto debe implementar reglas condicionales redundantes para rectificar falsos positivos de hardware y forzar transiciones de estado seguras (ej. auto-armado por inactividad).
 \end{itemize}
 
@@ -106,8 +106,8 @@ El tratamiento de datos derivados de constantes biométricas (frecuencia respira
         \node[anchor=south, font=\bfseries\small, color=red] at ([yshift=0.3cm]fw.north) {Aislamiento (WPA3)};
 
         % Conexiones
-        \draw[<->, >=stealth, thick, color=black!70] (sensor) -- node[above, font=\footnotesize] {MQTT} (broker);
-        \draw[<->, >=stealth, thick, color=black!70] (broker) |- node[right, font=\footnotesize] {MQTT} (actuator);
+        \draw[<->, >=stealth, thick, color=black!70] (sensor) -- node[above, font=\footnotesize] {API nativa} (broker);
+        \draw[<->, >=stealth, thick, color=black!70] (broker) |- node[right, font=\footnotesize] {API nativa} (actuator);
         
         % Bloqueo
         \draw[->, >=stealth, thick, red, dashed] (broker) -- (fw);
@@ -128,7 +128,7 @@ El tratamiento de datos derivados de constantes biométricas (frecuencia respira
     \label{fig:edge_privacy}
 \end{figure}
 
-En el ámbito de la seguridad de las telecomunicaciones, el blindaje de la infraestructura reside en la robustez criptográfica del estándar de autenticación de la red inalámbrica de área local (WPA2/WPA3). Esto previene ataques de inyección de telemetría y bloquea la intercepción pasiva de las tramas MQTT por agentes externos al perímetro.
+En el ámbito de la seguridad de las telecomunicaciones, el blindaje de la infraestructura reside en la robustez criptográfica del estándar de autenticación de la red inalámbrica de área local (WPA2/WPA3). Esto previene ataques de inyección de telemetría y bloquea la intercepción pasiva de las comunicaciones de la API local por agentes externos al perímetro.
 
 \subsection{Matriz de trazabilidad}
 La trazabilidad metodológica asegura que cada requisito técnico del diseño responde directamente a un objetivo formalizado del proyecto. La Tabla \ref{tab:trazabilidad} correlaciona los Objetivos Específicos (OE), detallados en el Capítulo 1, con los requisitos funcionales y no funcionales aprobados para el sistema.

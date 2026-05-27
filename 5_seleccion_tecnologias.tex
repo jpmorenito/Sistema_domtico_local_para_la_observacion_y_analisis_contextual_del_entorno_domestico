@@ -2,10 +2,15 @@
 \section{Selección de tecnologías e integración}
 \label{cap:seleccion_tecnologias}
 
-En este capítulo se fundamenta la elección de cada componente hardware y software utilizado en el sistema, justificando las decisiones técnicas adoptadas en base a los requisitos de eficiencia, coste y privacidad del proyecto.
+Una vez definida la arquitectura conceptual y funcional del sistema, es necesario concretar y justificar la selección de los componentes físicos y lógicos que materializan la infraestructura. En este capítulo se exponen los criterios técnicos que guiaron la elección de los dispositivos de hardware, los sensores y actuadores específicos utilizados en los tres nodos, así como las plataformas de software y protocolos elegidos para garantizar la interoperabilidad local, la privacidad y la resiliencia del entorno.
 
-\subsection{Selección del centro de procesamiento (hardware)}
-Para el servidor central encargado de ejecutar la orquestación domótica y la base de datos, se ha elegido la \textbf{Raspberry Pi 4 Model B}. La selección se justifica tras compararla frente a un modelo predecesor y frente a una alternativa tope de gama en computación embebida (Orange Pi 5 Plus).
+\subsection{Criterios de selección}
+La ingeniería de diseño para entornos residenciales de inteligencia ambiental exige el cumplimiento de tres restricciones primarias: viabilidad económica, eficiencia energética para operaciones ininterrumpidas (24/7) y madurez tecnológica que asegure la estabilidad de los controladores. Para este proyecto, se priorizó la adopción de hardware comercial de bajo coste y plataformas de software de código abierto. Este enfoque mitiga la dependencia de licencias propietarias y permite un acceso de bajo nivel a los registros de compilación y firmware, propiedad indispensable para implementar algoritmos personalizados de fusión sensorial y control perimetral.
+
+\subsection{Selección de hardware}
+
+\subsubsection{Unidad central de procesamiento (servidor local)}
+Para el núcleo computacional y de persistencia de datos se seleccionó el microordenador \textbf{Raspberry Pi 4 Model B} en su variante de 1 GB de memoria RAM LPDDR4. Frente a opciones de menor cómputo como su predecesora (Raspberry Pi 3B+) o alternativas de mayor coste y consumo (arquitecturas x86 tradicionales), la Raspberry Pi 4 ofrece un equilibrio óptimo al integrar un procesador ARM Cortex-A72 de cuatro núcleos a 1.5 GHz. Esta capacidad de procesamiento en paralelo es suficiente para ejecutar simultáneamente el entorno de contenedores Docker, la base de datos local y el motor de automatizaciones lógicas, manteniendo un consumo nominal inferior a los 15 vatios bajo carga máxima, lo que facilita el respaldo del sistema ante contingencias eléctricas mediante Sistemas de Alimentación Ininterrumpida (SAI) de baja potencia.
 
 \begin{table}[H]
     \centering
@@ -27,10 +32,27 @@ Para el servidor central encargado de ejecutar la orquestación domótica y la b
     \label{tab:hw_central}
 \end{table}
 
-A pesar de la superioridad en especificaciones puras de la Orange Pi 5 Plus, la Raspberry Pi 4B resulta óptima debido a su eficiencia energética (vital para maximizar la autonomía del SAI ante cortes eléctricos) y la estabilidad de su ecosistema de software. Su arquitectura y cantidad de memoria RAM física (1 GB) son suficientes para ejecutar con solvencia los servicios del motor de inferencia y la base de datos en tiempo real, garantizando una alta estabilidad sin necesidad de sobredimensionar los recursos de la infraestructura (\textit{overprovisioning}).
+A pesar de la superioridad en especificaciones puras de la Orange Pi 5 Plus (recogida en la Tabla~\ref{tab:hw_central}), la Raspberry Pi 4B resulta óptima debido a su eficiencia energética (vital para maximizar la autonomía del SAI ante cortes eléctricos) y la estabilidad de su ecosistema de software. Su arquitectura y cantidad de memoria RAM física (1 GB) son suficientes para ejecutar con solvencia los servicios del motor de inferencia y la base de datos en tiempo real, garantizando una alta estabilidad sin necesidad de sobredimensionar los recursos de la infraestructura (\textit{overprovisioning}).
 
-\subsection{Tecnología de recolección de contexto (sensores)}
-Se ha descartado el uso de sensores infrarrojos pasivos (PIR) tradicionales en favor del radar de ondas milimétricas (mmWave) \textbf{HLK-LD2410C} operando en la banda de 24 GHz bajo tecnología FMCW.
+\subsubsection{Microcontroladores de red (nodos de instrumentación)}
+Como elementos de control embebido distribuido se seleccionaron placas de desarrollo basadas en el SoC \textbf{ESP32} de Espressif Systems. Los factores técnicos que justifican esta decisión frente a arquitecturas alternativas (como las plataformas Arduino tradicionales o los microcontroladores PIC) son:
+\begin{itemize}
+    \item Integración nativa en chip de conectividad inalámbrica Wi-Fi 802.11 b/g/n y Bluetooth v4.2 BR/EDR y BLE.
+    \item CPU de doble núcleo Xtensa de 32 bits operando a 240 MHz con 520 KB de SRAM interna, permitiendo la gestión síncrona de interrupciones por hardware de sensores críticos y la serialización asíncrona de tramas de red.
+    \item Amplia disponibilidad de canales de conversión analógico-digital (ADC) con resolución parametrizable y transceptores UART por hardware independientes.
+\end{itemize}
+
+\subsubsection{Sensores y actuadores de la infraestructura física}
+De acuerdo con la distribución empírica diseñada para cubrir las necesidades analíticas y de seguridad del espacio, los transductores específicos seleccionados son:
+\begin{itemize}
+    \item \textbf{Radar de ondas milimétricas HLK-LD2410C:} dispositivo FMCW operando en la banda de 24 GHz. Se seleccionó por su capacidad analítica para segmentar la energía reflejada en compuertas de distancia fijas y discriminar micromovimientos asociados a la respiración humana, superando la limitación volumétrica de los sensores piroeléctricos.
+    \item \textbf{Módulo de sonido de alta sensibilidad (Big Sound):} equipado con un micrófono de electret y el circuito comparador analógico LM393. Permite establecer un umbral de conmutación digital rápido mediante potenciómetro y capturar la amplitud de la señal analógica para auditorías de ruido ambiental.
+    \item \textbf{Transductor termo-higrométrico digital:} sensor climático que proporciona lecturas directas calibradas en origen de temperatura exterior y humedad relativa mediante un protocolo serie propietario de un solo hilo, reduciendo el uso de pines GPIO en el Nodo Ambiente.
+    \item \textbf{Fotorresistor LDR:} sensor de sulfuro de cadmio (CdS) integrado en un divisor de tensión pasivo. Proporciona una respuesta analógica inversamente proporcional a la iluminancia incidente, idónea para la calibración del comportamiento lumínico de la estancia.
+    \item \textbf{Módulo de relé optoacoplado:} actuador de potencia con aislamiento galvánico provisto por un optoacoplador interno. Su inclusión previene el retorno de corrientes parásitas de alta tensión o transitorios de conmutación de la luminaria de corriente alterna hacia las líneas lógicas de baja tensión del ESP32.
+    \item \textbf{Módulo de diodo láser semiconductor:} emisor de luz monocromática focalizada de baja potencia. Actúa como transductor de señalización óptica y disuasión perimetral dentro de las reglas de control de la estancia.
+    \item \textbf{Sensor magnético de contacto Reed:} interruptor encapsulado que se activa por campo magnético. Instalado en el perfil estructural del acceso principal para el envío de señales binarias inmediatas ante cambios de geometría en la puerta.
+\end{itemize}
 
 \begin{table}[H]
     \centering
@@ -50,10 +72,15 @@ Se ha descartado el uso de sensores infrarrojos pasivos (PIR) tradicionales en f
     \label{tab:pir_vs_mmwave_comp}
 \end{table}
 
-Tal y como se detalló en el capítulo del estado del arte, la tecnología FMCW aprovecha el efecto Doppler a alta frecuencia para discriminar pequeñas variaciones de la caja torácica humana durante la respiración, eliminando los falsos negativos que sufren los sensores PIR cuando un usuario se encuentra inmóvil.
+Tal y como se detalla en la comparativa técnica de la Tabla~\ref{tab:pir_vs_mmwave_comp}, la tecnología FMCW aprovecha el efecto Doppler a alta frecuencia para discriminar pequeñas variaciones de la caja torácica humana durante la respiración, eliminando los falsos negativos que sufren los sensores PIR convencionales cuando un usuario se encuentra inmóvil.
 
-\subsection{Software de orquestación domótica}
-Se requiere un software para la gestión del estado del sistema. La comparativa evalúa las principales soluciones de código abierto del mercado frente a ecosistemas comerciales propietarios.
+\subsection{Selección de software y protocolos}
+
+\subsubsection{Firmware declarativo del hardware embebido}
+Para la programación e instrumentación de los microcontroladores se descartó el desarrollo de código monolítico imperativo en entornos tradicionales en favor de \textbf{ESPHome}. Esta herramienta permite generar firmwares optimizados a partir de archivos de configuración declarativos estructurados en formato YAML. ESPHome compila directamente sobre el framework original del fabricante, abstrayendo la gestión del stack TCP/IP y garantizando la reconexión automática ante pérdidas de señal inalámbrica. El uso de este sistema facilita la monitorización de registros en tiempo real (\textit{logs}) directamente desde el orquestador central y permite actualizaciones inalámbricas seguras (OTA, por sus siglas en inglés).
+
+\subsubsection{Orquestador central y motor de contexto}
+El núcleo lógico del sistema se sustenta sobre \textbf{Home Assistant Container} ejecutado en un entorno aislado de contenedores. Se seleccionó esta plataforma de código abierto debido a su arquitectura dirigida por eventos y su capacidad para unificar sistemas heterogéneos bajo una capa común de entidades lógicas. Home Assistant asume el rol de Motor de Contexto, ejecutando las automatizaciones locales complejas, gestionando las máquinas de estado finito de la estancia y aislando por completo la lógica operacional de servidores de terceros en la nube, siguiendo patrones de diseño específicos para la orquestación confiable en el borde \cite{pahl2018trusted}.
 
 \begin{table}[H]
     \centering
@@ -73,10 +100,10 @@ Se requiere un software para la gestión del estado del sistema. La comparativa 
     \label{tab:sw_domotica}
 \end{table}
 
-\textbf{Home Assistant} se consolida como la solución idónea. Frente a los ecosistemas propietarios (Google/Alexa), Home Assistant garantiza un procesamiento \textit{edge} 100\% local sin depender de servidores en la nube, mitigando latencias y protegiendo la privacidad. Frente a OpenHAB, la arquitectura basada en Python de Home Assistant permite compartir el mismo entorno de ejecución con los scripts analíticos de este proyecto (facilitando el uso de NumPy y Pandas), evitando la pesada sobrecarga de la máquina virtual de Java (JVM) en un hardware de recursos restringidos.
+Frente a los ecosistemas propietarios y soluciones comerciales recogidas en la Tabla~\ref{tab:sw_domotica}, Home Assistant garantiza un procesamiento \textit{edge} 100\% local sin depender de servidores externos, mitigando latencias y protegiendo la privacidad. Frente a OpenHAB, la arquitectura basada en Python de Home Assistant permite compartir el mismo entorno de ejecución con los scripts analíticos de este proyecto (facilitando el uso de NumPy y Pandas), evitando la pesada sobrecarga de la máquina virtual de Java (JVM) en un hardware de recursos restringidos como la Raspberry Pi.
 
-\subsection{Estrategia de despliegue}
-Home Assistant ofrece cuatro métodos oficiales de instalación. Se debe elegir el método que brinde mayor control y menor impacto sobre el rendimiento.
+\subsubsection{Estrategia de despliegue}
+Home Assistant ofrece cuatro métodos oficiales de instalación. Se debe elegir el método que brinde mayor control y menor impacto sobre el rendimiento del servidor central.
 
 \begin{table}[H]
     \centering
@@ -95,11 +122,11 @@ Home Assistant ofrece cuatro métodos oficiales de instalación. Se debe elegir 
     \label{tab:ha_instalacion}
 \end{table}
 
-Se ha seleccionado el despliegue mediante \textbf{Home Assistant Container (Docker)} sobre Raspberry Pi OS Lite. Esta decisión técnica se fundamenta en:
+De acuerdo con el análisis de la Tabla~\ref{tab:ha_instalacion}, se ha seleccionado el despliegue mediante \textbf{Home Assistant Container (Docker)} sobre Raspberry Pi OS Lite. Esta decisión técnica se fundamenta en:
 \begin{enumerate}
     \item \textbf{Acceso a nivel de sistema operativo:} vital para la ejecución de scripts en Python personalizados fuera de las restricciones impuestas por el sistema operativo cerrado de HA OS.
     \item \textbf{Arquitectura de microservicios:} mediante \textit{Docker Compose}, se aíslan y gestionan de forma independiente los servicios críticos (el núcleo de Home Assistant Container, el entorno de desarrollo y compilación ESPHome, y el panel de control Portainer), lo que permite que las tareas de administración no afecten a la automatización del hogar.
-    \item \textbf{Eficiencia:} al prescindir de la sobrecarga del supervisor integrado en HA OS, se reduce drásticamente la huella de memoria RAM, liberando recursos para la algoritmia.
+    \item \textbf{Eficiencia:} al prescindir de la sobrecarga del supervisor integrado en la alternativa *Supervised* o en HA OS, se reduce drásticamente la huella de memoria RAM, liberando recursos para la base de datos y la algoritmia del sistema.
 \end{enumerate}
 
 \begin{figure}[H]
@@ -155,3 +182,11 @@ Se ha seleccionado el despliegue mediante \textbf{Home Assistant Container (Dock
     \caption{Arquitectura de despliegue basada en microservicios mediante Docker Container en el servidor central.}
     \label{fig:despliegue_docker}
 \end{figure}
+
+\subsubsection{Protocolo de comunicaciones}
+Para el intercambio de telemetría y eventos de control entre los nodos instrumentados y el servidor central se seleccionó la \textbf{API nativa de ESPHome} sobre conexiones TCP directas en el puerto 6053. A diferencia de protocolos tradicionales basados en texto o intermediarios de mensajería (como HTTP o MQTT), esta API emplea un canal de sockets binarios optimizado mediante estructuras de serialización ligeras (basadas en Google Protocol Buffers). Adicionalmente, el canal incorpora cifrado local mediante el protocolo Noise, garantizando la privacidad del tráfico de sensores. Esta elección tecnológica asegura tiempos de transmisión de eventos inferiores a los 10 milisegundos y proporciona un mecanismo de comprobación activa del estado del enlace (\textit{keepalive}), capacitando al orquestador central para diagnosticar interrupciones de red de manera determinista y tolerar fallos en el bus local \cite{al2015internet}.
+
+\subsection{Integración entre sistemas heterogéneos}
+La cohesión de la arquitectura se logra mediante la estandarización de las interfaces de intercambio de datos. Los nodos ESP32 digitalizan los transductores analógicos e interactúan de forma nativa con los sensores digitales empleando buses serie locales (UART, unifilar). Posteriormente, ESPHome traduce esta telemetría física en variables de estado que son expuestas y actualizadas síncronamente hacia el servidor a través del socket binario de la API.
+
+Esta comunicación directa prescinde de brokers de mensajería intermedios (como Eclipse Mosquitto), reduciendo sustancialmente la sobrecarga computacional de la Raspberry Pi 4 de 1 GB. Home Assistant absorbe de forma concurrente los eventos de la API y los mapea inmediatamente a su bus lógico interno de entidades. Esta cadena de integración elimina la necesidad de configurar manualmente tópicos o parsear tramas de datos complejas en el servidor central, permitiendo que el motor de inferencia evalúe de manera uniforme variables físicas tan diversas como la distancia del radar, la caída de tensión del LDR o el estado del interruptor magnético de la puerta, consolidando una infraestructura de computación sensible al contexto robusta, segura y completamente independiente de conectividad externa.
