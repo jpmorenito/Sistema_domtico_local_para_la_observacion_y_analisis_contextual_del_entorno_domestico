@@ -12,23 +12,23 @@ El coste de adquisición de equipamiento comprende el conjunto de dispositivos f
     \centering
     \small
     \renewcommand{\arraystretch}{1.2}
-    \setlength{\tabcolsep}{4pt}
+    \setlength{\tabcolsep}{3pt}
     \begin{tabular}{|l|c|c|r|r|}
         \hline
-        \textbf{Descripción del componente} & \textbf{Fabricante} & \textbf{Cantidad} & \textbf{Precio Unitario (\euro)} & \textbf{Coste Total (\euro)} \\ \hline
-        Raspberry Pi 4 Model B (1\,GB RAM)  & Raspberry Pi  & 1 & 45.00 & 45.00 \\ \hline
+        \parbox[c]{4.2cm}{\vspace{0.15cm}\centering\textbf{Descripción del componente}\vspace{0.15cm}} & \parbox[c]{2.0cm}{\centering\textbf{Fabricante}} & \parbox[c]{1.2cm}{\centering\textbf{Cant.}} & \parbox[c]{2.2cm}{\centering\textbf{Precio Unit.\\(\euro)}} & \parbox[c]{2.2cm}{\centering\textbf{Coste Total\\(\euro)}} \\ \hline
+        \parbox[c]{4.2cm}{\vspace{0.1cm}Raspberry Pi 4 Model B (1\,GB RAM)\vspace{0.1cm}}  & Raspberry Pi  & 1 & 45.00 & 45.00 \\ \hline
         Microcontrolador ESP32 DevKitC v4   & Espressif     & 3 & 6.00  & 18.00 \\ \hline
         Sensor de humedad y temp. DHT11     & Keyes         & 1 & 2.00  & 2.00  \\ \hline
-        Fotorresistor LDR (Fotoresistencia)  & Keyes         & 1 & 1.50  & 1.50  \\ \hline
-        Relé de estado sólido SSR-25DA 25A  & Fotek         & 1 & 4.00  & 4.00  \\ \hline
-        Sensor acústico de alto sonido      & Keyes         & 1 & 3.50  & 3.50  \\ \hline
-        Radar FMCW mmWave HLK-LD2410C       & Hi-Link       & 1 & 9.00  & 9.00  \\ \hline
+        \parbox[c]{4.2cm}{\vspace{0.1cm}Fotorresistor LDR (Fotoresistencia)\vspace{0.1cm}}  & Keyes         & 1 & 1.50  & 1.50  \\ \hline
+        \parbox[c]{4.2cm}{\vspace{0.1cm}Relé de estado sólido SSR-25DA 25A\vspace{0.1cm}}  & Fotek         & 1 & 4.00  & 4.00  \\ \hline
+        \parbox[c]{4.2cm}{\vspace{0.1cm}Sensor acústico de alto sonido\vspace{0.1cm}}      & Keyes         & 1 & 3.50  & 3.50  \\ \hline
+        \parbox[c]{4.2cm}{\vspace{0.1cm}Radar FMCW mmWave HLK-LD2410C\vspace{0.1cm}}       & Hi-Link       & 1 & 9.00  & 9.00  \\ \hline
         Diodo emisor láser KY-008           & Keyes         & 1 & 2.00  & 2.00  \\ \hline
         Sensor magnético Reed MC-38         & Keyes         & 1 & 2.00  & 2.00  \\ \hline
-        Fuente de alimentación USB-C 5V 3A  & Raspberry Pi  & 1 & 10.00 & 10.00 \\ \hline
-        Fuente de alimentación USB 5V 1A    & Genérico      & 3 & 4.00  & 12.00 \\ \hline
-        Cajas protectoras y cables Dupont   & Genérico      & 1 & 15.00 & 15.00 \\ \hline
-        \textbf{Subtotal Equipamiento}      & --            & -- & --   & \textbf{124.00} \\ \hline
+        \parbox[c]{4.2cm}{\vspace{0.1cm}Fuente de alimentación USB-C 5V 3A\vspace{0.1cm}}  & Raspberry Pi  & 1 & 10.00 & 10.00 \\ \hline
+        \parbox[c]{4.2cm}{\vspace{0.1cm}Fuente de alimentación USB 5V 1A\vspace{0.1cm}}    & Genérico      & 3 & 4.00  & 12.00 \\ \hline
+        \parbox[c]{4.2cm}{\vspace{0.1cm}Cajas protectoras y cables Dupont\vspace{0.1cm}}   & Genérico      & 1 & 15.00 & 15.00 \\ \hline
+        \parbox[c]{4.2cm}{\vspace{0.15cm}\textbf{Subtotal Equipamiento}\vspace{0.15cm}}   & --            & -- & --   & \textbf{124.00} \\ \hline
     \end{tabular}
     \caption{Presupuesto desglosado de adquisición de equipos y material de hardware.}
     \label{tbl:presupuesto_hardware}
@@ -44,18 +44,18 @@ Para garantizar la sostenibilidad, la privacidad y evitar la dependencia de lice
     \centering
     \small
     \renewcommand{\arraystretch}{1.2}
-    \setlength{\tabcolsep}{6pt}
+    \setlength{\tabcolsep}{4pt}
     \begin{tabular}{|l|c|c|c|}
         \hline
-        \textbf{Software / Plataforma} & \textbf{Tipo de Licencia} & \textbf{Uso en el Proyecto} & \textbf{Coste (\euro)} \\ \hline
-        Raspberry Pi OS (Debian)       & Código Abierto (GPL)      & Sistema operativo host      & 0.00 \\ \hline
-        Docker Community Edition       & Código Abierto (Apache)   & Orquestación de contenedores& 0.00 \\ \hline
-        Portainer Community Edition    & Libre con restricciones   & Panel de control Docker     & 0.00 \\ \hline
-        Home Assistant Container       & Código Abierto (Apache)   & Orquestador domótico central& 0.00 \\ \hline
-        ESPHome suite                  & Código Abierto (MIT/GPL)  & Compilador cruzado firmware  & 0.00 \\ \hline
-        Base de datos SQLite           & Dominio Público           & Motor de almacenamiento HA  & 0.00 \\ \hline
-        VPN Tailscale (Free tier)      & Comercial Gratuita        & Acceso remoto cifrado       & 0.00 \\ \hline
-        \textbf{Subtotal Licencias}    & --                        & --                          & \textbf{0.00} \\ \hline
+        \parbox[c]{3.2cm}{\vspace{0.15cm}\centering\textbf{Software /\\Plataforma}\vspace{0.15cm}} & \parbox[c]{3.0cm}{\centering\textbf{Tipo de\\Licencia}} & \parbox[c]{3.8cm}{\centering\textbf{Uso en el\\Proyecto}} & \parbox[c]{1.5cm}{\centering\textbf{Coste\\(\euro)}} \\ \hline
+        \parbox[c]{3.2cm}{\vspace{0.1cm}Raspberry Pi OS (Debian)\vspace{0.1cm}}       & \parbox[c]{3.0cm}{\centering\vspace{0.1cm}Código Abierto\\(GPL)\vspace{0.1cm}}      & \parbox[c]{3.8cm}{\vspace{0.1cm}Sistema operativo host\vspace{0.1cm}}      & 0.00 \\ \hline
+        \parbox[c]{3.2cm}{\vspace{0.1cm}Docker Community Edition\vspace{0.1cm}}       & \parbox[c]{3.0cm}{\centering\vspace{0.1cm}Código Abierto\\(Apache)\vspace{0.1cm}}   & \parbox[c]{3.8cm}{\vspace{0.1cm}Orquestación de contenedores\vspace{0.1cm}}& 0.00 \\ \hline
+        \parbox[c]{3.2cm}{\vspace{0.1cm}Portainer Community Edition\vspace{0.1cm}}    & \parbox[c]{3.0cm}{\centering\vspace{0.1cm}Libre con\\restricciones\vspace{0.1cm}}   & \parbox[c]{3.8cm}{\vspace{0.1cm}Panel de control Docker\vspace{0.1cm}}     & 0.00 \\ \hline
+        \parbox[c]{3.2cm}{\vspace{0.1cm}Home Assistant Container\vspace{0.1cm}}       & \parbox[c]{3.0cm}{\centering\vspace{0.1cm}Código Abierto\\(Apache)\vspace{0.1cm}}   & \parbox[c]{3.8cm}{\vspace{0.1cm}Orquestador domótico central\vspace{0.1cm}}& 0.00 \\ \hline
+        ESPHome suite                  & \parbox[c]{3.0cm}{\centering\vspace{0.1cm}Código Abierto\\(MIT/GPL)\vspace{0.1cm}}  & \parbox[c]{3.8cm}{\vspace{0.1cm}Compilador cruzado firmware\vspace{0.1cm}}  & 0.00 \\ \hline
+        \parbox[c]{3.2cm}{\vspace{0.1cm}Base de datos SQLite\vspace{0.1cm}}           & Dominio Público           & \parbox[c]{3.8cm}{\vspace{0.1cm}Motor de almacenamiento HA\vspace{0.1cm}}  & 0.00 \\ \hline
+        \parbox[c]{3.2cm}{\vspace{0.1cm}VPN Tailscale (Free tier)\vspace{0.1cm}}      & Comercial Gratuita        & \parbox[c]{3.8cm}{\vspace{0.1cm}Acceso remoto cifrado\vspace{0.1cm}}       & 0.00 \\ \hline
+        \parbox[c]{3.2cm}{\vspace{0.15cm}\textbf{Subtotal Licencias}\vspace{0.15cm}}    & --                        & --                          & \textbf{0.00} \\ \hline
     \end{tabular}
     \caption{Presupuesto de licencias de software y plataformas lógicas.}
     \label{tbl:presupuesto_software}
@@ -83,16 +83,16 @@ El principal factor económico en el desarrollo del Trabajo Fin de Grado corresp
     \centering
     \small
     \renewcommand{\arraystretch}{1.2}
-    \setlength{\tabcolsep}{8pt}
+    \setlength{\tabcolsep}{5pt}
     \begin{tabular}{|l|c|c|r|}
         \hline
-        \textbf{Fase de ingeniería} & \textbf{Horas dedicadas} & \textbf{Precio/Hora (\euro)} & \textbf{Coste total (\euro)} \\ \hline
-        Investigación y análisis    & 60  & 25.00 & 1\,500.00 \\ \hline
-        Diseño y arquitectura       & 50  & 25.00 & 1\,250.00 \\ \hline
-        Montaje y conexionado físico& 40  & 25.00 & 1\,000.00 \\ \hline
-        Desarrollo e integración    & 100 & 25.00 & 2\,500.00 \\ \hline
-        Validación y plan de pruebas& 50  & 25.00 & 1\,250.00 \\ \hline
-        \textbf{Total Mano de Obra} & \textbf{300} & --    & \textbf{7\,500.00} \\ \hline
+        \parbox[c]{4.6cm}{\vspace{0.15cm}\centering\textbf{Fase de ingeniería}\vspace{0.15cm}} & \parbox[c]{2.0cm}{\centering\textbf{Horas\\dedicadas}} & \parbox[c]{2.2cm}{\centering\textbf{Precio/Hora\\(\euro)}} & \parbox[c]{2.2cm}{\centering\textbf{Coste total\\(\euro)}} \\ \hline
+        \parbox[c]{4.6cm}{\vspace{0.1cm}Investigación y análisis\vspace{0.1cm}}    & 60  & 25.00 & 1\,500.00 \\ \hline
+        \parbox[c]{4.6cm}{\vspace{0.1cm}Diseño y arquitectura\vspace{0.1cm}}       & 50  & 25.00 & 1\,250.00 \\ \hline
+        \parbox[c]{4.6cm}{\vspace{0.1cm}Montaje y conexionado físico\vspace{0.1cm}}& 40  & 25.00 & 1\,000.00 \\ \hline
+        \parbox[c]{4.6cm}{\vspace{0.1cm}Desarrollo e integración\vspace{0.1cm}}    & 100 & 25.00 & 2\,500.00 \\ \hline
+        \parbox[c]{4.6cm}{\vspace{0.1cm}Validación y plan de pruebas\vspace{0.1cm}}& 50  & 25.00 & 1\,250.00 \\ \hline
+        \parbox[c]{4.6cm}{\vspace{0.15cm}\textbf{Total Mano de Obra}\vspace{0.15cm}} & \textbf{300} & --    & \textbf{7\,500.00} \\ \hline
     \end{tabular}
     \caption{Presupuesto estimado de mano de obra en ingeniería y desarrollo.}
     \label{tbl:mano_obra}
@@ -107,13 +107,13 @@ A partir de los tres subgrupos anteriores (hardware, software y mano de obra), s
     \setlength{\tabcolsep}{10pt}
     \begin{tabular}{|l|r|}
         \hline
-        \textbf{Concepto Presupuestario} & \textbf{Coste Parcial (\euro)} \\ \hline
-        Equipos y material de hardware    & 124.00 \\ \hline
-        Licencias y plataformas de software & 0.00 \\ \hline
-        Mano de obra (ingeniería de desarrollo) & 7\,500.00 \\ \hline
-        \textbf{Presupuesto de Ejecución Material (PEM)} & \textbf{7\,624.00} \\ \hline
-        Impuesto sobre el Valor Añadido (IVA, 21\,\%) & 1\,601.04 \\ \hline
-        \textbf{PRESUPUESTO TOTAL (IVA INCLUIDO)} & \textbf{9\,225.04} \\ \hline
+        \parbox[c]{9.5cm}{\vspace{0.15cm}\textbf{Concepto Presupuestario}\vspace{0.15cm}} & \parbox[c]{3.0cm}{\centering\textbf{Coste Parcial\\(\euro)}} \\ \hline
+        \parbox[c]{9.5cm}{\vspace{0.1cm}Equipos y material de hardware\vspace{0.1cm}}    & 124.00 \\ \hline
+        \parbox[c]{9.5cm}{\vspace{0.1cm}Licencias y plataformas de software\vspace{0.1cm}} & 0.00 \\ \hline
+        \parbox[c]{9.5cm}{\vspace{0.1cm}Mano de obra (ingeniería de desarrollo)\vspace{0.1cm}} & 7\,500.00 \\ \hline
+        \parbox[c]{9.5cm}{\vspace{0.15cm}\textbf{Presupuesto de Ejecución Material (PEM)}\vspace{0.15cm}} & \textbf{7\,624.00} \\ \hline
+        \parbox[c]{9.5cm}{\vspace{0.15cm}Impuesto sobre el Valor Añadido (IVA, 21\,\%)\vspace{0.15cm}} & 1\,601.04 \\ \hline
+        \parbox[c]{9.5cm}{\vspace{0.15cm}\textbf{PRESUPUESTO TOTAL (IVA INCLUIDO)}\vspace{0.15cm}} & \textbf{9\,225.04} \\ \hline
     \end{tabular}
     \caption{Resumen económico consolidado del proyecto domótico.}
     \label{tbl:resumen_presupuesto}
