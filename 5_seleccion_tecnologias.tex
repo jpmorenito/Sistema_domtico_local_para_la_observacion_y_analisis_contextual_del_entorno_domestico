@@ -125,7 +125,7 @@ Home Assistant ofrece cuatro métodos oficiales de instalación. Se debe elegir 
 De acuerdo con el análisis de la Tabla~\ref{tab:ha_instalacion}, se ha seleccionado el despliegue mediante \textbf{Home Assistant Container (Docker)} sobre Raspberry Pi OS Lite. Esta decisión técnica se fundamenta en:
 \begin{enumerate}
     \item \textbf{Acceso a nivel de sistema operativo:} vital para la ejecución de scripts en Python personalizados fuera de las restricciones impuestas por el sistema operativo cerrado de HA OS.
-    \item \textbf{Arquitectura de microservicios:} mediante \textit{Docker Compose}, se aíslan y gestionan de forma independiente los servicios críticos (el núcleo de Home Assistant Container, el entorno de desarrollo y compilación ESPHome, y el panel de control Portainer), lo que permite que las tareas de administración no afecten a la automatización del hogar.
+    \item \textbf{Arquitectura de microservicios y red nativa:} mediante \textit{Docker Compose}, se aíslan y gestionan de forma independiente los servicios críticos (el núcleo de Home Assistant Container, el entorno de desarrollo y compilación ESPHome, y el panel de control Portainer). Para garantizar la detección de dispositivos en la red local mediante mDNS y UPnP (fundamental para la API de ESPHome y el descubrimiento de dispositivos), los contenedores de Home Assistant y ESPHome se configuran en el modo de red del host (\textit{host network mode}), mientras que Portainer se despliega en una red de puente (\textit{bridge}) para el aislamiento de su interfaz de gestión.
     \item \textbf{Eficiencia:} al prescindir de la sobrecarga del supervisor integrado en la alternativa *Supervised* o en HA OS, se reduce drásticamente la huella de memoria RAM, liberando recursos para la base de datos y la algoritmia del sistema.
 \end{enumerate}
 
@@ -149,7 +149,7 @@ De acuerdo con el análisis de la Tabla~\ref{tab:ha_instalacion}, se ha seleccio
             fill=Azul!10,
             rounded corners=2pt,
             thick,
-            minimum width=2.6cm,
+            minimum width=2.8cm,
             minimum height=1.4cm,
             align=center,
             font=\bfseries\scriptsize
@@ -166,12 +166,13 @@ De acuerdo con el análisis de la Tabla~\ref{tab:ha_instalacion}, se ha seleccio
         \node[anchor=north west, font=\bfseries\scriptsize\itshape, text=Azul!80] at ([xshift=0.3cm, yshift=-0.7cm]rpi.north west) {Motor de Contenedores Docker};
 
         % Containers (Portainer, ESPHome, Home Assistant)
-        \node[container, fill=Cyan!15, draw=Cyan!80] (portainer) at (-3.6, -0.2) {Portainer\\(Gestión)\\{\normalfont\tiny Puerto: 9000}};
-        \node[container, fill=Verde!15, draw=Verde!80] (esphome) at (0, -0.2) {ESPHome\\(Firmware)\\{\normalfont\tiny Puerto: 6052}};
-        \node[container, fill=Azul!15, draw=Azul!80] (ha) at (3.6, -0.2) {Home Assistant\\(Núcleo)\\{\normalfont\tiny Puerto: 8123}};
+        \node[container, fill=Cyan!15, draw=Cyan!80] (portainer) at (-3.6, -0.2) {Portainer\\(Modo Bridge)\\{\normalfont\tiny Mapeo: 9000:9000}};
+        \node[container, fill=Verde!15, draw=Verde!80] (esphome) at (0, -0.2) {ESPHome\\(Modo Host)\\{\normalfont\tiny Puerto: 6052}};
+        \node[container, fill=Azul!15, draw=Azul!80] (ha) at (3.6, -0.2) {Home Assistant\\(Modo Host)\\{\normalfont\tiny Puerto: 8123}};
 
-        % Virtual network line
-        \draw[net] (-4.9, -1.8) -- (4.9, -1.8) node[above, midway, font=\bfseries\tiny, text=Verde!80] {Docker Bridge Network (172.18.0.0/16)};
+        % Network lines
+        \draw[net, draw=Cyan!80] (-4.9, -1.8) -- (-2.3, -1.8) node[above, midway, font=\bfseries\tiny, text=Cyan!80] {Bridge (172.17.0.0/16)};
+        \draw[net, draw=Verde!80] (-1.4, -1.8) -- (4.9, -1.8) node[above, midway, font=\bfseries\tiny, text=Verde!80] {Red del Host (Tailscale/LAN)};
         
         % Connections
         \draw[thick, draw=gray!60] (portainer.south) -- (-3.6, -1.8);
