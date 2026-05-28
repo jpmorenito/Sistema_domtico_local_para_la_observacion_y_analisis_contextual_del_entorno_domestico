@@ -36,10 +36,10 @@ El perímetro operativo de este Trabajo Fin de Grado comprende las siguientes ac
 \subsubsection{Limitaciones del sistema}
 El sistema desarrollado presenta restricciones operativas que delimitan su aplicación industrial directa, las cuales se enumeran a continuación:
 \begin{itemize}
-    \item \textbf{Restricciones volumétricas del radar:} El sensor HLK-LD2410 posee un rango de apertura angular acotado y una distancia máxima de operación de 8 metros, lo que restringe la detección a espacios cerrados de dimensiones medias, requiriendo un estudio de ubicación crítico para evitar zonas ciegas.
-    \item \textbf{Vulnerabilidad a interferencias mecánicas:} Al operar mediante ondas milimétricas, el radar es susceptible a falsos positivos provocados por elementos en movimiento constante no humano, tales como ventiladores o cortinas desplazadas por corrientes de aire, requiriendo una calibración fina de umbrales por software.
-    \item \textbf{Dependencia de la infraestructura de red local:} Al prescindir de servicios en la nube para garantizar la privacidad, la operatividad de los nodos y el intercambio de eventos están estrictamente vinculados a la disponibilidad y estabilidad de la red de área local (WLAN) del entorno de pruebas.
-    \item \textbf{Vulnerabilidades lógicas delegadas en el perímetro de red:} Aunque el procesamiento local elimina los vectores de ataque externos orientados a la interceptación de datos en tránsito hacia la nube, la seguridad global del ecosistema se desplaza y delega por completo en la robustez de los mecanismos de cifrado en la red local. Aunque los microcontroladores empotrados ESP32 presentan restricciones de recursos para gestionar capas de cifrado pesado como TLS/SSL tradicional, la adopción del protocolo Noise (integrado de forma nativa en la API de ESPHome) mitiga este riesgo al cifrar la telemetría en tránsito de extremo a extremo. No obstante, un compromiso de la seguridad de la red inalámbrica doméstica (WLAN) expondría la infraestructura a potenciales ataques de denegación de servicio o suplantación de identidad física.
+    \item \textbf{Restricciones volumétricas del radar:} el sensor HLK-LD2410 posee un rango de apertura angular acotado y una distancia máxima de operación de 8 metros, lo que restringe la detección a espacios cerrados de dimensiones medias, requiriendo un estudio de ubicación crítico para evitar zonas ciegas.
+    \item \textbf{Vulnerabilidad a interferencias mecánicas:} al operar mediante ondas milimétricas, el radar es susceptible a falsos positivos provocados por elementos en movimiento constante no humano, tales como ventiladores o cortinas desplazadas por corrientes de aire, requiriendo una calibración fina de umbrales por software.
+    \item \textbf{Dependencia de la infraestructura de red local:} al prescindir de servicios en la nube para garantizar la privacidad, la operatividad de los nodos y el intercambio de eventos están estrictamente vinculados a la disponibilidad y estabilidad de la red de área local (WLAN) del entorno de pruebas.
+    \item \textbf{Vulnerabilidades lógicas delegadas en el perímetro de red:} aunque el procesamiento local elimina los vectores de ataque externos orientados a la interceptación de datos en tránsito hacia la nube, la seguridad global del ecosistema se desplaza y delega por completo en la robustez de los mecanismos de cifrado en la red local. Aunque los microcontroladores empotrados ESP32 presentan restricciones de recursos para gestionar capas de cifrado pesado como TLS/SSL tradicional, la adopción del protocolo Noise (integrado de forma nativa en la API de ESPHome) mitiga este riesgo al cifrar la telemetría en tránsito de extremo a extremo. No obstante, un compromiso de la seguridad de la red inalámbrica doméstica (WLAN) expondría la infraestructura a potenciales ataques de denegación de servicio o suplantación de identidad física.
 \end{itemize}
 
 \subsection{Objetivos}
@@ -50,11 +50,11 @@ El objetivo fundamental de este Trabajo Fin de Grado es diseñar, implementar y 
 \subsubsection{Objetivos específicos}
 Para alcanzar la meta principal, se establecen los siguientes objetivos parciales:
 \begin{itemize}
-    \item \textbf{Diseño de hardware distribuido:} Configurar y ensamblar una red de nodos de sensores y actuadores utilizando microcontroladores ESP32, garantizando la cobertura espacial del entorno de pruebas.
-    \item \textbf{Implementación de telemetría avanzada:} Sustituir la detección de presencia tradicional por telemetría espacial continua, empleando radares de ondas milimétricas (HLK-LD2410) combinados con mediciones lumínicas (LDR) y ambientales.
-    \item \textbf{Desarrollo del motor de contexto:} Programar un orquestador centralizado que, mediante técnicas de fusión de datos, asigne un estado unívoco a la habitación (ocio, estudio, durmiendo, ausente) en tiempo real.
-    \item \textbf{Automatización proactiva y seguridad:} Diseñar algoritmos de control lógico para la gestión ergonómica de la iluminación, la evaluación del descanso y el despliegue de un sistema de alarma robusto frente a vulnerabilidades lógicas, como las condiciones de carrera.
-    \item \textbf{Validación e integración:} Evaluar el comportamiento de la arquitectura propuesta en escenarios de uso real, aplicando redundancias lógicas para verificar la tolerancia a fallos del hardware.
+    \item \textbf{Diseño de hardware distribuido:} configurar y ensamblar una red de nodos de sensores y actuadores utilizando microcontroladores ESP32, garantizando la cobertura espacial del entorno de pruebas.
+    \item \textbf{Implementación de telemetría avanzada:} sustituir la detección de presencia tradicional por telemetría espacial continua, empleando radares de ondas milimétricas (HLK-LD2410) combinados con mediciones lumínicas (LDR) y ambientales.
+    \item \textbf{Desarrollo del motor de contexto:} programar un orquestador centralizado que, mediante técnicas de fusión de datos, asigne un estado unívoco a la habitación (ocio, estudio, durmiendo, ausente) en tiempo real.
+    \item \textbf{Automatización proactiva y seguridad:} diseñar algoritmos de control lógico para la gestión ergonómica de la iluminación, la evaluación del descanso y el despliegue de un sistema de alarma robusto frente a vulnerabilidades lógicas, como las condiciones de carrera.
+    \item \textbf{Validación e integración:} evaluar el comportamiento de la arquitectura propuesta en escenarios de uso real, aplicando redundancias lógicas para verificar la tolerancia a fallos del hardware.
 \end{itemize}
 
 \subsection{Metodología empleada}
@@ -62,11 +62,11 @@ Para la consecución de los objetivos propuestos, se ha adoptado una metodologí
 
 La metodología se despliega a través de las siguientes fases secuenciales:
 \begin{enumerate}
-    \item \textbf{Ingeniería de requisitos y restricciones:} Definición formal de las necesidades funcionales y de las fronteras físicas del entorno para acotar la selección de componentes.
-    \item \textbf{Diseño de la arquitectura e integración de hardware:} Fase donde se proyecta la topología de red y se realiza el ensamblaje electrónico, aplicando técnicas de instrumentación en frío y en caliente (uso de multímetros para validación de la caída de potencial en los divisores de tensión de los sensores) para garantizar la estabilidad eléctrica.
-    \item \textbf{Desarrollo del firmware y lógica de abstracción:} Programación de los microcontroladores mediante abstracciones de hardware declarativas, optimizando los intervalos de actualización y los rangos de atenuación analógica.
-    \item \textbf{Orquestación y fusión de datos en el Edge:} Implementación de las máquinas de estado y reglas lógicas redundantes en el nodo central para dotar al sistema de tolerancia a fallos ante pérdidas temporales de conectividad o lecturas anómalas de los transductores.
-    \item \textbf{Fase de pruebas experimentales y evaluación técnica:} Protocolo de validación que abarca desde pruebas unitarias en caja negra hasta pruebas de integración en escenarios reales de uso continuo, analizando la fiabilidad de las transiciones de estado.
+    \item \textbf{Ingeniería de requisitos y restricciones:} definición formal de las necesidades funcionales y de las fronteras físicas del entorno para acotar la selección de componentes.
+    \item \textbf{Diseño de la arquitectura e integración de hardware:} fase donde se proyecta la topología de red y se realiza el ensamblaje electrónico, aplicando técnicas de instrumentación en frío y en caliente (uso de multímetros para validación de la caída de potencial en los divisores de tensión de los sensores) para garantizar la estabilidad eléctrica.
+    \item \textbf{Desarrollo del firmware y lógica de abstracción:} programación de los microcontroladores mediante abstracciones de hardware declarativas, optimizando los intervalos de actualización y los rangos de atenuación analógica.
+    \item \textbf{Orquestación y fusión de datos en el Edge:} implementación de las máquinas de estado y reglas lógicas redundantes en el nodo central para dotar al sistema de tolerancia a fallos ante pérdidas temporales de conectividad o lecturas anómalas de los transductores.
+    \item \textbf{Fase de pruebas experimentales y evaluación técnica:} protocolo de validación que abarca desde pruebas unitarias en caja negra hasta pruebas de integración en escenarios reales de uso continuo, analizando la fiabilidad de las transiciones de estado.
 \end{enumerate}
 
     \begin{figure}[htbp]

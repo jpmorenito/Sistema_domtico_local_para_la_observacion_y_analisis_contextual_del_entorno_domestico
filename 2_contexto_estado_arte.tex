@@ -9,9 +9,9 @@ La domótica clásica nació ligada a sistemas de automatización, tanto cablead
 
 El cambio paradigmático hacia la automatización contemporánea se fundamenta en los principios de la computación ubicua descritos por Mark Weiser \cite{weiser1991computer}. Este enfoque postula que la tecnología informática debe integrarse de manera orgánica en el entorno cotidiano hasta volverse invisible para el usuario, operando en un segundo plano conceptual. La convergencia de la computación ubicua con los sistemas empotrados de comunicación dio origen al concepto de inteligencia ambiental (AmI) \cite{cook2009ambient}. Un espacio dotado de AmI se caracteriza por tres propiedades fundamentales:
 \begin{itemize}
-    \item \textbf{Sensibilidad al contexto:} Capacidad de adquirir e interpretar telemetría ambiental proveniente de sensores distribuidos para determinar el estado del entorno físico.
-    \item \textbf{Autonomía proactiva:} Facultad de ejecutar acciones de control predictivas basadas en las inferencias contextuales, eliminando la necesidad de comandos manuales.
-    \item \textbf{Interacción transparente:} El usuario se sitúa en el centro del sistema, experimentando modificaciones adaptativas en el entorno (ajustes lumínicos, térmicos o de seguridad) sin percibir la infraestructura tecnológica subyacente.
+    \item \textbf{Sensibilidad al contexto:} capacidad de adquirir e interpretar telemetría ambiental proveniente de sensores distribuidos para determinar el estado del entorno físico.
+    \item \textbf{Autonomía proactiva:} facultad de ejecutar acciones de control predictivas basadas en las inferencias contextuales, eliminando la necesidad de comandos manuales.
+    \item \textbf{Interacción transparente:} el usuario se sitúa en el centro del sistema, experimentando modificaciones adaptativas en el entorno (ajustes lumínicos, térmicos o de seguridad) sin percibir la infraestructura tecnológica subyacente.
 \end{itemize}
 
 En las arquitecturas comerciales típicas de la última década, la inteligencia ambiental se ha supeditado a plataformas de computación en la nube (\textit{cloud computing}). Sin embargo, la necesidad de reducir los tiempos de latencia en la toma de decisiones, optimizar el uso del ancho de banda y garantizar la confidencialidad de la información ha impulsado la adopción del paradigma de computación en el extremo (\textit{edge computing}) \cite{shi2016edge}. En este modelo local, la adquisición, el filtrado algorítmico y la fusión de datos se ejecutan en las fronteras de la red interna, dotando al sistema de autonomía operativa frente a desconexiones de la red externa, como se contrapone gráficamente en la Figura \ref{fig:edge_vs_cloud}.
@@ -61,8 +61,8 @@ Los dispositivos PIR operan mediante la captación de las variaciones de radiaci
 
 Esta naturaleza física introduce dos limitaciones severas:
 \begin{itemize}
-    \item \textbf{Incapacidad de detección estática:} Si el sujeto permanece inmóvil (por ejemplo, durante la lectura, el trabajo en escritorio o el sueño), la radiación térmica proyectada sobre el sensor piroeléctrico se vuelve constante, anulando la variación de tensión. Esto genera falsos negativos que interrumpen de forma anómala las automatizaciones.
-    \item \textbf{Sensibilidad a gradientes térmicos:} Al depender de la temperatura diferencial, los sensores PIR son vulnerables a falsos positivos provocados por corrientes de aire caliente, radiación solar directa sobre superficies interiores o el encendido automático de sistemas de climatización por convección.
+    \item \textbf{Incapacidad de detección estática:} si el sujeto permanece inmóvil (por ejemplo, durante la lectura, el trabajo en escritorio o el sueño), la radiación térmica proyectada sobre el sensor piroeléctrico se vuelve constante, anulando la variación de tensión. Esto genera falsos negativos que interrumpen de forma anómala las automatizaciones.
+    \item \textbf{Sensibilidad a gradientes térmicos:} al depender de la temperatura diferencial, los sensores PIR son vulnerables a falsos positivos provocados por corrientes de aire caliente, radiación solar directa sobre superficies interiores o el encendido automático de sistemas de climatización por convección.
 \end{itemize}
 
 \subsubsection{Sensores ultrasonidos}
@@ -185,18 +185,18 @@ Sobre la capa de transporte TCP/IP de la red Wi-Fi, el protocolo de mensajería 
 
 Frente a protocolos síncronos pesados (como HTTP\slash REST), MQTT ofrece ventajas esenciales para el proyecto:
 \begin{itemize}
-    \item \textbf{Reducido sobrecoste de protocolo (\textit{overhead}):} La cabecera fija del protocolo es de únicamente 2 bytes, reduciendo el consumo de ancho de banda y los tiempos de serialización en procesadores limitados como el ESP32.
-    \item \textbf{Gestión de la calidad de servicio (QoS):} Permite parametrizar el nivel de entrega de los mensajes (QoS 0, QoS 1 o QoS 2), asegurando la llegada de eventos críticos relativos a la seguridad perimetral frente a telemetrías ambientales repetitivas.
-    \item \textbf{Mecanismo de testamento (\textit{Last Will and Testament}):} Permite al \textit{broker} notificar de forma proactiva y automática la desconexión abrupta de un nodo sensor por fallo eléctrico o pérdida de Wi-Fi, habilitando la ejecución inmediata de rutinas de contingencia en el orquestador local.
+    \item \textbf{Reducido sobrecoste de protocolo (\textit{overhead}):} la cabecera fija del protocolo es de únicamente 2 bytes, reduciendo el consumo de ancho de banda y los tiempos de serialización en procesadores limitados como el ESP32.
+    \item \textbf{Gestión de la calidad de servicio (QoS):} permite parametrizar el nivel de entrega de los mensajes (QoS 0, QoS 1 o QoS 2), asegurando la llegada de eventos críticos relativos a la seguridad perimetral frente a telemetrías ambientales repetitivas.
+    \item \textbf{Mecanismo de testamento (\textit{Last Will and Testament}):} permite al \textit{broker} notificar de forma proactiva y automática la desconexión abrupta de un nodo sensor por fallo eléctrico o pérdida de Wi-Fi, habilitando la ejecución inmediata de rutinas de contingencia en el orquestador local.
 \end{itemize}
 
 \subsection{Soluciones comerciales y antecedentes}
 El mercado actual de consumo ofrece una amplia gama de ecosistemas domóticos propietarios desarrollados por corporaciones tecnológicas internacionales. Plataformas basadas en los ecosistemas de Tuya/Smart Life, Google Home o Philips Hue proporcionan interfaces de usuario pulidas y compatibilidad simplificada mediante el modelo \textit{Plug-and-Play}. Sin embargo, un análisis de ingeniería revela deficiencias estructurales en estas soluciones:
 
 \begin{itemize}
-    \item \textbf{Aislamiento en silos tecnológicos:} Los fabricantes tienden a restringir la interoperabilidad nativa, forzando al usuario a depender de pasarelas de traducción propietarias y aplicaciones de software independientes que complican la unificación de datos.
-    \item \textbf{Dependencia de la nube:} La lógica de conmutación y la ejecución de las automatizaciones de estas soluciones comerciales se procesan en servidores remotos. Si la conexión a internet del hogar se degrada o el servidor del proveedor experimenta una interrupción del servicio, el entorno pierde por completo sus capacidades autónomas.
-    \item \textbf{Monetización e intrusión en la privacidad:} El almacenamiento masivo de históricos de presencia, hábitos horarios y perfiles acústicos en infraestructuras externas plantea serios dilemas éticos y legales bajo normativas de protección de datos, al delegar la custodia de información sensible a terceros cuyos modelos de negocio suelen incluir la explotación analítica de datos agregados \cite{perera2014context}.
+    \item \textbf{Aislamiento en silos tecnológicos:} los fabricantes tienden a restringir la interoperabilidad nativa, forzando al usuario a depender de pasarelas de traducción propietarias y aplicaciones de software independientes que complican la unificación de datos.
+    \item \textbf{Dependencia de la nube:} la lógica de conmutación y la ejecución de las automatizaciones de estas soluciones comerciales se procesan en servidores remotos. Si la conexión a internet del hogar se degrada o el servidor del proveedor experimenta una interrupción del servicio, el entorno pierde por completo sus capacidades autónomas.
+    \item \textbf{Monetización e intrusión en la privacidad:} el almacenamiento masivo de históricos de presencia, hábitos horarios y perfiles acústicos en infraestructuras externas plantea serios dilemas éticos y legales bajo normativas de protección de datos, al delegar la custodia de información sensible a terceros cuyos modelos de negocio suelen incluir la explotación analítica de datos agregados \cite{perera2014context}.
 \end{itemize}
 
 Frente a estos antecedentes comerciales, las arquitecturas de código abierto de integración local como Home Assistant y ESPHome plantean una alternativa robusta. Permiten la unificación de hardware heterogéneo bajo una capa de abstracción común operada de forma local, devolviendo el control operativo y la privacidad absoluta de los datos al perímetro de la vivienda.

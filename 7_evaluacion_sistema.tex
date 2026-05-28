@@ -83,11 +83,11 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
 \subsubsection{Caso de prueba PR-AUTO-01: Inferencia de ocupación y control de iluminación ergonómica}
 \label{sec:pr_auto_01}
 \begin{itemize}
-    \item \textbf{Objetivo:} Validar que al detectarse presencia en el escritorio bajo condiciones de baja iluminación se enciende la luz de apoyo de forma automática.
-    \item \textbf{Estímulo de entrada:} Cambio de estado del sensor del radar mmWave (\texttt{binary\_sensor.radar\_presence} a \texttt{on}) con una lectura analógica del LDR por debajo del umbral de luz diurna (\texttt{sensor.ldr\_iluminancia < 200\,lx}).
-    \item \textbf{Flujo esperado en la traza:} El orquestador intercepta el disparo del radar, evalúa como verdadera la condición de baja iluminación del LDR y ejecuta la acción de encendido en el relé de estado sólido de potencia (\texttt{switch.ssr\_rele\_iluminacion} a \texttt{on}).
-    \item \textbf{Demostración en vídeo:} Se ha registrado la secuencia física en el archivo \texttt{videos/demo\_PR\_AUTO\_01.mp4}.
-    \item \textbf{Resultado y traza de ejecución:} Exitoso. La traza de Home Assistant confirma un tiempo de conmutación de 115\,ms (ver Figura~\ref{fig:traza_auto_01}).
+    \item \textbf{Objetivo:} validar que al detectarse presencia en el escritorio bajo condiciones de baja iluminación se enciende la luz de apoyo de forma automática.
+    \item \textbf{Estímulo de entrada:} cambio de estado del sensor del radar mmWave (\texttt{binary\_sensor.radar\_presence} a \texttt{on}) con una lectura analógica del LDR por debajo del umbral de luz diurna (\texttt{sensor.ldr\_iluminancia < 200\,lx}).
+    \item \textbf{Flujo esperado en la traza:} el orquestador intercepta el disparo del radar, evalúa como verdadera la condición de baja iluminación del LDR y ejecuta la acción de encendido en el relé de estado sólido de potencia (\texttt{switch.ssr\_rele\_iluminacion} a \texttt{on}).
+    \item \textbf{Demostración en vídeo:} se ha registrado la secuencia física en el archivo \texttt{videos/demo\_PR\_AUTO\_01.mp4}.
+    \item \textbf{Resultado y traza de ejecución:} exitoso. La traza de Home Assistant confirma un tiempo de conmutación de 115\,ms (ver Figura~\ref{fig:traza_auto_01}).
 \end{itemize}
 
 \begin{figure}[H]
@@ -103,7 +103,6 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
             \textbf{[Captura de Pantalla: Traza de Automatización PR-AUTO-01]}\\[0.2cm]
             Aquí se insertará la imagen de la traza de ejecución de Home Assistant\\
             (\textit{Automation Trace}) para verificar el flujo de estados.\\
-            Nombre de archivo recomendado: \texttt{Img/traza\_auto\_01.png}\\[0.3cm]
         \end{minipage}%
     }
     \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-01 (iluminación automática por presencia y luminosidad).}
@@ -113,11 +112,11 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
 \subsubsection{Caso de prueba PR-AUTO-02: Barrera óptica y supervisión de seguridad del perímetro}
 \label{sec:pr_auto_02}
 \begin{itemize}
-    \item \textbf{Objetivo:} Validar la detección de paso y activación de contramedidas disuasorias cuando se interrumpe la barrera del diodo láser de la puerta.
-    \item \textbf{Estímulo de entrada:} Cambio en el estado del sensor del receptor magnético de la puerta (\texttt{binary\_sensor.puerta\_reed} a \texttt{on}) o cambio del receptor de la barrera óptica láser a estado sin luz (\texttt{binary\_sensor.laser\_receptor} a \texttt{on}).
-    \item \textbf{Flujo esperado en la traza:} El orquestador evalúa la desconexión física. Si el sistema de alerta perimetral está armado, se dispara la alarma visual en la interfaz del usuario, se incrementa el contador de accesos en la base de datos y se activa la conmutación de seguridad en los diodos de disuasión.
-    \item \textbf{Demostración en vídeo:} Se ha registrado la secuencia física en el archivo \texttt{videos/demo\_PR\_AUTO\_02.mp4}.
-    \item \textbf{Resultado y traza de ejecución:} Exitoso. El motor de trazas registra la correcta evaluación paralela de las condiciones de armado e incrementa el contador en SQLite (ver Figura~\ref{fig:traza_auto_02}).
+    \item \textbf{Objetivo:} validar la detección de paso y activación de contramedidas disuasorias cuando se interrumpe la barrera del diodo láser de la puerta.
+    \item \textbf{Estímulo de entrada:} cambio en el estado del sensor del receptor magnético de la puerta (\texttt{binary\_sensor.puerta\_reed} a \texttt{on}) o cambio del receptor de la barrera óptica láser a estado sin luz (\texttt{binary\_sensor.laser\_receptor} a \texttt{on}).
+    \item \textbf{Flujo esperado en la traza:} el orquestador evalúa la desconexión física. Si el sistema de alerta perimetral está armado, se dispara la alarma visual en la interfaz del usuario, se incrementa el contador de accesos en la base de datos y se activa la conmutación de seguridad en los diodos de disuasión.
+    \item \textbf{Demostración en vídeo:} se ha registrado la secuencia física en el archivo \texttt{videos/demo\_PR\_AUTO\_02.mp4}.
+    \item \textbf{Resultado y traza de ejecución:} exitoso. El motor de trazas registra la correcta evaluación paralela de las condiciones de armado e incrementa el contador en SQLite (ver Figura~\ref{fig:traza_auto_02}).
 \end{itemize}
 
 \begin{figure}[H]
@@ -133,7 +132,6 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
             \textbf{[Captura de Pantalla: Traza de Automatización PR-AUTO-02]}\\[0.2cm]
             Aquí se insertará la imagen de la traza de ejecución de Home Assistant\\
             (\textit{Automation Trace}) para verificar el flujo de estados.\\
-            Nombre de archivo recomendado: \texttt{Img/traza\_auto\_02.png}\\[0.3cm]
         \end{minipage}%
     }
     \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-02 (barrera óptica y control de accesos).}
@@ -143,11 +141,11 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
 \subsubsection{Caso de prueba PR-AUTO-03: Mitigación del sedentarismo (Pomodoro espacial)}
 \label{sec:pr_auto_03}
 \begin{itemize}
-    \item \textbf{Objetivo:} Validar que el sistema monitoriza el tiempo de permanencia estática del usuario en la silla de trabajo y genera las alertas ergonómicas establecidas.
-    \item \textbf{Estímulo de entrada:} Permanencia ininterrumpida de la entidad de presencia del radar (\texttt{binary\_sensor.radar\_presence} en estado \texttt{on}) durante un periodo acumulativo continuo superior a $25\,\text{minutos}$.
-    \item \textbf{Flujo esperado en la traza:} Tras expirar el temporizador de control, el motor lógico del orquestador realiza la transición interna al estado \texttt{Alerta Ergonómica}, enviando una notificación interactiva \textit{push} al dispositivo móvil del usuario y modificando el color del LED indicador del Nodo Escritorio.
-    \item \textbf{Demostración en vídeo:} Se ha registrado la secuencia física en el archivo \texttt{videos/demo\_PR\_AUTO\_03.mp4}.
-    \item \textbf{Resultado y traza de ejecución:} Exitoso. El motor de trazas confirma el envío inmediato del paquete TCP de notificación al cumplirse el retardo (ver Figura~\ref{fig:traza_auto_03}).
+    \item \textbf{Objetivo:} validar que el sistema monitoriza el tiempo de permanencia estática del usuario en la silla de trabajo y genera las alertas ergonómicas establecidas.
+    \item \textbf{Estímulo de entrada:} permanencia ininterrumpida de la entidad de presencia del radar (\texttt{binary\_sensor.radar\_presence} en estado \texttt{on}) durante un periodo acumulativo continuo superior a $25\,\text{minutos}$.
+    \item \textbf{Flujo esperado en la traza:} tras expirar el temporizador de control, el motor lógico del orquestador realiza la transición interna al estado \texttt{Alerta Ergonómica}, enviando una notificación interactiva \textit{push} al dispositivo móvil del usuario y modificando el color del LED indicador del Nodo Escritorio.
+    \item \textbf{Demostración en vídeo:} se ha registrado la secuencia física en el archivo \texttt{videos/demo\_PR\_AUTO\_03.mp4}.
+    \item \textbf{Resultado y traza de ejecución:} exitoso. El motor de trazas confirma el envío inmediato del paquete TCP de notificación al cumplirse el retardo (ver Figura~\ref{fig:traza_auto_03}).
 \end{itemize}
 
 \begin{figure}[H]
@@ -163,7 +161,6 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
             \textbf{[Captura de Pantalla: Traza de Automatización PR-AUTO-03]}\\[0.2cm]
             Aquí se insertará la imagen de la traza de ejecución de Home Assistant\\
             (\textit{Automation Trace}) para verificar el flujo de estados.\\
-            Nombre de archivo recomendado: \texttt{Img/traza\_auto\_03.png}\\[0.3cm]
         \end{minipage}%
     }
     \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-03 (temporizador y alerta ergonómica Pomodoro).}
@@ -173,11 +170,11 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
 \subsubsection{Caso de prueba PR-AUTO-04: Transición al modo descanso y apagado global}
 \label{sec:pr_auto_04}
 \begin{itemize}
-    \item \textbf{Objetivo:} Validar el paso automático del sistema al estado de ahorro de energía y ausencia cuando el usuario abandona la estancia o inicia el reposo nocturno.
-    \item \textbf{Estímulo de entrada:} Ausencia absoluta de movimiento por el radar mmWave (\texttt{binary\_sensor.radar\_presence} en estado \texttt{off}) durante un retardo de cortesía de $10\,\text{minutos}$, o conmutación manual del conmutador de cabecera a modo \texttt{Noche}.
-    \item \textbf{Flujo esperado en la traza:} El orquestador evalúa la persistencia del estado de reposo, ejecuta la transición de la máquina de estados a \texttt{Ausente} o \texttt{Durmiendo} y desencadena un comando de apagado masivo de todos los relés y actuadores del sistema (\texttt{switch.ssr\_rele\_iluminacion} a \texttt{off}, etc.).
-    \item \textbf{Demostración en vídeo:} Se ha registrado la secuencia física en el archivo \texttt{videos/demo\_PR\_AUTO\_04.mp4}.
-    \item \textbf{Resultado y traza de ejecución:} Exitoso. El motor de trazas confirma el apagado coordinado y secuencial (ver Figura~\ref{fig:traza_auto_04}).
+    \item \textbf{Objetivo:} validar el paso automático del sistema al estado de ahorro de energía y ausencia cuando el usuario abandona la estancia o inicia el reposo nocturno.
+    \item \textbf{Estímulo de entrada:} ausencia absoluta de movimiento por el radar mmWave (\texttt{binary\_sensor.radar\_presence} en estado \texttt{off}) durante un retardo de cortesía de $10\,\text{minutos}$, o conmutación manual del conmutador de cabecera a modo \texttt{Noche}.
+    \item \textbf{Flujo esperado en la traza:} el orquestador evalúa la persistencia del estado de reposo, ejecuta la transición de la máquina de estados a \texttt{Ausente} o \texttt{Durmiendo} y desencadena un comando de apagado masivo de todos los relés y actuadores del sistema (\texttt{switch.ssr\_rele\_iluminacion} a \texttt{off}, etc.).
+    \item \textbf{Demostración en vídeo:} se ha registrado la secuencia física en el archivo \texttt{videos/demo\_PR\_AUTO\_04.mp4}.
+    \item \textbf{Resultado y traza de ejecución:} exitoso. El motor de trazas confirma el apagado coordinado y secuencial (ver Figura~\ref{fig:traza_auto_04}).
 \end{itemize}
 
 \begin{figure}[H]
@@ -193,7 +190,6 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
             \textbf{[Captura de Pantalla: Traza de Automatización PR-AUTO-04]}\\[0.2cm]
             Aquí se insertará la imagen de la traza de ejecución de Home Assistant\\
             (\textit{Automation Trace}) para verificar el flujo de estados.\\
-            Nombre de archivo recomendado: \texttt{Img/traza\_auto\_04.png}\\[0.3cm]
         \end{minipage}%
     }
     \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-04 (transición automática a modo ausente/apagado general).}

@@ -7,8 +7,8 @@ La ingeniería de requisitos constituye una fase crítica en el ciclo de vida de
 \subsection{Restricciones y factores limitantes}
 El desarrollo e implantación del prototipo están sujetos a un conjunto de restricciones físicas, tecnológicas y temporales que condicionan la arquitectura final:
 \begin{itemize}
-    \item \textbf{Restricciones de conectividad y latencia:} El sistema opera sobre una red local aislada para garantizar la resiliencia frente a caídas del servicio de Internet (arquitectura \textit{offline-first}). Esto exige que el orquestador y los sensores compartan el mismo dominio de difusión (dominio de \textit{broadcast}) y estén sometidos a una estricta política de red.
-    \item \textbf{Restricciones ambientales y volumétricas:} La fiabilidad de la telemetría espacial está supeditada a la geometría de la habitación y a la existencia de línea de visión electromagnética directa entre el radar de ondas milimétricas y los sujetos, limitando las posiciones de instalación viables para evitar zonas de sombra acústica.
+    \item \textbf{Restricciones de conectividad y latencia:} el sistema opera sobre una red local aislada para garantizar la resiliencia frente a caídas del servicio de Internet (arquitectura \textit{offline-first}). Esto exige que el orquestador y los sensores compartan el mismo dominio de difusión (dominio de \textit{broadcast}) y estén sometidos a una estricta política de red.
+    \item \textbf{Restricciones ambientales y volumétricas:} la fiabilidad de la telemetría espacial está supeditada a la geometría de la habitación y a la existencia de línea de visión electromagnética directa entre el radar de ondas milimétricas y los sujetos, limitando las posiciones de instalación viables para evitar zonas de sombra acústica.
 \end{itemize}
 
 \begin{figure}[H]
@@ -18,16 +18,16 @@ El desarrollo e implantación del prototipo están sujetos a un conjunto de rest
     \label{fig:campo_vision_radar}
 \end{figure} 
 \begin{itemize}
-    \item \textbf{Restricciones de hardware y procesamiento:} La orquestación central se ejecuta sobre un microordenador Raspberry Pi 4 de recursos finitos. Esto impone una limitación directa sobre la complejidad computacional algorítmica y exige un control estricto sobre el uso de la memoria RAM y el desgaste de la unidad de almacenamiento.
-    \item \textbf{Restricciones de infraestructura de red:} El sistema exige cobertura ininterrumpida de red inalámbrica IEEE 802.11 (Wi-Fi) en la banda de 2.4 GHz para la transmisión de la telemetría a través de la API local de los nodos distribuidos, requiriendo un nivel de señal (RSSI) estable para evitar la pérdida de eventos lógicos.
+    \item \textbf{Restricciones de hardware y procesamiento:} la orquestación central se ejecuta sobre un microordenador Raspberry Pi 4 de recursos finitos. Esto impone una limitación directa sobre la complejidad computacional algorítmica y exige un control estricto sobre el uso de la memoria RAM y el desgaste de la unidad de almacenamiento.
+    \item \textbf{Restricciones de infraestructura de red:} el sistema exige cobertura ininterrumpida de red inalámbrica IEEE 802.11 (Wi-Fi) en la banda de 2.4 GHz para la transmisión de la telemetría a través de la API local de los nodos distribuidos, requiriendo un nivel de señal (RSSI) estable para evitar la pérdida de eventos lógicos.
 \end{itemize}
 
 \subsection{Identificación de actores del sistema}
 Para el modelado lógico de los casos de uso, se identifican los siguientes actores que interactúan de forma directa o indirecta con la infraestructura:
 \begin{itemize}
-    \item \textbf{Usuario habitual:} Actor principal y pasivo. Representa a la persona física que habita el entorno monitorizado. Su interacción consiste en realizar rutinas cotidianas (estudiar, dormir, salir) sin requerir la emisión de comandos explícitos al sistema.
-    \item \textbf{Administrador del sistema:} Actor activo con privilegios elevados. Encargado del mantenimiento de la infraestructura, el acceso al panel de control analítico, la calibración de los umbrales de sensibilidad de los sensores y la auditoría de los registros de ejecución.
-    \item \textbf{Motor de contexto (actor lógico):} Entidad de software autónoma que procesa la telemetría entrante, ejecuta los algoritmos de fusión de datos y emite las órdenes de actuación sobre el entorno físico.
+    \item \textbf{Usuario habitual:} actor principal y pasivo. Representa a la persona física que habita el entorno monitorizado. Su interacción consiste en realizar rutinas cotidianas (estudiar, dormir, salir) sin requerir la emisión de comandos explícitos al sistema.
+    \item \textbf{Administrador del sistema:} actor activo con privilegios elevados. Encargado del mantenimiento de la infraestructura, el acceso al panel de control analítico, la calibración de los umbrales de sensibilidad de los sensores y la auditoría de los registros de ejecución.
+    \item \textbf{Motor de contexto (actor lógico):} entidad de software autónoma que procesa la telemetría entrante, ejecuta los algoritmos de fusión de datos y emite las órdenes de actuación sobre el entorno físico.
 \end{itemize}
 
 \begin{figure}[H]

@@ -74,12 +74,89 @@ De acuerdo con la distribución empírica diseñada para cubrir las necesidades 
 
 Tal y como se detalla en la comparativa técnica de la Tabla~\ref{tab:pir_vs_mmwave_comp}, la tecnología FMCW aprovecha el efecto Doppler a alta frecuencia para discriminar pequeñas variaciones de la caja torácica humana durante la respiración, eliminando los falsos negativos que sufren los sensores PIR convencionales cuando un usuario se encuentra inmóvil.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{Img/raspberry_pi4.png}
+    \caption{Microordenador Raspberry Pi 4 Model B (Servidor Central).}
+    \label{fig:hw_raspberry}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{Img/placa_esp32.png}
+    \caption{Placa de desarrollo ESP32 DevKit V1.}
+    \label{fig:hw_esp32}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{Img/sensor_hlk_ld2410c.png}
+    \caption{Radar de presencia humana de ondas milimétricas HLK-LD2410C.}
+    \label{fig:hw_hlk}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{Img/sensor_dht11.png}
+    \caption{Sensor digital de temperatura y humedad DHT11.}
+    \label{fig:hw_dht}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{Img/sensor_ldr_modulo.png}
+    \caption{Módulo fotorresistor LDR para medición de iluminancia.}
+    \label{fig:hw_ldr}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{Img/sensor_sonido_ky037.png}
+    \caption{Módulo sensor de sonido de alta sensibilidad KY-037.}
+    \label{fig:hw_sonido}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{Img/sensor_reed_modulo.png}
+    \caption{Módulo interruptor magnético (Reed Switch) para puertas o ventanas.}
+    \label{fig:hw_reed}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{Img/rele_modulo.png}
+    \caption{Módulo de relé electromagnético de un canal con optoacoplamiento.}
+    \label{fig:hw_rele}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{Img/laser_ky008.png}
+    \caption{Módulo emisor de diodo láser semiconductor KY-008.}
+    \label{fig:hw_laser}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{Img/cables_dupont.png}
+    \caption{Cables Dupont puente de conexión (macho-macho, macho-hembra y hembra-hembra).}
+    \label{fig:hw_dupont}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{Img/cables_conexion.png}
+    \caption{Cables de alimentación USB-C, micro-USB y cable de red Ethernet RJ45.}
+    \label{fig:hw_cables_alim}
+\end{figure}
+
 \subsection{Selección de software y protocolos}
 
-\subsubsection{Firmware declarativo del hardware embebido}
+\subsubsection{Firmware de los nodos perimetrales (ESPHome)}
 Para la programación e instrumentación de los microcontroladores se descartó el desarrollo de código monolítico imperativo en entornos tradicionales en favor de \textbf{ESPHome}. Esta herramienta permite generar firmwares optimizados a partir de archivos de configuración declarativos estructurados en formato YAML. ESPHome compila directamente sobre el framework original del fabricante, abstrayendo la gestión del stack TCP/IP y garantizando la reconexión automática ante pérdidas de señal inalámbrica. El uso de este sistema facilita la monitorización de registros en tiempo real (\textit{logs}) directamente desde el orquestador central y permite actualizaciones inalámbricas seguras (OTA, por sus siglas en inglés).
 
-\subsubsection{Orquestador central y motor de contexto}
+\subsubsection{Orquestador central y motor de contexto (Home Assistant)}
 El núcleo lógico del sistema se sustenta sobre \textbf{Home Assistant Container} ejecutado en un entorno aislado de contenedores. Se seleccionó esta plataforma de código abierto debido a su arquitectura dirigida por eventos y su capacidad para unificar sistemas heterogéneos bajo una capa común de entidades lógicas. Home Assistant asume el rol de Motor de Contexto, ejecutando las automatizaciones locales complejas, gestionando las máquinas de estado finito de la estancia y aislando por completo la lógica operacional de servidores de terceros en la nube, siguiendo patrones de diseño específicos para la orquestación confiable en el borde \cite{pahl2018trusted}.
 
 \begin{table}[H]
@@ -102,7 +179,7 @@ El núcleo lógico del sistema se sustenta sobre \textbf{Home Assistant Containe
 
 Frente a los ecosistemas propietarios y soluciones comerciales recogidas en la Tabla~\ref{tab:sw_domotica}, Home Assistant garantiza un procesamiento \textit{edge} 100\% local sin depender de servidores externos, mitigando latencias y protegiendo la privacidad. Frente a OpenHAB, la arquitectura basada en Python de Home Assistant permite compartir el mismo entorno de ejecución con los scripts analíticos de este proyecto (facilitando el uso de NumPy y Pandas), evitando la pesada sobrecarga de la máquina virtual de Java (JVM) en un hardware de recursos restringidos como la Raspberry Pi.
 
-\subsubsection{Estrategia de despliegue}
+\subsubsection{Entorno de virtualización y gestión de contenedores (Docker y Portainer)}
 Home Assistant ofrece cuatro métodos oficiales de instalación. Se debe elegir el método que brinde mayor control y menor impacto sobre el rendimiento del servidor central.
 
 \begin{table}[H]
@@ -122,11 +199,14 @@ Home Assistant ofrece cuatro métodos oficiales de instalación. Se debe elegir 
     \label{tab:ha_instalacion}
 \end{table}
 
-De acuerdo con el análisis de la Tabla~\ref{tab:ha_instalacion}, se ha seleccionado el despliegue mediante \textbf{Home Assistant Container (Docker)} sobre Raspberry Pi OS Lite. Esta decisión técnica se fundamenta en:
+De acuerdo con el análisis de la Tabla~\ref{tab:ha_instalacion}, se ha seleccionado el despliegue mediante \textbf{Home Assistant Container (Docker)} sobre Raspberry Pi OS Lite, gestionado visualmente mediante el panel de control \textbf{Portainer}. Esta decisión técnica se fundamenta en:
 \begin{enumerate}
+    \item \textbf{Aislamiento de dependencias y portabilidad:} Docker permite ejecutar cada servicio (Home Assistant, ESPHome y Portainer) en contenedores ligeros aislados que comparten el mismo núcleo del sistema operativo. Esto evita conflictos de librerías y facilita la replicación de la infraestructura en cualquier otro hardware compatible.
+    \item \textbf{Gestión de microservicios con Docker Compose:} la infraestructura se define en un único archivo declarativo YAML. Esto agiliza la configuración, las actualizaciones y el mantenimiento del stack completo del servidor local.
+    \item \textbf{Administración visual con Portainer:} el uso del gestor de contenedores Portainer proporciona una interfaz gráfica para monitorizar el estado del hardware de la Raspberry Pi, inspeccionar los registros de ejecución (\textit{logs}) de cada contenedor y administrar los ciclos de vida de las imágenes y volúmenes de almacenamiento de forma simplificada, sin necesidad de recurrir a la línea de comandos para operaciones cotidianas.
+    \item \textbf{Eficiencia de recursos:} al prescindir del supervisor integrado en la alternativa *Supervised* o en HA OS, se reduce drásticamente la huella de memoria RAM (crítico en un hardware con recursos restringidos a 1 GB como la Raspberry Pi 4 de este proyecto), liberando recursos para la base de datos y la algoritmia del sistema.
     \item \textbf{Acceso a nivel de sistema operativo:} vital para la ejecución de scripts en Python personalizados fuera de las restricciones impuestas por el sistema operativo cerrado de HA OS.
-    \item \textbf{Arquitectura de microservicios y red nativa:} mediante \textit{Docker Compose}, se aíslan y gestionan de forma independiente los servicios críticos (el núcleo de Home Assistant Container, el entorno de desarrollo y compilación ESPHome, y el panel de control Portainer). Para garantizar la detección de dispositivos en la red local mediante mDNS y UPnP (fundamental para la API de ESPHome y el descubrimiento de dispositivos), los contenedores de Home Assistant y ESPHome se configuran en el modo de red del host (\textit{host network mode}), mientras que Portainer se despliega en una red de puente (\textit{bridge}) para el aislamiento de su interfaz de gestión.
-    \item \textbf{Eficiencia:} al prescindir de la sobrecarga del supervisor integrado en la alternativa *Supervised* o en HA OS, se reduce drásticamente la huella de memoria RAM, liberando recursos para la base de datos y la algoritmia del sistema.
+    \item \textbf{Arquitectura de microservicios y red nativa:} mediante \textit{Docker Compose}, se aíslan y gestionan de forma independiente los servicios críticos. Para garantizar la detección de dispositivos en la red local mediante mDNS y UPnP (fundamental para la API de ESPHome y el descubrimiento de dispositivos), los contenedores de Home Assistant y ESPHome se configuran en el modo de red del host (\textit{host network mode}), mientras que Portainer se despliega en una red de puente (\textit{bridge}) para el aislamiento de su interfaz de gestión.
 \end{enumerate}
 
 \begin{figure}[H]
@@ -184,7 +264,18 @@ De acuerdo con el análisis de la Tabla~\ref{tab:ha_instalacion}, se ha seleccio
     \label{fig:despliegue_docker}
 \end{figure}
 
-\subsubsection{Protocolo de comunicaciones}
+\subsubsection{Red privada virtual y acceso remoto seguro (Tailscale)}
+Para habilitar el acceso remoto al cuadro de mandos de Home Assistant y permitir la administración de la Raspberry Pi de forma segura sin exponer el sistema a internet, se descartó la redirección tradicional de puertos en el enrutador doméstico en favor de la VPN peer-to-peer \textbf{Tailscale}.
+
+Los criterios de selección de esta tecnología son:
+\begin{itemize}
+    \item \textbf{Cifrado extremo a extremo:} Tailscale establece una red mallada privada virtual (\textit{overlay network}) basada en el protocolo moderno de VPN \textbf{WireGuard}. Toda la telemetría y el tráfico administrativo viajan cifrados de extremo a extremo, impidiendo que terceros intercepten datos sensibles del hogar.
+    \item \textbf{Conexión directa peer-to-peer:} a diferencia de otras VPN comerciales que enrutan el tráfico a través de servidores centralizados, Tailscale facilita la conexión directa entre dispositivos usando técnicas de evasión de cortafuegos (NAT traversal). Esto minimiza la latencia de respuesta y optimiza el ancho de banda.
+    \item \textbf{Ausencia de puertos abiertos en WAN:} al no requerir la redirección de puertos (como SSH o el puerto de Home Assistant 8123) en el enrutador doméstico, el servidor central permanece invisible a escaneos de puertos y ataques masivos automatizados desde el exterior.
+    \item \textbf{Bajo consumo computacional:} la integración de Tailscale en Raspberry Pi OS Lite es sumamente ligera, consumiendo una cantidad de recursos de CPU y RAM prácticamente imperceptible, idónea para el hardware seleccionado de 1 GB.
+\end{itemize}
+
+\subsubsection{Protocolo de comunicaciones (API nativa de ESPHome)}
 Para el intercambio de telemetría y eventos de control entre los nodos instrumentados y el servidor central se seleccionó la \textbf{API nativa de ESPHome} sobre conexiones TCP directas en el puerto 6053. A diferencia de protocolos tradicionales basados en texto o intermediarios de mensajería (como HTTP o MQTT), esta API emplea un canal de sockets binarios optimizado mediante estructuras de serialización ligeras (basadas en Google Protocol Buffers). Adicionalmente, el canal incorpora cifrado local mediante el protocolo Noise, garantizando la privacidad del tráfico de sensores. Esta elección tecnológica asegura tiempos de transmisión de eventos inferiores a los 10 milisegundos y proporciona un mecanismo de comprobación activa del estado del enlace (\textit{keepalive}), capacitando al orquestador central para diagnosticar interrupciones de red de manera determinista y tolerar fallos en el bus local \cite{al2015internet}.
 
 \subsection{Integración entre sistemas heterogéneos}

@@ -2,4 +2,571 @@
 \section{Manual técnico y de código}
 \label{anexo:manual_tecnico_codigo}
 
-% TODO: Añadir contenido del manual técnico y de código
+En este anexo se detalla el conjunto completo de códigos y configuraciones desarrollados para el despliegue del sistema domótico local. Se incluye la infraestructura de red virtualizada bajo Docker, el código declarativo de firmware para los tres nodos inalámbricos basados en ESPHome y las nueve automatizaciones que gobiernan la lógica de contexto y bienestar en el orquestador Home Assistant.
+
+\subsection{Infraestructura y contenedores perimetrales (Docker)}
+El servidor central se implementa sobre una placa Raspberry Pi 4 ejecutando el sistema operativo Raspberry Pi OS. Para garantizar el aislamiento de dependencias, la portabilidad y la reproducibilidad técnica, los servicios de Home Assistant, ESPHome y Portainer se orquestan como contenedores independientes compartiendo el espacio de red física del host.
+
+A continuación, se presenta la especificación del archivo de orquestación \texttt{docker-compose.yml}:
+
+\begin{lstlisting}[language=YAML, caption={Archivo de orquestación de contenedores en la Raspberry Pi 4 (docker-compose.yml).}, label={lst:docker_compose}]
+version: '3.8'
+
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: 'ghcr.io/home-assistant/home-assistant:stable'
+    volumes:
+      - /home/jpmorenito/homeassistant/config:/config
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=Europe/Madrid
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+
+  esphome:
+    container_name: esphome
+    image: 'ghcr.io/esphome/esphome:latest'
+    volumes:
+      - /home/jpmorenito/esphome/config:/config
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=Europe/Madrid
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+
+  portainer:
+    container_name: portainer
+    image: 'portainer/portainer-ce:latest'
+    command: -H unix:///var/run/docker.sock
+    ports:
+      - '9000:9000'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+
+volumes:
+  portainer_data:
+\end{lstlisting}
+
+\subsection{Firmware de los nodos perimetrales (ESPHome)}
+Los nodos perimetrales inalámbricos se basan en el microcontrolador SoC ESP32. Su programación se realiza mediante archivos de configuración declarativos en formato YAML, que el compilador de ESPHome traduce automáticamente a código de producción C++ optimizado.
+
+\subsubsection{Nodo de Ambiente (esp32-nodo-ambiente.yaml)}
+Este firmware gestiona la lectura unifilar del sensor de temperatura y humedad DHT11, la entrada analógica del fotorresistor LDR, el detector acústico digital filtrado contra rebotes electromecánicos y el relé de estado sólido que controla la iluminación principal de la estancia.
+
+\begin{lstlisting}[language=YAML, caption={Firmware completo del Nodo de Ambiente.}, label={lst:code_nodo_ambiente}]
+esphome:
+  name: esp32-nodo-ambiente
+  friendly_name: esp32-nodo-ambiente
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+logger:
+
+wifi:
+  ssid: 'Livebox6s-479B'
+  password: 'jjCLnhaS56aA'
+
+api:
+
+ota:
+  - platform: esphome
+
+# 1. SENSOR DE TEMPERATURA Y HUMEDAD
+sensor:
+  - platform: dht
+    pin: 4
+    # ATENCION: Si tu sensor es el azul pon DHT11, si es el blanco pon DHT22.
+    model: DHT11 
+    temperature:
+      name: 'Temperatura Habitacion'
+    humidity:
+      name: 'Humedad Habitacion'
+    update_interval: 30s
+
+# 2. SENSOR DE LUMINOSIDAD (FOTORESISTOR LDR)
+  - platform: adc
+    pin: 32
+    name: 'Nivel de Luz'
+    update_interval: 10s
+    attenuation: auto
+
+# 3. ACTUADOR: RELE
+switch:
+  - platform: gpio
+    pin: 26
+    name: 'Rele Principal'
+    id: rele_1
+    restore_mode: ALWAYS_OFF
+
+# 4. SENSOR DE RUIDO (BIG SOUND)
+binary_sensor:
+  - platform: gpio
+    pin: 27
+    name: 'Detector de Sonido'
+    device_class: sound
+    filters:
+      # Pequeno filtro para que no mande 50 avisos por segundo al dar una palmada
+      - delayed_off: 500ms
+\end{lstlisting}
+
+\subsubsection{Nodo de Escritorio (esp32-zona-escritorio.yaml)}
+Este firmware inicializa el bus de comunicación serie UART a 256.000 baudios para procesar la telemetría espacial del radar de microondas FMCW (HLK-LD2410). Expone tanto los estados binarios de detección como las métricas analógicas de distancia, además de incorporar el interruptor digital para el emisor láser secundario.
+
+\begin{lstlisting}[language=YAML, caption={Firmware completo del Nodo de Escritorio.}, label={lst:code_nodo_escritorio}]
+esphome:
+  name: esp32-zona-escritorio
+  friendly_name: esp32-zona-escritorio
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+logger:
+
+wifi:
+  ssid: 'Livebox6s-479B'
+  password: 'jjCLnhaS56aA'
+
+api:
+
+ota:
+  - platform: esphome
+
+# CONFIGURACION DEL RADAR LD2410
+uart:
+  tx_pin: 17
+  rx_pin: 16
+  baud_rate: 256000
+  parity: NONE
+  stop_bits: 1
+
+ld2410:
+
+# 1. SENSORES BINARIOS DEL RADAR
+binary_sensor:
+  - platform: ld2410
+    has_target:
+      name: 'Ocupacion General'
+    has_moving_target:
+      name: 'Detectado Movimiento'
+    has_still_target:
+      name: 'Detectado Estatico'
+
+# 2. SENSORES DE DISTANCIA DEL RADAR
+sensor:
+  - platform: ld2410
+    moving_distance:
+      name: 'Distancia del Movimiento'
+    still_distance:
+      name: 'Distancia del Estatico'
+
+# 3. CONTROLES DESLIZANTES DEL RADAR
+number:
+  - platform: ld2410
+    timeout:
+      name: 'Tiempo de retardo (Timeout)'
+    max_move_distance_gate:
+      name: 'Limite distancia Movimiento'
+    max_still_distance_gate:
+      name: 'Limite distancia Estatico'
+
+# 4. ACTUADOR: EMISOR LASER
+switch:
+  - platform: gpio
+    pin: 12 
+    name: 'Laser Escritorio'
+    id: laser_escritorio
+    restore_mode: ALWAYS_OFF
+\end{lstlisting}
+
+\subsubsection{Nodo de Puerta (esp32-zona-puerta.yaml)}
+Este firmware controla la monitorización digital del sensor de contacto magnético (interruptor Reed) en la puerta de acceso, aplicando filtros antirebote de 100\,ms por software para registrar los eventos de apertura y cierre de forma inmediata.
+
+\begin{lstlisting}[language=YAML, caption={Firmware completo del Nodo de Puerta.}, label={lst:code_nodo_puerta}]
+esphome:
+  name: esp32-zona-puerta
+  friendly_name: esp32-zona-puerta
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+logger:
+
+wifi:
+  ssid: 'Livebox6s-479B'
+  password: 'jjCLnhaS56aA'
+
+api:
+
+ota:
+  - platform: esphome
+
+# 1. SENSOR DE PUERTA MAGNETICO
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: 4
+      mode:
+        input: true
+        pullup: true
+    name: 'Sensor Puerta'
+    device_class: door
+    filters:
+      - delayed_on: 100ms
+      - delayed_off: 100ms
+\end{lstlisting}
+
+\subsection{Automatizaciones del orquestador perimetral (Home Assistant)}
+El archivo de configuración \texttt{automations.yaml} aloja el motor de reglas lógicas que rigen el comportamiento inteligente de la estancia. Se detallan a continuación las nueve automatizaciones operativas:
+
+\subsubsection{Termostato inteligente (Modo Estudio)}
+Activa de forma automatizada un actuador auxiliar de potencia (cuyo proxy Bluetooth comanda el encendido eléctrico de un radiador local) si el estado de contexto determinado para la estancia es de \texttt{Estudio} ininterrumpido durante 5 minutos y la lectura térmica desciende por debajo de 19,5\,\text{°C}.
+
+\begin{lstlisting}[language=YAML, caption={Código de control térmico reactivo al contexto de estudio.}, label={lst:auto_climatizacion}]
+- id: 'climatizacion_estudio_001'
+  alias: 'Termostato Inteligente: Modo Estudio'
+  trigger:
+    - platform: 'state'
+      entity_id: 'sensor.contexto_de_la_habitacion'
+      to: 'Actividad / Estudiando'
+      for:
+        minutes: 5
+  condition:
+    - condition: 'numeric_state'
+      entity_id: 'sensor.esp32_nodo_ambiente_temperatura_habitacion'
+      below: 19.5
+  action:
+    - service: 'switch.turn_on'
+      target:
+        entity_id: 'switch.bluetooth_proxy_ea49ac_actuador_dormitorio'
+\end{lstlisting}
+
+\subsubsection{Resumen diario de bienestar (Calidad de Vida)}
+Regla de análisis local ejecutada diariamente a las 22:00:00. Evalúa los históricos de tiempo activo en el escritorio y las horas de descanso nocturno y genera un reporte analítico adaptativo mediante plantillas Jinja2, el cual es transmitido por vía de notificación push al usuario sin contactar con servidores externos.
+
+\begin{lstlisting}[language=YAML, caption={Código del analista de bienestar diario local.}, label={lst:auto_bienestar_resumen}]
+- id: 'informe_diario_qol'
+  alias: 'Analista Local: Resumen Diario de Bienestar'
+  description: 'Genera un reporte diario analizando las horas de estudio y sueno del nuevo motor de contexto.'
+  triggers:
+    - at: '22:00:00'
+      trigger: 'time'
+  actions:
+    - data:
+        title: 'Informe de Inteligencia Ambiental'
+        message: |
+          Resumen de tu jornada: - Tiempo efectivo de estudio: {{ states(''sensor.tiempo_de_estudio'') }} horas. - Tiempo de descanso (anoche): {{ states(''sensor.tiempo_de_sueno'') }} horas.
+          {% if states(''sensor.tiempo_de_estudio'') | float > 4.0 %}
+            Gran rendimiento hoy. El sistema ha mantenido un confort termico constante.
+          {% else %}
+            Jornada ligera. Sistemas en modo ahorro energetico.
+          {% endif %}
+      action: 'notify.notify'
+  mode: 'single'
+\end{lstlisting}
+
+\subsubsection{Detección espacial de la zona de estudio (Radar)}
+Esta regla infiere el paso de la estancia a modo de \texttt{Estudio} basándose en la distancia reportada por la telemetría del radar LD2410 del Nodo de Escritorio. Si el radar reporta la presencia estática de un cuerpo en un radio inferior a 1,2 metros durante más de 2 minutos, se conmuta el estado lógico general de la estancia a \texttt{Estudio}. Por contra, si no se registra presencia en ese radio durante el mismo lapso, el sistema devuelve el contexto a \texttt{Ocio}.
+
+\begin{lstlisting}[language=YAML, caption={Fusión de distancia de radar para la detección de la zona de estudio.}, label={lst:auto_detect_estudio}]
+- id: '1779303721704'
+  alias: 'Contexto: Deteccion de Estudio (Radar Espacial)'
+  description: 'Infiere si estas estudiando basandose en tu distancia al radar LD2410.'
+  triggers:
+    - entity_id: 'sensor.esp32_zona_escritorio_distancia_del_estatico'
+      below: 120
+      for:
+        minutes: 2
+      id: 'en_escritorio'
+      trigger: 'numeric_state'
+    - entity_id: 'sensor.esp32_zona_escritorio_distancia_del_estatico'
+      above: 120
+      for:
+        minutes: 2
+      id: 'fuera_de_escritorio'
+      trigger: 'numeric_state'
+  conditions:
+    - condition: 'state'
+      entity_id: 'input_select.estado_habitacion'
+      state:
+        - 'Ocio'
+        - 'Estudio'
+  actions:
+    - choose:
+        - conditions:
+            - condition: 'trigger'
+              id: 'en_escritorio'
+          sequence:
+            - target:
+                entity_id: 'input_select.estado_habitacion'
+              data:
+                option: 'Estudio'
+              action: 'input_select.select_option'
+        - conditions:
+            - condition: 'trigger'
+              id: 'fuera_de_escritorio'
+          sequence:
+            - target:
+                entity_id: 'input_select.estado_habitacion'
+              data:
+                option: 'Ocio'
+              action: 'input_select.select_option'
+  mode: 'single'
+\end{lstlisting}
+
+\subsubsection{Fusión sensorial para la detección del sueño (Radar y LDR)}
+Infiere dinámicamente si el usuario se encuentra durmiendo o si se ha despertado. Transiciona al estado \texttt{Durmiendo} si el sensor LDR del Nodo Ambiente registra un valor de luminosidad inferior a 0,5\,V de forma ininterrumpida durante 10 minutos. Para transicionar de vuelta al modo de vigilia (\texttt{Ocio}), el motor lógico requiere que el radar del Nodo Escritorio registre movimiento continuo durante al menos 2 minutos, o bien que la luminosidad analógica en la estancia supere el umbral de 1\,V durante el mismo intervalo.
+
+\begin{lstlisting}[language=YAML, caption={Regla lógica de transiciones de sueño mediante fusión de luminosidad y radar.}, label={lst:auto_detect_sueno}]
+- id: '1779306431260'
+  alias: 'Contexto: Deteccion de Sueno (Fusion Radar + LDR)'
+  description: 'Infiere si estas durmiendo o si te has despertado cruzando la luz y el movimiento.'
+  triggers:
+    - entity_id: 'sensor.esp32_nodo_ambiente_nivel_de_luz'
+      below: 0.5
+      for:
+        minutes: 10
+      id: 'se_duerme'
+      trigger: 'numeric_state'
+    - entity_id: 'binary_sensor.esp32_zona_escritorio_detectado_movimiento'
+      to: 'on'
+      for:
+        minutes: 2
+      id: 'se_despierta_movimiento'
+      trigger: 'state'
+    - entity_id: 'sensor.esp32_nodo_ambiente_nivel_de_luz'
+      above: 1
+      for:
+        minutes: 2
+      id: 'se_despierta_luz'
+      trigger: 'numeric_state'
+  conditions: []
+  actions:
+    - choose:
+        - conditions:
+            - condition: 'trigger'
+              id: 'se_duerme'
+            - condition: 'state'
+              entity_id: 'input_select.estado_habitacion'
+              state: 'Ocio'
+          sequence:
+            - target:
+                entity_id: 'input_select.estado_habitacion'
+              data:
+                option: 'Durmiendo'
+              action: 'input_select.select_option'
+        - conditions:
+            - condition: 'or'
+              conditions:
+                - condition: 'trigger'
+                  id: 'se_despierta_movimiento'
+                - condition: 'trigger'
+                  id: 'se_despierta_luz'
+            - condition: 'state'
+              entity_id: 'input_select.estado_habitacion'
+              state: 'Durmiendo'
+          sequence:
+            - target:
+                entity_id: 'input_select.estado_habitacion'
+              data:
+                option: 'Ocio'
+              action: 'input_select.select_option'
+  mode: 'single'
+\end{lstlisting}
+
+\subsubsection{Alarma de intrusión de seguridad perimetral}
+Gobierna la seguridad perimetral de la estancia cuando se activa de forma manual (representado por el encendido físico del emisor láser del escritorio). Si se detecta presencia física mediante el radar de ondas milimétricas en el Nodo Escritorio (\texttt{binary\_sensor.esp32\_zona\_escritorio\_ocupacion\_general} en estado encendido) mientras el láser está activo, el sistema dispara de forma inmediata una alarma: envía una alerta de intrusión push de prioridad crítica y fuerza el encendido eléctrico de la luminaria principal a través del relé físico para disuadir al intruso.
+
+\begin{lstlisting}[language=YAML, caption={Automatización de alarma perimetral reactiva al radar.}, label={lst:auto_seguridad_alarma}]
+- id: '1779308813969'
+  alias: 'Seguridad: Alarma por Radar (Modo Manual)'
+  description: 'Dispara la alarma si el radar detecta presencia mientras el laser esta encendido.'
+  triggers:
+    - entity_id: 'binary_sensor.esp32_zona_escritorio_ocupacion_general'
+      to: 'on'
+      trigger: 'state'
+  conditions:
+    - condition: 'state'
+      entity_id: 'switch.esp32_zona_escritorio_laser_escritorio'
+      state: 'on'
+  actions:
+    - data:
+        title: 'ALERTA DE INTRUSION'
+        message: 'Se ha detectado movimiento en tu habitacion mientras la alarma estaba armada.'
+      action: 'notify.notify'
+    - target:
+        entity_id: 'switch.esp32_nodo_ambiente_rele_principal'
+      action: 'switch.turn_on'
+  mode: 'single'
+\end{lstlisting}
+
+\subsubsection{Alerta ergonómica contra la procrastinación del sueño}
+Regla de bienestar nocturno. Se activa de forma diaria a las 23:00. Si la estancia sigue en modo de \texttt{Ocio} o \texttt{Estudio}, el sistema asume que el usuario está posponiendo su descanso. Ejecuta entonces un bucle insistente con 4 repeticiones: enciende la lámpara principal de la estancia y espera a que el usuario la apague manualmente a través de la aplicación (comprobando que se ha desvelado por completo). El bucle repite el ciclo cada 15 minutos para invitar activamente al usuario a acostarse.
+
+\begin{lstlisting}[language=YAML, caption={Lógica de control insistente de ergonomía para la higiene del sueño.}, label={lst:auto_procrastinacion_sueno}]
+- id: '1779386894074'
+  alias: 'Bienestar: Alerta Anti-Procrastinacion de Sueno'
+  description: 'Enciende la luz a la hora de dormir y obliga a apagarla desde la app, repitiendo el proceso durante una hora.'
+  triggers:
+    - at: '23:00:00'
+      trigger: 'time'
+  conditions:
+    - condition: 'state'
+      entity_id: 'input_select.estado_habitacion'
+      state:
+        - 'Ocio'
+        - 'Estudio'
+  actions:
+    - repeat:
+        count: 4
+        sequence:
+          - condition: 'not'
+            conditions:
+              - condition: 'state'
+                entity_id: 'input_select.estado_habitacion'
+                state: 'Durmiendo'
+          - target:
+              entity_id: 'switch.esp32_nodo_ambiente_rele_principal'
+            action: 'switch.turn_on'
+          - wait_for_trigger:
+              - entity_id: 'switch.esp32_nodo_ambiente_rele_principal'
+                to: 'off'
+                trigger: 'state'
+            timeout: '00:15:00'
+          - delay: '00:15:00'
+  mode: 'single'
+\end{lstlisting}
+
+\subsubsection{Iluminación automatizada de ergonomía activa}
+Control inteligente del relé de alimentación de la luz de estudio basándose exclusivamente en necesidades físicas reales. Solo se ejecuta cuando el estado de contexto es \texttt{Estudio}. Si se entra en este modo o la luminosidad analógica baja del umbral crítico de 1,5\,V, se enciende la luz. En cambio, si el nivel analógico supera los 2,2\,V o se abandona el estado de estudio, el actuador apaga la luz instántaneamente.
+
+\begin{lstlisting}[language=YAML, caption={Regla de control de iluminación activa sujeta a contexto y nivel analógico lumínico.}, label={lst:auto_ergonomia_iluminacion}]
+- id: '1779387255691'
+  alias: 'Bienestar: Iluminacion Ergonomia Activa'
+  description: 'Controla el rele de iluminacion por necesidad real de luz unicamente en estado de Estudio.'
+  triggers:
+    - entity_id: 'sensor.esp32_nodo_ambiente_nivel_de_luz'
+      below: 1.5
+      id: 'poca_luz'
+      trigger: 'numeric_state'
+    - entity_id: 'sensor.esp32_nodo_ambiente_nivel_de_luz'
+      above: 2.2
+      id: 'mucha_luz'
+      trigger: 'numeric_state'
+    - entity_id: 'input_select.estado_habitacion'
+      to: 'Estudio'
+      id: 'entra_estudio'
+      trigger: 'state'
+    - entity_id: 'input_select.estado_habitacion'
+      from: 'Estudio'
+      id: 'sale_estudio'
+      trigger: 'state'
+  conditions: []
+  actions:
+    - choose:
+        - conditions:
+            - condition: 'state'
+              entity_id: 'input_select.estado_habitacion'
+              state: 'Estudio'
+            - condition: 'numeric_state'
+              entity_id: 'sensor.esp32_nodo_ambiente_nivel_de_luz'
+              below: 1.5
+            - condition: 'or'
+              conditions:
+                - condition: 'trigger'
+                  id: 'poca_luz'
+                - condition: 'trigger'
+                  id: 'entra_estudio'
+          sequence:
+            - target:
+                entity_id: 'switch.esp32_nodo_ambiente_rele_principal'
+              action: 'switch.turn_on'
+        - conditions:
+            - condition: 'or'
+              conditions:
+                - condition: 'trigger'
+                  id: 'mucha_luz'
+                - condition: 'trigger'
+                  id: 'sale_estudio'
+                - condition: 'not'
+                  conditions:
+                    - condition: 'state'
+                      entity_id: 'input_select.estado_habitacion'
+                      state: 'Estudio'
+          sequence:
+            - target:
+                entity_id: 'switch.esp32_nodo_ambiente_rele_principal'
+              action: 'switch.turn_off'
+  mode: 'restart'
+\end{lstlisting}
+
+\subsubsection{Avisos de descanso activo (Método Pomodoro Espacial)}
+Promueve hábitos saludables y mitiga la fatiga cognitiva y el sedentarismo. Si el estado contextual permanece de forma continuada en \texttt{Estudio} durante 50 minutos, se envía una notificación push de bienestar y se realiza una llamada interactiva al relé del Nodo Ambiente para hacer parpadear la lámpara principal de la habitación tres veces en intervalos de un segundo, indicando al usuario que debe iniciar un descanso dinámico de 5 minutos.
+
+\begin{lstlisting}[language=YAML, caption={Regla de control temporal Pomodoro con alertas físicas y móviles.}, label={lst:auto_pomodoro}]
+- id: '1779446976418'
+  alias: 'Bienestar: Break Dinamico (Pomodoro)'
+  description: 'Hace parpadear la luz principal y envia una notificacion tras 50 minutos seguidos en estado Estudio.'
+  triggers:
+    - entity_id: 'input_select.estado_habitacion'
+      to: 'Estudio'
+      for: '00:50:00'
+      trigger: 'state'
+  conditions: []
+  actions:
+    - data:
+        title: 'Hora de un descanso'
+        message: 'Llevas 50 minutos rindiendo. Levantate 5 minutos a estirar las piernas.'
+      action: 'notify.notify'
+    - repeat:
+        count: 3
+        sequence:
+          - target:
+              entity_id: 'switch.esp32_nodo_ambiente_rele_principal'
+            action: 'switch.turn_on'
+          - delay: '00:00:01'
+          - target:
+              entity_id: 'switch.esp32_nodo_ambiente_rele_principal'
+            action: 'switch.turn_off'
+          - delay: '00:00:01'
+  mode: 'single'
+\end{lstlisting}
+
+\subsubsection{Transición por inactividad y ausencia automática}
+Regla de eficiencia ecológica y seguridad. Si el sensor de ocupación general del radar de microondas del Nodo Escritorio conmuta a apagado y permanece en ese estado por un período de inactividad de 20 minutos (aquí configurado con un retardo transitorio de 10 segundos con propósitos de prueba ágil y demostración ante el tribunal), se asume que la estancia se encuentra vacía. La acción fuerza al selector de contexto general de la estancia a pasar al estado \texttt{Ausente}, desencadenando en cascada el apagado completo de todos los periféricos activos.
+
+\begin{lstlisting}[language=YAML, caption={Automatización de transición contextual a ausencia automática por inactividad.}, label={lst:auto_ausencia}]
+- id: '1779447855314'
+  alias: 'Contexto: Ausencia Automatica por Inactividad'
+  description: 'Pasa la habitacion a Ausente si el radar se queda completamente vacio durante 20 minutos.'
+  triggers:
+    - entity_id: 'binary_sensor.esp32_zona_escritorio_ocupacion_general'
+      to: 'off'
+      for: '00:00:10'
+      trigger: 'state'
+  conditions:
+    - condition: 'not'
+      conditions:
+        - condition: 'state'
+          entity_id: 'input_select.estado_habitacion'
+          state: 'Ausente'
+  actions:
+    - target:
+        entity_id: 'input_select.estado_habitacion'
+      data:
+        option: 'Ausente'
+      action: 'input_select.select_option'
+  mode: 'single'
+\end{lstlisting}

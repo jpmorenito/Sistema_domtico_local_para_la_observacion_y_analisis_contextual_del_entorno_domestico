@@ -10,9 +10,9 @@ La correcta implementación física y lógica de una infraestructura domótica b
 El sistema ha sido desplegado y evaluado en una habitación de estudio con una geometría rectangular de dimensiones aproximadas de $4.0\,\text{m} \times 3.5\,\text{m}$. La ubicación física de cada uno de los tres nodos empotrados responde a criterios de optimización de cobertura de sensado, proximidad a los elementos del entorno y minimización del ruido ambiental:
 
 \begin{itemize}
-    \item \textbf{Nodo 1 (Nodo Ambiente - $N_1$):} Ubicado a la derecha del escritorio sobre la pared norte de la estancia. Esta posición elevada permite realizar lecturas térmicas, acústicas y lumínicas representativas del volumen general de la estancia sin obstrucciones.
-    \item \textbf{Nodo 2 (Nodo Escritorio - $N_2$):} Situado en el extremo derecho del escritorio de trabajo. Este nodo alberga el radar de ondas milimétricas (FMCW) HLK-LD2410C, orientado diagonalmente hacia la silla de estudio. Su cono de detección angular (de aproximadamente $120^\circ$) cubre la zona espacial de permanencia del usuario, permitiendo discriminar micromovimientos asociados a la respiración.
-    \item \textbf{Nodo 3 (Nodo Puerta - $N_3$):} Instalado directamente en la esquina inferior derecha, sobre la pared lateral derecha en el marco superior de la puerta de acceso. Gobierna el sensor de contacto de la puerta y el diodo láser emisor de la barrera óptica.
+    \item \textbf{Nodo 1 (Nodo Ambiente - $N_1$):} ubicado a la derecha del escritorio sobre la pared norte de la estancia. Esta posición elevada permite realizar lecturas térmicas, acústicas y lumínicas representativas del volumen general de la estancia sin obstrucciones.
+    \item \textbf{Nodo 2 (Nodo Escritorio - $N_2$):} situado en el extremo derecho del escritorio de trabajo. Este nodo alberga el radar de ondas milimétricas (FMCW) HLK-LD2410C, orientado diagonalmente hacia la silla de estudio. Su cono de detección angular (de aproximadamente $120^\circ$) cubre la zona espacial de permanencia del usuario, permitiendo discriminar micromovimientos asociados a la respiración.
+    \item \textbf{Nodo 3 (Nodo Puerta - $N_3$):} instalado directamente en la esquina inferior derecha, sobre la pared lateral derecha en el marco superior de la puerta de acceso. Gobierna el sensor de contacto de la puerta y el diodo láser emisor de la barrera óptica.
 \end{itemize}
 
 La distribución espacial de estos componentes, el mobiliario y la zona activa de influencia del transductor radar se representan vectorialmente en el plano de la estancia de la Figura~\ref{fig:plano_distribucion_planta}.
@@ -130,10 +130,8 @@ En la Figura~\ref{fig:esquema_amb_puerta} se detallan las conexiones electrónic
             \node[block, draw=Rojo!90, fill=Rojo!2] (esp_puerta) at (0, 0) {ESP32\\Nodo 3\\(Puerta)};
             
             \node[sensor] (reed) at (-5.5, 0) {Interruptor Reed\\(Contacto)};
-            \node[actuator] (laser) at (5.5, 0) {Diodo Láser\\(Disuasión)};
             
             \draw[arrow] (reed.east) -- node[above=3pt, midway, font=\tiny\bfseries] {GPIO 4 (Pull-up)} (esp_puerta.180);
-            \draw[arrow] (esp_puerta.0) -- node[above=3pt, midway, font=\tiny\bfseries] {GPIO 5} (laser.west);
             
             \node[anchor=west, font=\bfseries\small, color=Rojo!80!black] at (-5.5, 2.2) {NODO 3: SEGURIDAD DE ACCESO};
         \end{scope}
@@ -181,12 +179,12 @@ Por otro lado, la comunicación del Nodo 2 (Escritorio) con el radar mmWave HLK-
 El intercambio de información y la orquestación contextual se estructuran sobre una topología en estrella segmentada localmente que se conecta de forma segura con el exterior mediante una red privada virtual (VPN). Los flujos de comunicación se dividen en tres planos lógicos diferenciados:
 
 \begin{enumerate}
-    \item \textbf{Red Troncal Local (WLAN Wi-Fi):} Los tres nodos de control basados en ESP32 se asocian al punto de acceso local (Router Doméstico) mediante comunicación inalámbrica en la banda de $2.4\,\text{GHz}$. Para agilizar el proceso de descubrimiento e interconexión y mitigar la latencia, cada microcontrolador tiene configurada una dirección IP estática dentro del rango de subred local (\texttt{192.168.1.X}).
-    \item \textbf{Canal de Orquestación perimetral (ESPHome API):} El servidor central (Raspberry Pi 4) está conectado físicamente al router mediante un enlace Ethernet Gigabit Cat6 para asegurar una conexión robusta y libre de colisiones. El servidor aloja los contenedores aislados mediante Docker. Home Assistant establece conexiones de sockets TCP directas (puerto 6053) con la API nativa de cada microcontrolador para la transmisión periódica de telemetría y la recepción de comandos de conmutación.
-    \item \textbf{Canal de Telemetría Remota Segura (Tailscale VPN):} Con el fin de habilitar el acceso remoto y el control del panel Lovelace desde el exterior de la vivienda sin vulnerar la red local (evitando la redirección de puertos entrantes en el router), se despliega un túnel de cifrado extremo a extremo basado en la VPN Tailscale (protocolo WireGuard). Tanto el servidor Raspberry Pi como los terminales autorizados de administración se integran en la misma malla segura de red privada (\textit{Tailnet}), garantizando el acceso cifrado mediante protocolo HTTPS.
+    \item \textbf{Red Troncal Local (WLAN Wi-Fi):} los tres nodos de control basados en ESP32 se asocian al punto de acceso local (router doméstico) mediante comunicación inalámbrica en la banda de $2.4\,\text{GHz}$. Para agilizar el proceso de descubrimiento e interconexión y mitigar la latencia, cada microcontrolador tiene configurada una dirección IP estática dentro del rango de subred local (\texttt{192.168.1.X}).
+    \item \textbf{Canal de Orquestación perimetral (ESPHome API):} el servidor central (Raspberry Pi 4) está conectado físicamente al router mediante un enlace Ethernet Gigabit Cat6 para asegurar una conexión robusta y libre de colisiones. El servidor aloja los contenedores aislados mediante Docker. Home Assistant establece conexiones de sockets TCP directas (puerto 6053) con la API nativa de cada microcontrolador para la transmisión periódica de telemetría y la recepción de comandos de conmutación.
+    \item \textbf{Canal de Telemetría Remota Segura (Tailscale VPN):} con el fin de habilitar el acceso remoto y el control del panel Lovelace desde el exterior de la vivienda sin vulnerar la red local (evitando la redirección de puertos entrantes en el router), se despliega un túnel de cifrado extremo a extremo basado en la VPN Tailscale (protocolo WireGuard). Tanto el servidor Raspberry Pi como los terminales autorizados de administración se integran en la misma malla segura de red privada (\textit{Tailnet}), garantizando el acceso cifrado mediante protocolo HTTPS.
 \end{enumerate}
 
-La arquitectura lógica de red del sistema se ilustra en la Figura~\ref{fig:topologia_red_sistema}. Para evitar solapamientos y cruces de líneas sobre los bloques de red, se ha diseñado una topología de flujo ordenada izquierda-derecha con enrutamientos perimetrales superior e inferior. El Router de acceso Wi-Fi se ubica a la izquierda, la columna de microcontroladores se sitúa en el centro, y los elementos de procesamiento en el borde y acceso VPN ocupan el flanco derecho del diagrama.
+La arquitectura lógica de red del sistema se ilustra en la Figura~\ref{fig:topologia_red_sistema}. Para evitar solapamientos y cruces de líneas sobre los bloques de red, se ha diseñado una topología de flujo ordenada izquierda-derecha con enrutamientos perimetrales superior e inferior. El router de acceso Wi-Fi se ubica a la izquierda, la columna de microcontroladores se sitúa en el centro, y los elementos de procesamiento en el borde y acceso VPN ocupan el flanco derecho del diagrama.
 
 \begin{figure}[H]
     \centering
