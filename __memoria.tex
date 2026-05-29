@@ -133,6 +133,43 @@
 \thispagestyle{indice}
 \tableofcontents
 
+\newpage
+\renewcommand{\listfigurename}{Índice de Ilustraciones}
+\listoffigures
+\addcontentsline{toc}{section}{\listfigurename}
+
+\newpage
+\section*{Glosario de Abreviaturas}
+\addcontentsline{toc}{section}{Glosario de Abreviaturas}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{l l}
+        \textbf{API} & Application Programming Interface \\
+        \textbf{DHT} & Digital Humidity and Temperature \\
+        \textbf{ESP} & Espressif Systems \\
+        \textbf{GPIO} & General Purpose Input/Output \\
+        \textbf{HA} & Home Assistant \\
+        \textbf{I2C} & Inter-Integrated Circuit \\
+        \textbf{IDE} & Integrated Development Environment \\
+        \textbf{IoT} & Internet of Things (Internet de las Cosas) \\
+        \textbf{LDR} & Light Dependent Resistor (Fotorresistencia) \\
+        \textbf{MAC} & Media Access Control \\
+        \textbf{MQTT} & Message Queuing Telemetry Transport \\
+        \textbf{OS} & Operating System (Sistema Operativo) \\
+        \textbf{OTA} & Over-The-Air (Actualización Inalámbrica) \\
+        \textbf{PIR} & Passive Infrared Sensor \\
+        \textbf{PWM} & Pulse Width Modulation \\
+        \textbf{RAM} & Random Access Memory \\
+        \textbf{SBC} & Single Board Computer \\
+        \textbf{SSR} & Solid State Relay (Relé de Estado Sólido) \\
+        \textbf{UI} & User Interface (Interfaz de Usuario) \\
+        \textbf{VPN} & Virtual Private Network \\
+        \textbf{YAML} & YAML Ain't Markup Language \\
+    \end{tabular}
+\end{table}
+
 %---------------------%
 %	CUERPO DE TEXTO   %
 %---------------------%

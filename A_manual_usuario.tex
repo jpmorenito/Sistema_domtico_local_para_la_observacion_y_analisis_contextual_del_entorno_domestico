@@ -1,20 +1,96 @@
 \newpage
-\section{Manual de usuario}
+\section{Manual de Usuario}
 \label{anexo:manual_usuario}
 
-En este anexo se ilustra el funcionamiento, la puesta en marcha y el uso del sistema domótico local para la estancia, el cual se ha dividido en las siguientes secciones diferenciadas para facilitar su consulta según el perfil de uso:
+El presente manual proporciona una guía detallada y estructurada para la puesta en marcha, configuración y uso diario del sistema domótico local. Está diseñado para servir tanto al administrador del sistema (encargado del despliegue en el servidor) como al usuario final (residente de la habitación).
 
+\subsection{Introducción}
+El sistema domótico está basado en una arquitectura cliente-servidor de forma completamente local. Utiliza una \textbf{Raspberry Pi 4} como servidor central y placas \textbf{ESP32} como nodos sensores repartidos por la estancia. Para interactuar con el sistema, se dispone de un panel de control accesible vía web o mediante aplicación móvil.
+
+\subsection{Requisitos Previos}
+Para la correcta implementación de este proyecto, es imprescindible contar con los siguientes elementos:
+
+\subsubsection{Requisitos de Hardware}
 \begin{itemize}
-    \item \textbf{Manual del Dispositivo (Hardware y Ubicación):} muestra la descripción física de los nodos sensores, su ubicación recomendada y el proceso de encendido de la instrumentación. Está dirigido principalmente al instalador o administrador del sistema.
-    \item \textbf{Manual de Acceso y Conexión:} detalla el procedimiento paso a paso para acceder al panel de control desde la red doméstica (Wi-Fi local) y desde redes externas de forma segura (mediante la red privada VPN). Está dirigido tanto al usuario final como al administrador.
-    \item \textbf{Manual del Panel de Control (Interfaz Lovelace):} describe la navegación por el cuadro de mandos digital de la habitación, explicando cómo interpretar las lecturas del clima, el nivel de ruido, el estado de los accesos y los históricos de actividad. Está dirigido al usuario final.
-    \item \textbf{Manual del Comportamiento Inteligente (Automatizaciones):} explica el funcionamiento automático de la luz de escritorio, los avisos ergonómicos para la mitigación del sedentarismo (alertas Pomodoro), el sistema de alarma de intrusión perimetral y el ahorro de energía en modo noche. Está dirigido al usuario final.
-    \item \textbf{Guía de Resolución de Incidencias:} recopila las preguntas frecuentes y los pasos para solucionar problemas comunes de hardware, red o visualización.
+    \item Servidor central: \textbf{Raspberry Pi 4} (se recomienda modelo de 4GB u 8GB de RAM), con fuente de alimentación oficial de $5.1\,\text{V}/3.0\,\text{A}$ y una tarjeta microSD de al menos 32GB (clase 10 o superior).
+    \item Nodos sensores: Placas de desarrollo \textbf{ESP32} genéricas.
+    \item Componentes periféricos: Sensores (Radar mmWave, DHT11, Relé, Contacto Magnético, LDR, Micrófono KY-037, Láser) y cableado Dupont.
+    \item Enrutador (router) doméstico con conexión a internet y puertos Ethernet disponibles.
 \end{itemize}
 
-\subsection{Manual del dispositivo (hardware y ubicación)}
-Para que el sistema domótico local funcione correctamente, se asume como requisito previo que el servidor central (la Raspberry Pi 4 que aloja el núcleo del sistema) se encuentra encendido y conectado directamente por cable de red al enrutador doméstico de acceso, ya sea un router, un repetidor o un punto de acceso.
+\subsubsection{Requisitos de Software}
+\begin{itemize}
+    \item Sistema operativo del servidor: \textbf{Raspberry Pi OS} (versión de 64 bits recomendada).
+    \item Plataforma de virtualización: \textbf{Docker} y opcionalmente el gestor visual \textbf{Portainer}.
+    \item Servicios núcleo: \textbf{Home Assistant} y \textbf{ESPHome}.
+    \item Acceso remoto seguro: \textbf{Tailscale} (VPN).
+\end{itemize}
 
+\subsection{Configuración e Inicialización del Servidor Central}
+A continuación, se detalla el proceso técnico, paso por paso, para instalar la infraestructura de software necesaria en la Raspberry Pi y levantar los servicios que orquestan la inteligencia de la habitación.
+
+\subsubsection{1. Instalación de Docker}
+Con la Raspberry Pi conectada a la red e iniciado el sistema operativo Raspberry Pi OS, abre un terminal (ya sea físicamente o mediante SSH) e introduce el comando oficial de instalación de Docker:
+\begin{verbatim}
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+\end{verbatim}
+Para evitar usar \texttt{sudo} en cada ejecución de Docker, añade tu usuario actual (por ejemplo, \texttt{jpmorenito} o \texttt{pi}) al grupo \texttt{docker}:
+\begin{verbatim}
+sudo usermod -aG docker $USER
+\end{verbatim}
+
+\subsubsection{2. Despliegue de Servicios mediante Docker}
+El sistema se compone de tres contenedores principales que deben ejecutarse en la Raspberry Pi.
+
+\textbf{Paso 1: Iniciar Portainer (Gestor visual de contenedores)}
+Portainer permite administrar Docker desde una interfaz web gráfica de forma intuitiva.
+\begin{verbatim}
+docker volume create portainer_data
+docker run -d -p 8000:8000 -p 9000:9000 --name portainer \
+    --restart=always \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v portainer_data:/data \
+    portainer/portainer-ce:latest
+\end{verbatim}
+
+\textbf{Paso 2: Iniciar Home Assistant (Cerebro domótico)}
+Utiliza la red del servidor anfitrión (\texttt{--network=host}) para detectar dispositivos de la red local de forma automática.
+\begin{verbatim}
+docker run -d \
+  --name homeassistant \
+  --privileged \
+  --restart=unless-stopped \
+  -e TZ=Europe/Madrid \
+  -v /home/jpmorenito/homeassistant:/config \
+  -v /etc/localtime:/etc/localtime:ro \
+  -v /run/dbus:/run/dbus:ro \
+  --network=host \
+  ghcr.io/home-assistant/home-assistant:stable
+\end{verbatim}
+
+\textbf{Paso 3: Iniciar ESPHome (Programador de nodos)}
+Este servicio se encarga de compilar y transmitir el código a las placas ESP32 de los nodos de la habitación.
+\begin{verbatim}
+docker run -d \
+  --name esphome \
+  --restart=always \
+  -e TZ=Europe/Madrid \
+  -v /opt/esphome/config:/config \
+  -v /etc/localtime:/etc/localtime:ro \
+  --network=host \
+  ghcr.io/esphome/esphome
+\end{verbatim}
+
+\subsubsection{3. Acceso Remoto Seguro (VPN con Tailscale)}
+Para permitir el acceso a Home Assistant desde fuera de casa sin abrir puertos en el router (lo cual compromete la seguridad), se utiliza Tailscale.
+\begin{enumerate}
+    \item Instala Tailscale en la Raspberry Pi ejecutando: \texttt{curl -fsSL https://tailscale.com/install.sh | sh}
+    \item Inicia el servicio y actívalo con: \texttt{sudo tailscale up}
+    \item Aparecerá un enlace de autenticación en la pantalla. Ábrelo en un navegador para vincular la Raspberry Pi a tu cuenta gratuita de Tailscale. A partir de este momento, la Raspberry Pi tendrá asignada una IP privada segura (por ejemplo, \texttt{100.x.x.x}).
+\end{enumerate}
+
+\subsection{Manual del Dispositivo (Hardware y Ubicación)}
 El sistema físico que interactúa con la estancia consta de tres módulos sensores y actuadores inalámbricos, los cuales se describen a continuación (véase la Figura~\ref{fig:usr_nodos}):
 
 \begin{figure}[H]
@@ -44,218 +120,171 @@ El sistema físico que interactúa con la estancia consta de tres módulos senso
 \end{figure}
 
 \begin{enumerate}
-    \item \textbf{Módulo de Ambiente ($N_1$):} mide la temperatura, la humedad y el nivel de ruido. Debe ubicarse en una zona de la pared libre de corrientes directas de aire acondicionado o calefactores. Incluye el interruptor electrónico que controla la corriente del enchufe general.
-    \item \textbf{Módulo de Escritorio ($N_2$):} integra el sensor de presencia por radar y el fotorresistor de luminosidad. Debe colocarse sobre la mesa de trabajo, orientado diagonalmente hacia la silla del usuario a una distancia recomendada de entre 0.5 y 1.5 metros, asegurando que no haya objetos móviles interponiéndose (como aspas de ventiladores o cortinas).
-    \item \textbf{Módulo de Puerta ($N_3$):} contiene el sensor magnético de contacto Reed. Se instala directamente sobre la hoja y el marco de la puerta de entrada para registrar los eventos físicos de apertura y cierre.
+    \item \textbf{Módulo de Ambiente ($N_1$):} Mide la temperatura, la humedad y el nivel de ruido. Debe ubicarse en una zona de la pared libre de corrientes directas. Incluye el relé que controla el enchufe general.
+    \item \textbf{Módulo de Escritorio ($N_2$):} Integra el sensor de presencia por radar y el láser. Debe colocarse sobre la mesa de trabajo, a 0.5-1.5 metros del usuario.
+    \item \textbf{Módulo de Puerta ($N_3$):} Contiene el sensor magnético Reed. Se instala sobre el marco y la hoja de la puerta.
 \end{enumerate}
 
-Para que estos módulos se puedan comunicar con la red Wi-Fi y con el servidor central, es necesario programar los microcontroladores (las placas ESP32) por primera vez cargándoles su correspondiente software. Este proceso se gestiona de forma centralizada y visual desde la herramienta \textbf{ESPHome}, partiendo de la base de que ya disponemos de la Raspberry Pi en funcionamiento con Docker y los contenedores de \textbf{Home Assistant}, \textbf{ESPHome} y \textbf{Portainer} activos.
+\subsection{Conexión y Cableado de Periféricos}
+Al ensamblar físicamente los nodos ESP32, asegúrese de que todos los sensores compartan una masa común (GND) y de no superar los $3.3\,\text{V}$ en las entradas lógicas (GPIO).
 
-A continuación, se detalla el procedimiento que debe seguir el administrador o instalador para preparar y cargar el código en los módulos:
-\begin{enumerate}
-    \item \textbf{Acceder al panel de administración de ESPHome:} desde un ordenador conectado a la red local, abre el navegador de internet e introduce la dirección web del panel de ESPHome (habitualmente \texttt{http://ip\_raspberry\_pi:6052}, donde \texttt{ip\_raspberry\_pi} representa la dirección IP que proporciona Tailscale para tu Raspberry Pi). También puedes acceder a esta interfaz directamente desde la barra lateral izquierda de Home Assistant si está integrada.
-    \item \textbf{Crear o seleccionar el dispositivo:} en la pantalla principal de ESPHome, haz clic en el botón ``+ Add Device'' para crear un nuevo dispositivo (o selecciona uno ya configurado de la lista). Dale un nombre descriptivo al módulo (ej. \texttt{nodo-ambiente}, \texttt{nodo-escritorio} o \texttt{nodo-puerta}).
-    \item \textbf{Escribir la configuración de red y código:} introduce el código de configuración del módulo en formato de texto (los códigos específicos y completos para cada uno de los tres módulos se detallan más adelante en el Apéndice B, ``Manual Técnico y de Código''). Dentro del archivo de configuración, asegúrate de escribir correctamente los datos de tu red Wi-Fi:
-    \begin{itemize}
-        \item Nombre de la red Wi-Fi (\texttt{ssid}).
-        \item Contraseña de la red Wi-Fi (\texttt{password}).
-        \item Dirección IP fija asignada a ese módulo en concreto (para evitar conflictos de red y asegurar un acceso rápido).
-    \end{itemize}
-    \item \textbf{Conexión física y carga inicial del código:}
-    Dado que es la primera vez que se programa la placa ESP32, la carga del software no puede hacerse de forma inalámbrica:
-    \begin{enumerate}
-        \item Conecta el módulo ESP32 físicamente mediante un cable micro-USB (o USB-C) a un puerto USB de tu ordenador, o bien directamente a uno de los puertos USB de la Raspberry Pi donde corre el sistema.
-        \item En el panel de ESPHome, haz clic en el botón ``Install'' situado en la esquina superior derecha del dispositivo correspondiente.
-        \item Si has conectado la placa a tu ordenador, selecciona la opción ``Plug into this computer'' (esta opción utiliza una tecnología del navegador Google Chrome o Edge para programarla directamente desde la web). Si has conectado la placa directamente a la Raspberry Pi, selecciona ``Plug into the server''.
-        \item Haz clic en ``Install'' y espera a que el sistema compile el código y lo grabe en la placa (el proceso tardará un par de minutos y verás un registro de texto indicando el avance).
-    \end{enumerate}
-    \item \textbf{Instalación en ubicación definitiva y encendido:}
-    Una vez programado con éxito el módulo por USB, ya puedes desconectarlo físicamente. A partir de este momento:
-    \begin{enumerate}
-        \item Coloca el módulo en su ubicación física recomendada en la estancia.
-        \item Enchúfalo a una toma de corriente convencional utilizando cualquier cargador doméstico de móvil de $5\,\text{V}$ y un cable USB.
-        \item Al recibir corriente, el microcontrolador iniciará de forma automática el software cargado, se conectará a la red Wi-Fi de tu casa y establecerá comunicación cifrada y segura con el servidor central para empezar a enviar lecturas.
-    \end{enumerate}
-    \item \textbf{Actualizaciones inalámbricas posteriores (OTA):} en el futuro, si necesitas hacer cualquier modificación en el comportamiento o los filtros del sensor, no tendrás que volver a conectar físicamente el módulo por USB. Podrás hacer las actualizaciones de forma inalámbrica por el aire seleccionando la opción ``Wirelessly'' dentro del menú ``Install'' de ESPHome.
-\end{enumerate}
-
-\subsection{Conexión y cableado de periféricos}
-\label{sec:conexion_perifericos}
-
-Para facilitar el ensamblado físico de los nodos sensores, se detallan a continuación los diagramas de cableado desarrollados con la herramienta de diseño electrónico \textbf{Fritzing}. En estos diagramas se representa de forma visual la placa de desarrollo ESP32, los sensores y actuadores asociados y la distribución de cables puente (Dupont) utilizando el código de colores estándar para alimentación ($5\,\text{V}$ en rojo, $3.3\,\text{V}$ en naranja, tierra o GND en negro) y líneas de datos (azul, amarillo o verde).
-
-Al realizar las conexiones, es de vital importancia asegurar que los sensores compartan una masa común (GND) con el microcontrolador y que los niveles lógicos de entrada no superen la tolerancia máxima de $3.3\,\text{V}$ en los pines GPIO del ESP32.
-
-\subsubsection{Cableado del Módulo de Ambiente (Nodo 1)}
-El Módulo de Ambiente monitoriza variables higrométricas, iluminancia y nivel acústico de la estancia, además de controlar un relé optoacoplado. Las conexiones lógicas y de alimentación son las siguientes:
+\subsubsection{Módulo de Ambiente (Nodo 1)}
 \begin{itemize}
-    \item \textbf{Sensor DHT11 (Clima):} se alimenta a $3.3\,\text{V}$ (pin 3V3) y tierra (GND). Su pin de datos se conecta al \textbf{GPIO 4} del ESP32.
-    \item \textbf{Fotorresistor LDR (Divisor de tensión):} se alimenta a $3.3\,\text{V}$ y GND. La salida analógica del divisor de tensión se conecta al canal ADC \textbf{GPIO 32} del ESP32.
-    \item \textbf{Sensor de sonido KY-037 (Big Sound):} se alimenta a la línea de $5\,\text{V}$ (VIN) y GND para asegurar el correcto funcionamiento del comparador analógico. Su pin de salida digital (DO) se conecta al \textbf{GPIO 27} del ESP32.
-    \item \textbf{Módulo de Relé (Control de enchufe):} se alimenta a $5\,\text{V}$ (VIN) y GND. Su pin de control (IN) se conecta al \textbf{GPIO 26} del ESP32.
+    \item \textbf{DHT11}: a 3.3V y datos al \textbf{GPIO 4}.
+    \item \textbf{Fotorresistor LDR}: Divisor de tensión a 3.3V y salida analógica al \textbf{GPIO 32}.
+    \item \textbf{KY-037 (Big Sound)}: Alimentado a 3.3V o 5V (VIN), salida digital al \textbf{GPIO 27}.
+    \item \textbf{Módulo relé}: Alimentado a 5V (VIN), control al \textbf{GPIO 26}.
 \end{itemize}
-
-En la Figura~\ref{fig:conexion_ambiente} se ilustra el conexionado completo del Nodo de Ambiente.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.65\textwidth]{Img/conexion_nodo_ambiente.png}
-    \caption{Diagrama de conexionado de periféricos en Fritzing para el Módulo de Ambiente (Nodo 1).}
+    \caption{Diagrama de conexionado de periféricos en el Módulo de Ambiente.}
     \label{fig:conexion_ambiente}
 \end{figure}
 
-\subsubsection{Cableado del Módulo de Escritorio (Nodo 2)}
-El Módulo de Escritorio integra el radar de microondas FMCW y el emisor láser. Su cableado se organiza de la siguiente manera:
+\subsubsection{Módulo de Escritorio (Nodo 2)}
 \begin{itemize}
-    \item \textbf{Radar mmWave HLK-LD2410C:} requiere una tensión de alimentación estable de $5\,\text{V}$ (VIN) y GND. La transmisión de datos se realiza a través de un canal serie UART cruzado: el pin de transmisión (TX) del radar se conecta al pin de recepción del ESP32 \textbf{RX2 (GPIO 16)}, y el pin de recepción (RX) del radar se conecta al pin de transmisión del ESP32 \textbf{TX2 (GPIO 17)}.
-    \item \textbf{Módulo Emisor Láser KY-008:} se conecta directamente a la línea lógica \textbf{GPIO 12} del ESP32 para el control de encendido y apagado digital, y su pin de tierra a GND.
+    \item \textbf{Radar mmWave HLK-LD2410C}: Alimentado a 5V (VIN). TX radar a \textbf{RX2 (GPIO 16)}, RX radar a \textbf{TX2 (GPIO 17)}.
+    \item \textbf{Láser KY-008}: Pin de control lógico directo al \textbf{GPIO 12}.
 \end{itemize}
-
-En la Figura~\ref{fig:conexion_escritorio} se muestra el conexionado correspondiente al Nodo de Escritorio.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.65\textwidth]{Img/conexion_nodo_escritorio.png}
-    \caption{Diagrama de conexionado de periféricos en Fritzing para el Módulo de Escritorio (Nodo 2).}
+    \caption{Diagrama de conexionado de periféricos para el Módulo de Escritorio.}
     \label{fig:conexion_escritorio}
 \end{figure}
 
-\subsubsection{Cableado del Módulo de Puerta (Nodo 3)}
-El Módulo de Puerta monitoriza exclusivamente el acceso magnético de la puerta de entrada. Sus conexiones físicas son sumamente sencillas:
+\subsubsection{Módulo de Puerta (Nodo 3)}
 \begin{itemize}
-    \item \textbf{Sensor Reed Switch (Contacto magnético):} se conecta directamente entre el pin \textbf{GPIO 4} del ESP32 y el pin de tierra (GND). Para simplificar el hardware y evitar el uso de resistencias físicas externas de acoplamiento, se aprovecha la resistencia de pull-up interna del microcontrolador, la cual se activa y configura mediante software.
+    \item \textbf{Sensor Magnético (Reed Switch)}: Alimentado a 3.3V y se conecta directamente entre el \textbf{GPIO 4} y GND aprovechando la resistencia interna \textit{pull-up}.
 \end{itemize}
-
-En la Figura~\ref{fig:conexion_puerta} se ilustra el conexionado completo para el Módulo de Puerta.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.65\textwidth]{Img/conexion_nodo_puerta.png}
-    \caption{Diagrama de conexionado de periféricos en Fritzing para el Módulo de Puerta (Nodo 3).}
+    \caption{Diagrama de conexionado de periféricos para el Módulo de Puerta.}
     \label{fig:conexion_puerta}
 \end{figure}
 
-\subsection{Manual de acceso y conexión}
-Para ver el estado de la habitación y controlar las luces, puedes utilizar un ordenador, una tablet o tu teléfono móvil. Existen dos formas de conectarse dependiendo de dónde te encuentres:
-
-\subsubsection{Acceso desde casa (Red Wi-Fi local)}
-Si estás conectado a la misma red Wi-Fi de tu casa, el acceso es directo:
+\subsection{Integración Inicial de Nodos (Programación ESPHome)}
+Para que los nodos se conecten a la Raspberry Pi, deben ser programados por primera vez:
 \begin{enumerate}
-    \item Abre el navegador de internet que utilices habitualmente (Google Chrome, Safari, etc.) en tu ordenador o móvil.
-    \item Introduce la dirección web que se te ha proporcionado para el sistema (habitualmente \texttt{http://192.168.1.150:8123}).
-    \item Introduce tu nombre de usuario y tu contraseña.
+    \item Accede a la interfaz de ESPHome introduciendo la IP de la Raspberry en el puerto 6052 (ej. \texttt{http://100.x.x.x:6052}).
+    \item Selecciona \textbf{+ Add Device} e introduce el nombre del nodo.
+    \item Configura las credenciales de tu red Wi-Fi local dentro del código YAML.
+    \item \textbf{Conexión Física Inicial}: Conecta el ESP32 al puerto USB de tu ordenador.
+    \item Haz clic en \textbf{Install} y selecciona la opción para flashear mediante conexión por cable serial. Tras unos minutos, el firmware se cargará en la placa. 
+    \item Una vez completado, el nodo puede instalarse en su ubicación definitiva y recibir actualizaciones inalámbricas (OTA) en el futuro.
+\end{enumerate}
+\subsection{Configuración de Home Assistant e Integración de Nodos}
+Una vez que los nodos han sido programados con ESPHome y están conectados a la red Wi-Fi local, es necesario integrarlos en Home Assistant para que sus datos sean accesibles y se puedan crear los paneles de control.
+
+\subsubsection{Descubrimiento y Vinculación}
+Home Assistant cuenta con un sistema de descubrimiento automático (Auto-Discovery). Para añadir los nodos recién creados:
+\begin{enumerate}
+    \item Accede a la interfaz web de Home Assistant (puerto 8123).
+    \item Dirígete al menú lateral izquierdo y selecciona \textbf{Ajustes} > \textbf{Dispositivos y Servicios}.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{Img/ha_config_dispositivos.png}
+        \caption{Menú de Configuración y sección de Dispositivos y Servicios en Home Assistant.}
+        \label{fig:ha_config_dispos}
+    \end{figure}
+
+    \item En la pestaña \textbf{Integraciones}, observarás que Home Assistant ha detectado automáticamente los nuevos dispositivos ESPHome bajo el apartado de ``Descubiertos''.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{Img/ha_pestana_integraciones.png}
+        \caption{Pestaña de integraciones mostrando los dispositivos ESPHome descubiertos automáticamente.}
+        \label{fig:ha_integraciones}
+    \end{figure}
+
+    \item Haz clic en \textbf{Configurar} en cada uno de los nodos detectados siguiendo los pasos básicos que nos ofrece Home Assistant.
+    \item Confirma la adición e introduce la \textbf{clave de encriptación (API Key)} que se generó automáticamente durante la configuración del nodo en ESPHome (puedes consultarla en el archivo YAML del nodo o en el apartado de logs del nodo en ESPHome).
+    \item Asigna el dispositivo a un área (por ejemplo, ``Habitación'') para mantener el sistema organizado.
 \end{enumerate}
 
-\subsubsection{Acceso desde fuera de casa (Conexión remota segura)}
-Si estás en la calle, en el trabajo o de viaje, puedes seguir accediendo a tu sistema gracias a una red privada segura que conecta tu móvil directamente con tu casa:
+\subsubsection{Creación del Panel de Inteligencia Ambiental (Lovelace)}
+Por defecto, Home Assistant muestra una vista general (Resumen) donde aparecerán listados automáticamente los sensores si previamente los hemos asignado a un área específica durante su configuración (por ejemplo, el área ``Dormitorio''). Sin embargo, para tener un control más centralizado y estético, crearemos un panel dedicado exclusivamente al sistema:
 \begin{enumerate}
-    \item Instala la aplicación gratuita llamada \textbf{Tailscale} en tu teléfono móvil o en tu ordenador portátil (disponible en la tienda de aplicaciones de Android y Apple).
-    \item Abre la aplicación Tailscale e inicia sesión con la cuenta de usuario que te haya configurado el administrador del sistema.
-    \item Activa la conexión en la aplicación (deslizando el interruptor de encendido).
-    \item Abre tu navegador de internet e introduce la misma dirección web que usas en casa. ¡Ya estarás conectado de forma segura!
+    \item Dirígete al menú lateral izquierdo y selecciona \textbf{Ajustes} > \textbf{Paneles de control}.
+    \item Haz clic en \textbf{Añadir panel} (esquina inferior derecha), selecciona crear un nuevo panel de control y ponle como título \textbf{Inteligencia Ambiental}.
+    \item Ábrelo desde el menú lateral, haz clic en el icono del lápiz (arriba a la derecha) para \textbf{Editar el panel de control} y empieza a seleccionar \textbf{Añadir Tarjeta}.
+    \item \textbf{Tarjetas Recomendadas}:
+    \begin{itemize}
+        \item Utiliza la tarjeta \textbf{Entidades} para agrupar estados simples, como el estado de la puerta, la presencia del radar o el nivel de luz.
+        \item Utiliza la tarjeta \textbf{Botón} para el actuador del relé (luces del escritorio), lo que permite un encendido rápido e intuitivo.
+        \item Utiliza la tarjeta \textbf{Gráfico de medidor (Gauge)} para visualizar de forma atractiva la Temperatura y la Humedad proporcionadas por el DHT11.
+    \end{itemize}
+    \item Reorganiza las tarjetas arrastrándolas por la cuadrícula hasta obtener una distribución lógica y cómoda para tu uso diario.
+    \item Al finalizar, haz clic en \textbf{Hecho} para guardar los cambios en tu nuevo panel personalizado.
 \end{enumerate}
 
-\subsection{Manual del panel de control (interfaz Lovelace)}
-Una vez accedas, verás una pantalla organizada en tarjetas visuales muy intuitivas, diseñada para mostrarte toda la información de un solo vistazo (véase la Figura~\ref{fig:usr_dashboard1}):
+\subsection{Manual de la Plataforma de Monitorización}
+El usuario final interactúa con la habitación mediante el cuadro de mandos Lovelace recién creado en Home Assistant.
+
+\subsubsection{Acceso al Sistema}
+\begin{itemize}
+    \item \textbf{Desde Casa (Local)}: Conéctate al Wi-Fi doméstico. Abre el navegador web o la App de Home Assistant e ingresa la dirección local de la Raspberry Pi en el puerto 8123 (ej. \texttt{http://192.168.1.X:8123}).
+    \item \textbf{Desde Fuera (Remoto)}: Activa la aplicación Tailscale en tu teléfono móvil. Luego abre la App de Home Assistant o el navegador e ingresa la dirección Tailscale asignada a la Raspberry Pi (ej. \texttt{http://100.x.x.x:8123}).
+\end{itemize}
+
+\subsubsection{Navegación por el Panel Lovelace}
+Al iniciar sesión, se visualizan todos los dispositivos de la estancia:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.90\textwidth]{Img/ha_dashboard_lovelace1.png}
-    \caption{Pantalla principal del panel de control (Cuadro de Mandos Lovelace) en Home Assistant.}
+    \includegraphics[width=\textwidth]{Img/ha_dashboard_lovelace2.png}
+    \caption{Pantalla principal del panel de control Lovelace en Home Assistant.}
     \label{fig:usr_dashboard1}
 \end{figure}
 
 \begin{itemize}
-    \item \textbf{Interruptores de Control Manual:} en la parte superior verás botones para encender o apagar manualmente la luz de estudio del escritorio en cualquier momento, además de activar o desactivar la alarma del sistema.
-    \item \textbf{Estado de Presencia:} la tarjeta central te muestra si hay alguien detectado en el escritorio o en la habitación en general. Gracias al radar de alta precisión, la pantalla te indicará si estás ``Sentado en Escritorio'', ``Descansando'' o si la habitación está ``Ausente''.
-    \item \textbf{Mediciones del Entorno:} podrás ver de forma clara e instantánea la temperatura actual, el nivel de humedad y el nivel de ruido en la estancia.
-    \item \textbf{Seguridad de Accesos:} indica si la puerta de la estancia está ``Abierta'' o ``Cerrada'', así como el estado del haz de luz de la barrera láser de la puerta.
-    \item \textbf{Históricos y Gráficas de Actividad:} deslizando hacia la parte inferior del panel (o accediendo a la sección de históricos, Figura~\ref{fig:usr_dashboard2}), puedes revisar gráficas visuales que muestran cómo ha cambiado la temperatura a lo largo de las últimas horas, cuándo se abrió la puerta o a qué horas estuviste utilizando el escritorio.
+    \item \textbf{Controles de Acciones}: Activa o desactiva la alarma, el modo noche, o el enchufe inteligente directamente con un toque en la tarjeta correspondiente.
+    \item \textbf{Monitorización del Entorno}: Visualiza los valores instantáneos de temperatura, humedad y el nivel de ruido captado (alto o normal).
+    \item \textbf{Presencia Inteligente}: Observa si la estancia se encuentra ocupada (basado en el radar de mmWave) y el estado físico de los accesos (barrera láser y contacto magnético de puerta).
 \end{itemize}
+
+Las gráficas del histórico permiten consultar la evolución térmica y la actividad de movimiento a lo largo del tiempo.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.90\textwidth]{Img/ha_dashboard_lovelace2.png}
-    \caption{Sección de históricos y registros del panel de control.}
+    \includegraphics[width=\textwidth]{Img/ha_dashboard_lovelace1.png}
+    \caption{Sección de históricos y registros en Lovelace.}
     \label{fig:usr_dashboard2}
 \end{figure}
 
-\subsection{Manual del comportamiento inteligente (automatizaciones)}
-Para que no tengas que preocuparte de encender o apagar interruptores constantemente, el sistema ha sido programado con comportamientos automáticos inteligentes. A continuación te explicamos cómo funcionan:
-
-\begin{enumerate}
-    \item \textbf{Control automático de la luz del escritorio:}
-    Cuando entres a la estancia y te sientes en la silla del escritorio, el sistema lo detectará al instante. Si es de noche o hay poca luz natural en la habitación, la luz del escritorio se encenderá automáticamente para que trabajes con comodidad. Al levantarte e irte del escritorio, la luz se apagará sola transcurridos unos instantes para ahorrar energía.
-    
-    \item \textbf{Avisos de descanso saludables (Método Pomodoro):}
-    Pasar muchas horas seguidas sentado es perjudicial para la salud. Por ello, si el sistema de radar detecta que llevas más de 25 minutos seguidos sentado en el escritorio, la luz del escritorio realizará un parpadeo en color naranja y recibirás un mensaje de aviso en tu teléfono móvil indicándote que es hora de levantarte, beber agua y estirar las piernas durante un breve descanso de 5 minutos.
-    
-    \item \textbf{Sistema de alarma de la habitación:}
-    Cuando vayas a salir de casa, puedes activar el ``Modo Alarma'' desde el panel de control en tu móvil. Si alguien abre la puerta de la habitación o cruza el haz de luz láser mientras la alarma está activa, el sistema lo considerará una intrusión: la luz de la habitación parpadeará en color rojo para alertar visualmente y recibirás una notificación de emergencia inmediata en tu teléfono móvil con el aviso.
-    
-    \item \textbf{Ahorro de energía automático (Modo Noche y Ausencia):}
-    Si sales de la habitación y el sistema no detecta ningún movimiento ni respiración durante 10 minutos, apagará de forma automática todas las luces y aparatos eléctricos. De igual forma, si te vas a dormir y activas el ``Modo Noche'', el sistema apagará instantáneamente todos los equipos para asegurar tu descanso y evitar consumos innecesarios.
-\end{enumerate}
-
-\subsection{Guía de resolución de incidencias}
-Esta sección recopila los problemas más comunes divididos en función del perfil de uso, facilitando tanto el diagnóstico rápido por parte del usuario final como la resolución de fallos lógicos o físicos de despliegue por parte del instalador.
-
-\subsubsection{Incidencias de uso cotidiano (usuario final)}
-A continuación, se describen los problemas relacionados con la operación y uso ordinario del sistema:
-
+\subsection{Manual de Comportamientos Inteligentes (Automatizaciones)}
+El sistema opera en segundo plano tomando decisiones que facilitan el día a día sin requerir interacción manual constante:
 \begin{itemize}
-    \item \textbf{La luz del escritorio no se enciende sola cuando me siento:}
-    \begin{enumerate}
-        \item Comprueba si hay suficiente luz natural en la habitación. Recuerda que el sistema está configurado para no encender la luz si la estancia ya está suficientemente iluminada por el sol.
-        \item Asegúrate de que la lámpara esté enchufada al módulo de corriente y que el interruptor físico propio de la lámpara esté en posición de encendido.
-    \end{enumerate}
-    
-    \item \textbf{En la pantalla aparece que un sensor no está disponible:}
-    \begin{enumerate}
-        \item Verifica que el módulo sensor en cuestión ($N_1$, $N_2$ o $N_3$) esté conectado a su cargador y que el cargador esté bien enchufado a la toma de corriente.
-        \item Si el módulo está encendido, es posible que haya habido un corte temporal en la conexión Wi-Fi de tu casa. El dispositivo volverá a conectarse solo automáticamente una vez la red Wi-Fi se estabilice.
-    \end{enumerate}
-    
-    \item \textbf{No puedo acceder al panel de control desde fuera de casa:}
-    \begin{enumerate}
-        \item Asegúrate de tener conexión a internet en tu móvil (datos móviles o Wi-Fi externo).
-        \item Comprueba que tienes la aplicación \textbf{Tailscale} abierta y que el interruptor principal de conexión dentro de la aplicación esté activo.
-    \end{enumerate}
+    \item \textbf{Luz Automática de Trabajo}: Se enciende sola cuando te sientas en el escritorio, apoyada por la detección milimétrica del radar LD2410, siempre y cuando la luminosidad de la sala (medida por el LDR) sea baja.
+    \item \textbf{Alertas Ergonómicas (Pomodoro)}: Si permaneces 50 minutos continuos trabajando y sentado, la lámpara realizará un aviso visual (parpadeo) invitándote a realizar un descanso saludable.
+    \item \textbf{Alarma Perimetral e Intrusión}: Estando activa, una interrupción del láser del escritorio o la apertura forzada de la puerta (detectada por el sensor Reed) desencadenará una alerta inmediata en tu teléfono móvil.
+    \item \textbf{Ahorro Energético Ausente}: El sistema apagará automáticamente el relé de las luces tras 20 minutos de inactividad global absoluta en la habitación.
 \end{itemize}
 
-\subsubsection{Incidencias de instalación y configuración (administrador/instalador)}
-Esta sección aborda problemas específicos que pueden surgir durante el montaje de hardware, la programación de las placas o el despliegue del servidor central:
+\subsection{Guía de Resolución de Incidencias}
+A continuación, se ofrecen las soluciones a los problemas más frecuentes:
 
 \begin{itemize}
-    \item \textbf{El microcontrolador ESP32 no es reconocido por el ordenador al conectarlo por USB:}
-    \begin{enumerate}
-        \item \textbf{Causa:} Falta del controlador del puente USB-a-UART en el sistema operativo del ordenador. Las placas de desarrollo ESP32 comerciales suelen integrar chips conversores como el CP2102 de Silicon Labs o el CH340 de WCH.
-        \item \textbf{Solución:} Descarga e instala los controladores oficiales del fabricante del chip (Silicon Labs CP210x USB to UART Bridge VCP Drivers o WCH CH340 Driver) correspondientes al sistema operativo utilizado (Windows, macOS o Linux).
-        \item \textbf{Verificación:} Conecta de nuevo el microcontrolador y verifica que se asigne un puerto COM (en Windows) o un dispositivo de terminal virtual (en macOS/Linux, como \texttt{/dev/ttyUSB0}).
-    \end{enumerate}
-
-    \item \textbf{La Raspberry Pi 4 se queda colgada o se reinicia durante la compilación del código en ESPHome:}
-    \begin{enumerate}
-        \item \textbf{Causa:} Sobrecarga extrema de CPU y memoria RAM. El compilador de C++ integrado en ESPHome consume una gran cantidad de recursos, lo que puede agotar la memoria de la Raspberry Pi (especialmente en modelos de 1\,GB o 2\,GB de RAM o bajo configuraciones sin memoria de intercambio (\textit{swap})).
-        \item \textbf{Solución A (Compilación local en PC):} Abre ESPHome, selecciona el menú de tres puntos del nodo y haz clic en ``Manual Download'' para compilar el firmware utilizando los recursos del ordenador local. Una vez descargado el archivo ejecutable compilado (\texttt{.bin}), utiliza el cargador web oficial de ESPHome (\texttt{https://web.esphome.io}) o la herramienta gráfica ESPHome Flasher desde el ordenador para grabar el código directamente en la placa ESP32 por USB.
-        \item \textbf{Solución B (Optimización en la Raspberry Pi):} Configura un archivo de intercambio (\textit{swapfile}) de al menos 1\,GB en Raspberry Pi OS para dar soporte a la memoria RAM física en tareas de compilación intensa.
-    \end{enumerate}
-
-    \item \textbf{Inestabilidad general en la Raspberry Pi, apagados aleatorios o falta de detección de periféricos USB:}
-    \begin{enumerate}
-        \item \textbf{Causa:} Alimentación eléctrica deficiente. La Raspberry Pi 4 requiere una fuente de alimentación estable de $5\,\text{V}$ y un mínimo de $3\,\text{A}$ ($15\,\text{W}$). El uso de cargadores de móvil genéricos, cables USB de mala calidad o puertos USB de ordenador suele provocar caídas de tensión. Esto impide el correcto funcionamiento de componentes internos o de dispositivos conectados (como discos externos o módulos USB).
-        \item \textbf{Solución:} Sustituye la fuente de alimentación por el adaptador oficial de corriente de la Raspberry Pi 4 o un cargador certificado compatible que garantice una salida dedicada de $5.1\,\text{V}$ y $3.0\,\text{A}$.
-    \end{enumerate}
-
-    \item \textbf{Los nodos ESP32 no logran conectarse a la red inalámbrica Wi-Fi:}
-    \begin{enumerate}
-        \item \textbf{Causa:} Incompatibilidad de banda de frecuencia de red. Los microcontroladores basados en el SoC ESP32 solo son compatibles con la banda de $2.4\,\text{GHz}$. Si el enrutador de acceso doméstico trabaja únicamente en la banda de $5\,\text{GHz}$ o tiene activo un sistema híbrido de autogestión de banda (Smart Connect) que obliga al nodo a enlazarse en $5\,\text{GHz}$, la conexión fallará.
-        \item \textbf{Solución:} Accede al panel de configuración del enrutador y asegúrate de que la banda de $2.4\,\text{GHz}$ esté habilitada con un canal específico. Si el sistema híbrido da problemas, es recomendable configurar una red Wi-Fi virtual (SSID secundario) dedicada en exclusiva a dispositivos IoT forzada a operar en $2.4\,\text{GHz}$.
-    \end{enumerate}
-
-    \item \textbf{Las entidades de los nodos sensores aparecen en Home Assistant como ``No disponibles'':}
-    \begin{enumerate}
-        \item \textbf{Causa:} Desajuste en la clave de cifrado de la API o problemas de enrutamiento de red local.
-        \item \textbf{Solución:} Abre el archivo de configuración del nodo en el panel de ESPHome y comprueba la clave de la API en la sección \texttt{api: encryption: key}. Verifica que esta clave de seguridad sea idéntica a la que introdujiste en la integración de Home Assistant. Si la clave es correcta, asegúrate de que la Raspberry Pi y las placas ESP32 se encuentren en la misma subred de red local y que los puertos de comunicación (por defecto, puerto TCP \texttt{6053}) no estén bloqueados por políticas de aislamiento de red del router.
-    \end{enumerate}
+    \item \textbf{P: Las placas ESP32 no conectan a la red Wi-Fi.}
+    \begin{itemize}
+        \item \textbf{R:} Comprueba que tu router transmita en la banda de $2.4\,\text{GHz}$. Los chips ESP32 no son compatibles con la frecuencia de $5\,\text{GHz}$.
+    \end{itemize}
+    \item \textbf{P: La luz automática no enciende al sentarme en la mesa.}
+    \begin{itemize}
+        \item \textbf{R:} Verifica el nivel que marca el sensor LDR en Home Assistant. Si el nivel de luz natural en la habitación es alto, la automatización ignorará el encendido de la lámpara.
+    \end{itemize}
+    \item \textbf{P: No se actualizan los datos de los sensores en el móvil cuando salgo de casa.}
+    \begin{itemize}
+        \item \textbf{R:} Asegúrate de tener habilitada y encendida la conexión VPN en la aplicación móvil de Tailscale y de contar con cobertura de datos 4G/5G.
+    \end{itemize}
+    \item \textbf{P: Un nodo aparece como No disponible en el panel.}
+    \begin{itemize}
+        \item \textbf{R:} Desconecta y vuelve a conectar físicamente la alimentación (5V) del nodo. Si el problema persiste, verifica desde el panel de ESPHome en el servidor si coinciden las contraseñas de encriptación de la API.
+    \end{itemize}
 \end{itemize}

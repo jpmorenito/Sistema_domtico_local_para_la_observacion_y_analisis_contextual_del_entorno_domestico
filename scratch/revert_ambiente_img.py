@@ -1,0 +1,34 @@
+import os
+from PIL import Image, ImageDraw, ImageFont
+
+uploaded_img = r"C:\Users\jacob\.gemini\antigravity\brain\cf77bcfa-95a5-4213-95d0-495806909af8\media__1780053379736.png"
+dest_path = r"c:\Users\jacob\Downloads\TFG\Documento final\Img\conexion_nodo_ambiente.png"
+font_path = r"C:\Windows\Fonts\arial.ttf"
+
+def get_font(size, bold=False):
+    try:
+        suffix = "bd" if bold else ""
+        path = font_path.replace("arial", f"arial{suffix}") if bold else font_path
+        if not os.path.exists(path):
+            path = font_path
+        return ImageFont.truetype(path, size)
+    except IOError:
+        return ImageFont.load_default()
+
+if os.path.exists(uploaded_img):
+    img = Image.open(uploaded_img).convert("RGBA")
+    draw = ImageDraw.Draw(img)
+    width, height = img.size
+    
+    # Redraw labels EXACTLY as before (without touching the wires)
+    font_esp = get_font(32, bold=True)
+    draw.text((width // 2, 40), "ESP32", fill="black", font=font_esp, anchor="mm")
+    
+    font_sensors = get_font(22, bold=True)
+    draw.text((120, height - 250), "Sensor DHT11", fill="black", font=font_sensors, anchor="mm")
+    draw.text((320, height - 20), "LDR", fill="black", font=font_sensors, anchor="mm")
+    draw.text((width - 150, height - 20), "Relé", fill="black", font=font_sensors, anchor="mm")
+    draw.text((width - 120, height - 430), "Big Sound", fill="black", font=font_sensors, anchor="mm")
+    
+    img.convert("RGB").save(dest_path)
+    print("Reverted to original image and labels applied.")
