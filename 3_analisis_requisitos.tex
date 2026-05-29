@@ -7,8 +7,11 @@ La ingeniería de requisitos constituye una fase crítica en el ciclo de vida de
 \subsection{Restricciones y factores limitantes}
 El desarrollo e implantación del prototipo están sujetos a un conjunto de restricciones físicas, tecnológicas y temporales que condicionan la arquitectura final:
 \begin{itemize}
-    \item \textbf{Restricciones de conectividad y latencia:} el sistema opera sobre una red local aislada para garantizar la resiliencia frente a caídas del servicio de Internet (arquitectura \textit{offline-first}). Esto exige que el orquestador y los sensores compartan el mismo dominio de difusión (dominio de \textit{broadcast}) y estén sometidos a una estricta política de red.
+    \item \textbf{Restricciones de conectividad y latencia:} el sistema opera sobre una red local aislada para garantizar la resiliencia frente a caídas del servicio de Internet (arquitectura \textit{offline-first}). Esto exige que el servidor central y los sensores compartan el mismo dominio de difusión (dominio de \textit{broadcast}) y estén sometidos a una estricta política de red.
     \item \textbf{Restricciones ambientales y volumétricas:} la fiabilidad de la telemetría espacial está supeditada a la geometría de la habitación y a la existencia de línea de visión electromagnética directa entre el radar de ondas milimétricas y los sujetos, limitando las posiciones de instalación viables para evitar zonas de sombra acústica.
+
+    \item \textbf{Restricciones de hardware y procesamiento:} la gestión centralizada central se ejecuta sobre un microordenador Raspberry Pi 4 de recursos finitos. Esto impone una limitación directa sobre la complejidad computacional algorítmica y exige un control estricto sobre el uso de la memoria RAM y el desgaste de la unidad de almacenamiento.
+    \item \textbf{Restricciones de infraestructura de red:} el sistema exige cobertura ininterrumpida de red inalámbrica IEEE 802.11 (Wi-Fi) en la banda de 2.4 GHz para la transmisión de la telemetría a través de la API local de los nodos distribuidos, requiriendo un nivel de señal (RSSI) estable para evitar la pérdida de eventos lógicos.
 \end{itemize}
 
 \begin{figure}[H]
@@ -16,11 +19,7 @@ El desarrollo e implantación del prototipo están sujetos a un conjunto de rest
     \includegraphics[width=0.7\textwidth]{Img/diagrama_rango.png}
     \caption{Campo de visión volumétrica del sensor FMCW. Adaptado de \cite{datasheetHLKLD2410}.}
     \label{fig:campo_vision_radar}
-\end{figure} 
-\begin{itemize}
-    \item \textbf{Restricciones de hardware y procesamiento:} la orquestación central se ejecuta sobre un microordenador Raspberry Pi 4 de recursos finitos. Esto impone una limitación directa sobre la complejidad computacional algorítmica y exige un control estricto sobre el uso de la memoria RAM y el desgaste de la unidad de almacenamiento.
-    \item \textbf{Restricciones de infraestructura de red:} el sistema exige cobertura ininterrumpida de red inalámbrica IEEE 802.11 (Wi-Fi) en la banda de 2.4 GHz para la transmisión de la telemetría a través de la API local de los nodos distribuidos, requiriendo un nivel de señal (RSSI) estable para evitar la pérdida de eventos lógicos.
-\end{itemize}
+\end{figure}
 
 \subsection{Identificación de actores del sistema}
 Para el modelado lógico de los casos de uso, se identifican los siguientes actores que interactúan de forma directa o indirecta con la infraestructura:
@@ -32,7 +31,8 @@ Para el modelado lógico de los casos de uso, se identifican los siguientes acto
 
 \begin{figure}[H]
     \centering
-    \begin{tikzpicture}[
+    
+\begin{tikzpicture}[
         actor/.style={circle, draw=black!80, fill=blue!10, thick, minimum size=1.2cm, align=center, font=\small\sffamily},
         system/.style={rectangle, draw=red!80, fill=white, thick, minimum width=6.5cm, minimum height=6cm, rounded corners},
         usecase/.style={ellipse, draw=black!80, fill=yellow!20, thick, minimum width=3.5cm, minimum height=1.2cm, align=center, font=\footnotesize\sffamily},
@@ -68,7 +68,7 @@ Los requisitos funcionales describen las operaciones y comportamientos específi
 \begin{itemize}
     \item \textbf{RF-01: Monitorización espacial continua.} El sistema debe detectar la ocupación volumétrica con resolución submilimétrica, diferenciando de manera inequívoca los estados de movimiento dinámico y reposo biométrico absoluto.
     \item \textbf{RF-02: Adquisición de telemetría ambiental.} El sistema debe registrar variables de luminosidad ambiental e índices termohigrométricos para nutrir la matriz de contexto.
-    \item \textbf{RF-03: Inferencia algorítmica de estados.} El orquestador debe procesar las entradas sensoriales para asignar unívocamente un estado lógico continuo a la estancia (ocio, estudio, durmiendo, ausente).
+    \item \textbf{RF-03: Inferencia algorítmica de estados.} El servidor central debe procesar las entradas sensoriales para asignar unívocamente un estado lógico continuo a la estancia (ocio, estudio, durmiendo, ausente).
     \item \textbf{RF-04: Actuación física proactiva.} El sistema debe controlar la apertura y cierre de relés de estado sólido para la iluminación en función de reglas paramétricas asociadas a la productividad (gestión de tiempos ininterrumpidos) y la ergonomía visual.
     \item \textbf{RF-05: Emisión de notificaciones y alertas.} El sistema debe poseer la capacidad de notificar eventos críticos o advertencias de inactividad prolongada al dispositivo móvil del Administrador.
 \end{itemize}
@@ -87,20 +87,21 @@ El tratamiento de datos derivados de constantes biométricas (frecuencia respira
 
 \begin{figure}[H]
     \centering
-    \begin{tikzpicture}[
-        node distance=1.2cm and 1.2cm,
+    
+\begin{tikzpicture}[
+        node distance=1.5cm and 1.8cm,
         box/.style={rectangle, draw=black!80, fill=blue!5, thick, minimum width=2.5cm, minimum height=1.5cm, align=center, rounded corners},
         cloud/.style={ellipse, draw=black!80, fill=gray!20, thick, minimum width=3cm, minimum height=2cm, align=center},
         firewall/.style={rectangle, draw=red, fill=red!20, thick, minimum width=0.5cm, minimum height=2cm}
     ]
         % Nodos locales
         \node[box] (sensor) {Nodos Sensores\\(ESP32 + Radar)};
-        \node[box, right=of sensor] (broker) {Orquestador Local\\(Raspberry Pi)};
+        \node[box, right=of sensor] (broker) {Servidor central Local\\(Raspberry Pi)};
         \node[box, below=of sensor] (actuator) {Actuadores\\(Relés)};
         
         % Internet y Cloud
-        \node[firewall, right=1.2cm of broker] (fw) {};
-        \node[cloud, right=1.2cm of fw] (internet) {Internet /\\Cloud Externo};
+        \node[firewall, right=0.8cm of broker] (fw) {};
+        \node[cloud, right=0.8cm of fw] (internet) {Internet /\\Cloud Externo};
 
         % Etiquetas
         \node[anchor=south, font=\bfseries\small, color=red] at ([yshift=0.3cm]fw.north) {Aislamiento (WPA3)};
@@ -138,13 +139,13 @@ La trazabilidad metodológica asegura que cada requisito técnico del diseño re
     \caption{Matriz de trazabilidad entre objetivos específicos y requisitos del sistema.}
     \label{tab:trazabilidad}
     \begin{tabular}{|l|c|c|}
-        \hline
+        \hhline{|-|-|-|}
         \rowcolor[gray]{0.9} 
-        \parbox[c]{5cm}{\vspace{0.3cm}\centering \textbf{Objetivo Específico (OE)}\vspace{0.3cm}} & \parbox[c]{4cm}{\centering \textbf{Requisitos Func. (RF)}} & \parbox[c]{4cm}{\centering \textbf{Req. No Func. (RNF)}} \\ \hline
-        \parbox[c]{5cm}{\vspace{0.3cm}\centering OE-1: Diseño de hardware distribuido\vspace{0.3cm}} & RF-01, RF-02 & RNF-01 \\ \hline
-        \parbox[c]{5cm}{\vspace{0.3cm}\centering OE-2: Telemetría avanzada\vspace{0.3cm}} & RF-01, RF-02 & RNF-02 \\ \hline
-        \parbox[c]{5cm}{\vspace{0.3cm}\centering OE-3: Motor de contexto\vspace{0.3cm}} & RF-03 & RNF-01, RNF-04 \\ \hline
-        \parbox[c]{5cm}{\vspace{0.3cm}\centering OE-4: Automatización y seguridad\vspace{0.3cm}} & RF-04, RF-05 & RNF-02, RNF-03 \\ \hline
-        \parbox[c]{5cm}{\vspace{0.3cm}\centering OE-5: Validación e integración\vspace{0.3cm}} & RF-03 & RNF-03, RNF-04 \\ \hline
+        \parbox[c]{5cm}{\vspace{0.3cm}\centering \textbf{Objetivo Específico (OE)}\vspace{0.3cm}} & \parbox[c]{4cm}{\centering \textbf{Requisitos Func. (RF)}} & \parbox[c]{4cm}{\centering \textbf{Req. No Func. (RNF)}} \\ \hhline{|-|-|-|}
+        \parbox[c]{5cm}{\vspace{0.3cm}\centering OE-1: Diseño de hardware distribuido\vspace{0.3cm}} & RF-01, RF-02 & RNF-01 \\ \hhline{|-|-|-|}
+        \parbox[c]{5cm}{\vspace{0.3cm}\centering OE-2: Telemetría avanzada\vspace{0.3cm}} & RF-01, RF-02 & RNF-02 \\ \hhline{|-|-|-|}
+        \parbox[c]{5cm}{\vspace{0.3cm}\centering OE-3: Motor de contexto\vspace{0.3cm}} & RF-03 & RNF-01, RNF-04 \\ \hhline{|-|-|-|}
+        \parbox[c]{5cm}{\vspace{0.3cm}\centering OE-4: Automatización y seguridad\vspace{0.3cm}} & RF-04, RF-05 & RNF-02, RNF-03 \\ \hhline{|-|-|-|}
+        \parbox[c]{5cm}{\vspace{0.3cm}\centering OE-5: Validación e integración\vspace{0.3cm}} & RF-03 & RNF-03, RNF-04 \\ \hhline{|-|-|-|}
     \end{tabular}
 \end{table}

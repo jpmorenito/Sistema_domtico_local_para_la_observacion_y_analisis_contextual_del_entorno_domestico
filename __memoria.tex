@@ -36,6 +36,7 @@
 \usepackage{wrapfig}
 \usepackage{multirow}
 \usepackage{tabularx}
+\usepackage{hhline}
 \usepackage{url}
 \usepackage{eurosym}
 \usepackage[titletoc,title]{appendix}
@@ -222,7 +223,12 @@
 \appendix
 \clearpage
 \addappheadtotoc
-\appendixpage
+\vspace*{\fill}
+\begin{center}
+    \Huge \textbf{APÉNDICES}
+\end{center}
+\vspace*{\fill}
+\clearpage
 \input{A_manual_usuario}
 \input{B_manual_tecnico_codigo}
 

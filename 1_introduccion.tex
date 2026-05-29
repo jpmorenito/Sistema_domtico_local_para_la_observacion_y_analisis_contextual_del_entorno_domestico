@@ -6,18 +6,18 @@ La evolución de la domótica tradicional hacia la inteligencia ambiental (AmI, 
 
 El despliegue de redes de sensores de bajo coste y el procesamiento local, conocido como \textit{edge computing}, ha facilitado el desarrollo de infraestructuras domóticas que preservan la privacidad del usuario al no depender exclusivamente de procesamientos centralizados en servicios en la nube \cite{shi2016edge}. A pesar de estos avances, la mayoría de implementaciones comerciales de nivel de entrada siguen empleando telemetría binaria básica, como los sensores infrarrojos pasivos (PIR). Estos dispositivos presentan limitaciones severas para determinar la presencia estática prolongada o la posición espacial exacta de un individuo, generando falsos negativos en escenarios de baja movilidad, como el estudio o el descanso \cite{labeodan2015survey}.
 
-El presente proyecto surge ante la necesidad de desarrollar un ecosistema domótico capaz de superar dichas limitaciones volumétricas y lógicas. Mediante la integración de radares de ondas milimétricas (mmWave) \cite{soumya2023mmwave} y técnicas de fusión de sensores, se plantea la construcción de una infraestructura que actúe como un entorno proactivo, capaz de gestionar de manera autónoma la eficiencia energética, la monitorización de rutinas y la seguridad perimetral.
+Este trabajo surge ante la necesidad de desarrollar un ecosistema domótico capaz de superar dichas limitaciones volumétricas y lógicas. Mediante la integración de radares de ondas milimétricas (mmWave) \cite{soumya2023mmwave} y técnicas de fusión de sensores, se plantea la construcción de una infraestructura que actúe como un entorno proactivo, capaz de gestionar de manera autónoma la eficiencia energética, la monitorización de rutinas y la seguridad perimetral (véase la Figura \ref{fig:pir_vs_microwave_real}).
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{Img/pir_vs_microwave.png}
     \caption{Comparativa física de componentes: módulo de radar de microondas para detección volumétrica continua (izquierda) frente a sensor infrarrojo pasivo PIR tradicional (derecha).}
     \label{fig:pir_vs_microwave_real}
 \end{figure}
 \section{Justificación e interés técnico}
-El interés técnico de este proyecto se fundamenta en la necesidad de redefinir el paradigma actual de la automatización residencial, trasladando la carga de procesamiento desde infraestructuras dependientes de la nube hacia arquitecturas de ejecución local (\textit{edge computing}). El ecosistema predominante del internet de las cosas (IoT) a nivel de usuario depende de servidores externos para la toma de decisiones, lo que introduce latencias operativas, dependencia de la conectividad a internet y, fundamentalmente, vulnerabilidades críticas respecto a la privacidad y el control de los datos personales \cite{perera2014context}.
+El interés técnico de este proyecto se fundamenta en la necesidad de redefinir el paradigma actual de la automatización residencial, trasladando la carga de procesamiento desde infraestructuras dependientes de la nube hacia arquitecturas de ejecución local (\textit{edge computing}). El ecosistema predominante del internet de las cosas (IoT) a nivel de usuario depende de servidores externos para la toma de decisiones, lo que introduce latencias operativas, dependencia de la conectividad a internet y, principalmente, vulnerabilidades críticas respecto a la privacidad y el control de los datos personales \cite{perera2014context}.
 
-Este trabajo justifica la viabilidad e implementación de un sistema basado en inteligencia ambiental (AmI) operado de forma estrictamente local. Al emplear microcontroladores con firmware declarativo y un orquestador centralizado de código abierto en la propia red (como Home Assistant), se garantiza que el procesamiento algorítmico y el almacenamiento de datos no abandonen el entorno físico donde son generados, mitigando los riesgos inherentes al \textit{cloud computing} \cite{shi2016edge}.
+Este trabajo justifica la viabilidad e implementación de un sistema basado en inteligencia ambiental (AmI) operado de forma estrictamente local. Al emplear microcontroladores con firmware declarativo y un servidor central centralizado de código abierto en la propia red (como Home Assistant), se garantiza que el procesamiento algorítmico y el almacenamiento de datos no abandonen el entorno físico donde son generados, mitigando los riesgos inherentes al \textit{cloud computing} \cite{shi2016edge}.
 
 En un segundo término, la innovación del proyecto reside en la aplicación práctica de la computación sensible al contexto (\textit{context-aware computing}). La transición de una domótica reactiva a una proactiva exige sistemas capaces de inferir el estado y las necesidades del usuario. Para ello, se aborda la complejidad del modelado del contexto mediante técnicas de fusión de sensores heterogéneos, cruzando variables lumínicas, acústicas y termohigrométricas con telemetría espacial avanzada. Es en este punto donde la integración de radares de ondas milimétricas (FMCW) resulta indispensable. Al sustituir la detección infrarroja tradicional (PIR) por tecnología capaz de registrar micromovimientos respiratorios, se eliminan los falsos negativos prolongados. Esto permite al motor algorítmico asignar estados lógicos de alta fiabilidad (como el estudio o el descanso profundo) sin requerir la interacción directa del individuo \cite{turppa2020vital}.
 
@@ -45,15 +45,15 @@ El sistema desarrollado presenta restricciones operativas que delimitan su aplic
 \subsection{Objetivos}
 
 \subsubsection{Objetivo principal}
-El objetivo fundamental de este Trabajo Fin de Grado es diseñar, implementar y validar un sistema domótico basado en inteligencia ambiental, capaz de inferir de manera continua el contexto físico y conductual del usuario para automatizar la toma de decisiones relativas al bienestar, la productividad y la seguridad en un entorno residencial, empleando hardware de bajo coste y plataformas de orquestación de código abierto.
+El objetivo fundamental de este Trabajo Fin de Grado es diseñar, implementar y validar un sistema domótico basado en inteligencia ambiental, capaz de inferir de manera continua el contexto físico y conductual del usuario para automatizar la toma de decisiones relativas al bienestar, la productividad y la seguridad en un entorno residencial, empleando hardware de bajo coste y plataformas de gestión centralizada de código abierto.
 
 \subsubsection{Objetivos específicos}
 Para alcanzar la meta principal, se establecen los siguientes objetivos parciales:
 \begin{itemize}
     \item \textbf{Diseño de hardware distribuido:} configurar y ensamblar una red de nodos de sensores y actuadores utilizando microcontroladores ESP32, garantizando la cobertura espacial del entorno de pruebas.
     \item \textbf{Implementación de telemetría avanzada:} sustituir la detección de presencia tradicional por telemetría espacial continua, empleando radares de ondas milimétricas (HLK-LD2410) combinados con mediciones lumínicas (LDR) y ambientales.
-    \item \textbf{Desarrollo del motor de contexto:} programar un orquestador centralizado que, mediante técnicas de fusión de datos, asigne un estado unívoco a la habitación (ocio, estudio, durmiendo, ausente) en tiempo real.
-    \item \textbf{Automatización proactiva y seguridad:} diseñar algoritmos de control lógico para la gestión ergonómica de la iluminación, la evaluación del descanso y el despliegue de un sistema de alarma robusto frente a vulnerabilidades lógicas, como las condiciones de carrera.
+    \item \textbf{Desarrollo del motor de contexto:} programar un servidor central centralizado que, mediante técnicas de fusión de datos, asigne un estado unívoco a la habitación (ocio, estudio, durmiendo, ausente) en tiempo real.
+    \item \textbf{Automatización proactiva y seguridad:} diseñar algoritmos de control lógico para la gestión ergonómica de la iluminación, la evaluación del descanso y el despliegue de un sistema de alarma sólido frente a vulnerabilidades lógicas, como las condiciones de carrera.
     \item \textbf{Validación e integración:} evaluar el comportamiento de la arquitectura propuesta en escenarios de uso real, aplicando redundancias lógicas para verificar la tolerancia a fallos del hardware.
 \end{itemize}
 
@@ -65,7 +65,7 @@ La metodología se despliega a través de las siguientes fases secuenciales:
     \item \textbf{Ingeniería de requisitos y restricciones:} definición formal de las necesidades funcionales y de las fronteras físicas del entorno para acotar la selección de componentes.
     \item \textbf{Diseño de la arquitectura e integración de hardware:} fase donde se proyecta la topología de red y se realiza el ensamblaje electrónico, aplicando técnicas de instrumentación en frío y en caliente (uso de multímetros para validación de la caída de potencial en los divisores de tensión de los sensores) para garantizar la estabilidad eléctrica.
     \item \textbf{Desarrollo del firmware y lógica de abstracción:} programación de los microcontroladores mediante abstracciones de hardware declarativas, optimizando los intervalos de actualización y los rangos de atenuación analógica.
-    \item \textbf{Orquestación y fusión de datos en el Edge:} implementación de las máquinas de estado y reglas lógicas redundantes en el nodo central para dotar al sistema de tolerancia a fallos ante pérdidas temporales de conectividad o lecturas anómalas de los transductores.
+    \item \textbf{Gestión centralizada y fusión de datos en el Edge:} implementación de las máquinas de estado y reglas lógicas redundantes en el nodo central para dotar al sistema de tolerancia a fallos ante pérdidas temporales de conectividad o lecturas anómalas de los transductores.
     \item \textbf{Fase de pruebas experimentales y evaluación técnica:} protocolo de validación que abarca desde pruebas unitarias en caja negra hasta pruebas de integración en escenarios reales de uso continuo, analizando la fiabilidad de las transiciones de estado.
 \end{enumerate}
 
@@ -81,7 +81,7 @@ La metodología se despliega a través de las siguientes fases secuenciales:
     \node[box] (arch) at (2.5, 2.5) {Diseño HW /\\Arquitectura};
     \node[box] (firm) at (5, 1) {Desarrollo\\Firmware};
     
-    \node[box] (integ) at (7.5, 2.5) {Integración y\\Orquestación};
+    \node[box] (integ) at (7.5, 2.5) {Integración y\\Gestión centralizada};
     \node[box] (test) at (10, 4) {Pruebas en\\Entorno Real};
     
     % Connections down

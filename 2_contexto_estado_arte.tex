@@ -2,7 +2,7 @@
 \section{Contexto y estado del arte}
 \label{cap:contexto_estado_arte}
 
-El desarrollo de sistemas inteligentes capaces de interactuar proactivamente con el usuario requiere un análisis exhaustivo de los fundamentos teóricos y tecnológicos que sustentan la inteligencia ambiental. En este capítulo se examina la evolución histórica de la automatización residencial, se analizan críticamente las tecnologías de detección de presencia tradicionales frente a las tecnologías emergentes de radiofrecuencia, y se evalúan los protocolos de comunicación y las arquitecturas de software que posibilitan la orquestación local de redes heterogéneas de internet de las cosas (IoT).
+El desarrollo de sistemas inteligentes capaces de interactuar proactivamente con el usuario requiere un análisis exhaustivo de los fundamentos teóricos y tecnológicos que sustentan la inteligencia ambiental. En este capítulo se examina la evolución histórica de la automatización residencial, se analizan críticamente las tecnologías de detección de presencia tradicionales frente a las tecnologías emergentes de radiofrecuencia, y se evalúan los protocolos de comunicación y las arquitecturas de software que posibilitan la gestión centralizada local de redes heterogéneas de internet de las cosas (IoT).
 
 \subsection{Evolución de la domótica y computación ubicua}
 La domótica clásica nació ligada a sistemas de automatización, tanto cableados como inalámbricos, de primera generación, orientados principalmente al control remoto y centralizado de la iluminación y la climatización mediante arquitecturas de automatismos rígidos. Estos sistemas primitivos operaban bajo un modelo estrictamente reactivo: el entorno únicamente modificaba su estado tras una acción explícita del usuario a través de interfaces físicas o mandos a distancia.
@@ -16,7 +16,7 @@ El cambio paradigmático hacia la automatización contemporánea se fundamenta e
 
 En las arquitecturas comerciales típicas de la última década, la inteligencia ambiental se ha supeditado a plataformas de computación en la nube (\textit{cloud computing}). Sin embargo, la necesidad de reducir los tiempos de latencia en la toma de decisiones, optimizar el uso del ancho de banda y garantizar la confidencialidad de la información ha impulsado la adopción del paradigma de computación en el extremo (\textit{edge computing}) \cite{shi2016edge}. En este modelo local, la adquisición, el filtrado algorítmico y la fusión de datos se ejecutan en las fronteras de la red interna, dotando al sistema de autonomía operativa frente a desconexiones de la red externa, como se contrapone gráficamente en la Figura \ref{fig:edge_vs_cloud}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \begin{tikzpicture}[
         cloud/.style={draw, ellipse, minimum width=3cm, minimum height=1.5cm, align=center, fill=blue!5, font=\scriptsize},
@@ -37,7 +37,7 @@ En las arquitecturas comerciales típicas de la última década, la inteligencia
     \node[local] (home2) at (6, 1.5) {};
     \node[above=0.1cm of home2, font=\scriptsize\bfseries] {Red Local (Aislada)};
     \node[device] (sensor2) at (6, 0.2) {Sensores /\\Actuadores};
-    \node[device, fill=blue!10] (edge) at (6, 2.3) {Orquestador\\Edge};
+    \node[device, fill=blue!10] (edge) at (6, 2.3) {Servidor central\\Edge};
     
     \draw[arrow, green!50!black] (sensor2) -- node[anchor=west, font=\scriptsize, align=left] {Baja latencia\\Privacidad} (edge);
     
@@ -46,7 +46,7 @@ En las arquitecturas comerciales típicas de la última década, la inteligencia
     \label{fig:edge_vs_cloud}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.75\textwidth]{Img/diagrama_capas.png}
     \caption{Arquitectura en capas característica de los ecosistemas IoT: capa de percepción (sensores), red (WLAN) y aplicación \cite{al2015internet}.}
@@ -82,7 +82,7 @@ R = \frac{c \cdot f_b \cdot T_c}{2 \cdot B}
 
 Donde $c$ representa la velocidad de la luz, $T_c$ es la duración del periodo de la rampa de frecuencia, y $B$ corresponde al ancho de banda de la modulación aplicada. 
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.45\textwidth]{Img/grafica_chirp.png}
     \caption{Representación en el dominio tiempo-frecuencia de las señales transmitidas (Tx) y recibidas (Rx) en un radar FMCW, ilustrando el retardo temporal $\tau$ y la frecuencia intermedia o de batido resultante \cite{rao2017introduction}.}
@@ -91,7 +91,7 @@ Donde $c$ representa la velocidad de la luz, $T_c$ es la duración del periodo d
 
 Mediante la evaluación continua del desfase de fase de los ecos en compuertas de distancia milimétricas, los radares FMCW modernos, como el modelo HLK-LD2410, poseen la resolución necesaria para registrar variaciones submilimétricas en la superficie del cuerpo humano. Esta capacidad analítica faculta al sensor para detectar de manera ininterrumpida los movimientos torácicos asociados a la respiración y los micromovimientos vasculares periféricos, manteniendo el estado de presencia activo incluso si el usuario se encuentra en reposo absoluto o durmiendo, eliminando de raíz los falsos negativos inherentes a la sensórica piroeléctrica \cite{turppa2020vital} (véase la Figura \ref{fig:pir_vs_mmwave}).
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \begin{tikzpicture}
     
@@ -153,7 +153,7 @@ Las tecnologías de red aplicadas al ámbito del IoT se segmentan principalmente
 
 Para entornos domésticos confinados, los protocolos de red en malla basados en el estándar IEEE 802.15.4, como Zigbee, ofrecen un balance óptimo entre consumo y direccionamiento de nodos. Sin embargo, su integración requiere el despliegue de pasarelas específicas de traducción de protocolos. Por este motivo, para el diseño de nodos de instrumentación continua con alimentación permanente, el uso del estándar IEEE 802.11b/g/n (Wi-Fi) sobre la banda de 2.4 GHz resulta el más eficiente. Proporciona una infraestructura de red local preexistente con un ancho de banda elevado que asimila las ráfagas de datos analógicos de los microcontroladores sin introducir cuellos de botella lógicos.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{Img/grafica_protocolos.png}
     \caption{Comparativa de tecnologías inalámbricas para ecosistemas IoT en función de su tasa de transferencia de datos frente a su alcance efectivo \cite{mekki2019comparative}.}
@@ -163,7 +163,7 @@ Para entornos domésticos confinados, los protocolos de red en malla basados en 
 \subsubsection{El protocolo de transporte MQTT}
 Sobre la capa de transporte TCP/IP de la red Wi-Fi, el protocolo de mensajería MQ Telemetry Transport (MQTT) se establece como el estándar de facto para arquitecturas perimetrales eficientes. MQTT opera bajo un modelo de publicación/suscripción desacoplado mediado por un agente central o \textit{broker} \cite{al2015internet}, tal y como se esquematiza en la Figura \ref{fig:mqtt_pubsub}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \begin{tikzpicture}[
         broker/.style={draw, circle, minimum size=2cm, align=center, fill=blue!10, font=\scriptsize},
@@ -187,7 +187,7 @@ Frente a protocolos síncronos pesados (como HTTP\slash REST), MQTT ofrece venta
 \begin{itemize}
     \item \textbf{Reducido sobrecoste de protocolo (\textit{overhead}):} la cabecera fija del protocolo es de únicamente 2 bytes, reduciendo el consumo de ancho de banda y los tiempos de serialización en procesadores limitados como el ESP32.
     \item \textbf{Gestión de la calidad de servicio (QoS):} permite parametrizar el nivel de entrega de los mensajes (QoS 0, QoS 1 o QoS 2), asegurando la llegada de eventos críticos relativos a la seguridad perimetral frente a telemetrías ambientales repetitivas.
-    \item \textbf{Mecanismo de testamento (\textit{Last Will and Testament}):} permite al \textit{broker} notificar de forma proactiva y automática la desconexión abrupta de un nodo sensor por fallo eléctrico o pérdida de Wi-Fi, habilitando la ejecución inmediata de rutinas de contingencia en el orquestador local.
+    \item \textbf{Mecanismo de testamento (\textit{Last Will and Testament}):} permite al \textit{broker} notificar de forma proactiva y automática la desconexión abrupta de un nodo sensor por fallo eléctrico o pérdida de Wi-Fi, habilitando la ejecución inmediata de rutinas de contingencia en el servidor central local.
 \end{itemize}
 
 \subsection{Soluciones comerciales y antecedentes}
@@ -199,6 +199,6 @@ El mercado actual de consumo ofrece una amplia gama de ecosistemas domóticos pr
     \item \textbf{Monetización e intrusión en la privacidad:} el almacenamiento masivo de históricos de presencia, hábitos horarios y perfiles acústicos en infraestructuras externas plantea serios dilemas éticos y legales bajo normativas de protección de datos, al delegar la custodia de información sensible a terceros cuyos modelos de negocio suelen incluir la explotación analítica de datos agregados \cite{perera2014context}.
 \end{itemize}
 
-Frente a estos antecedentes comerciales, las arquitecturas de código abierto de integración local como Home Assistant y ESPHome plantean una alternativa robusta. Permiten la unificación de hardware heterogéneo bajo una capa de abstracción común operada de forma local, devolviendo el control operativo y la privacidad absoluta de los datos al perímetro de la vivienda.
+Frente a estos antecedentes comerciales, las arquitecturas de código abierto de integración local como Home Assistant y ESPHome plantean una alternativa sólida. Permiten la unificación de hardware heterogéneo bajo una capa de abstracción común operada de forma local, devolviendo el control operativo y la privacidad absoluta de los datos al perímetro de la vivienda.
 
 Establecido el estado del arte y justificadas las ventajas del procesamiento local y la sensórica avanzada, el siguiente capítulo abordará la definición formal del problema, detallando los requisitos funcionales y no funcionales que guiarán el diseño y desarrollo de la solución propuesta.

@@ -29,7 +29,7 @@ Para la correcta implementación de este proyecto, es imprescindible contar con 
 \subsection{Configuración e Inicialización del Servidor Central}
 A continuación, se detalla el proceso técnico, paso por paso, para instalar la infraestructura de software necesaria en la Raspberry Pi y levantar los servicios que orquestan la inteligencia de la habitación.
 
-\subsubsection{1. Instalación de Docker}
+\subsubsection{Instalación de Docker}
 Con la Raspberry Pi conectada a la red e iniciado el sistema operativo Raspberry Pi OS, abre un terminal (ya sea físicamente o mediante SSH) e introduce el comando oficial de instalación de Docker:
 \begin{verbatim}
 curl -fsSL https://get.docker.com -o get-docker.sh
@@ -40,7 +40,7 @@ Para evitar usar \texttt{sudo} en cada ejecución de Docker, añade tu usuario a
 sudo usermod -aG docker $USER
 \end{verbatim}
 
-\subsubsection{2. Despliegue de Servicios mediante Docker}
+\subsubsection{Despliegue de Servicios mediante Docker}
 El sistema se compone de tres contenedores principales que deben ejecutarse en la Raspberry Pi.
 
 \textbf{Paso 1: Iniciar Portainer (Gestor visual de contenedores)}
@@ -82,10 +82,13 @@ docker run -d \
   ghcr.io/esphome/esphome
 \end{verbatim}
 
-\subsubsection{3. Acceso Remoto Seguro (VPN con Tailscale)}
+\subsubsection{Acceso Remoto Seguro (VPN con Tailscale)}
 Para permitir el acceso a Home Assistant desde fuera de casa sin abrir puertos en el router (lo cual compromete la seguridad), se utiliza Tailscale.
 \begin{enumerate}
-    \item Instala Tailscale en la Raspberry Pi ejecutando: \texttt{curl -fsSL https://tailscale.com/install.sh | sh}
+    \item Instala Tailscale en la Raspberry Pi ejecutando: 
+\begin{verbatim}
+curl -fsSL https://tailscale.com/install.sh | sh
+\end{verbatim}
     \item Inicia el servicio y actívalo con: \texttt{sudo tailscale up}
     \item Aparecerá un enlace de autenticación en la pantalla. Ábrelo en un navegador para vincular la Raspberry Pi a tu cuenta gratuita de Tailscale. A partir de este momento, la Raspberry Pi tendrá asignada una IP privada segura (por ejemplo, \texttt{100.x.x.x}).
 \end{enumerate}
@@ -259,7 +262,7 @@ Las gráficas del histórico permiten consultar la evolución térmica y la acti
 \end{figure}
 
 \subsection{Manual de Comportamientos Inteligentes (Automatizaciones)}
-El sistema opera en segundo plano tomando decisiones que facilitan el día a día sin requerir interacción manual constante:
+El sistema opera en segundo plano tomando decisiones que ayudan en la rutina sin requerir interacción manual constante:
 \begin{itemize}
     \item \textbf{Luz Automática de Trabajo}: Se enciende sola cuando te sientas en el escritorio, apoyada por la detección milimétrica del radar LD2410, siempre y cuando la luminosidad de la sala (medida por el LDR) sea baja.
     \item \textbf{Alertas Ergonómicas (Pomodoro)}: Si permaneces 50 minutos continuos trabajando y sentado, la lámpara realizará un aviso visual (parpadeo) invitándote a realizar un descanso saludable.

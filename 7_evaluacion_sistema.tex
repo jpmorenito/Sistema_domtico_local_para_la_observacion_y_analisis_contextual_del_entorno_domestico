@@ -6,7 +6,7 @@ La culminación de la fase de despliegue físico da paso a la auditoría técnic
 
 \subsection{Análisis técnico y de rendimiento}
 \label{sec:rendimiento_tecnico}
-El rendimiento temporal de las comunicaciones locales constituye un factor crítico en arquitecturas distribuidas de control y automatización. Se han realizado ensayos cronométricos sistemáticos para cuantificar el retardo o latencia de conmutación de los actuadores del sistema. Para ello, se midió el tiempo transcurrido desde la activación física de una interrupción de entrada (como la separación del interruptor Reed en la puerta) hasta el disparo físico del relé de iluminación a través del orquestador. 
+El rendimiento temporal de las comunicaciones locales constituye un factor crítico en arquitecturas distribuidas de control y automatización. Se han realizado ensayos cronométricos sistemáticos para cuantificar el retardo o latencia de conmutación de los actuadores del sistema. Para ello, se midió el tiempo transcurrido desde la activación física de una interrupción de entrada (como la separación del interruptor Reed en la puerta) hasta el disparo físico del relé de iluminación a través del servidor central. 
 
 Los resultados medidos en la red local inalámbrica bajo la API nativa de ESPHome se compararon con los tiempos de respuesta típicos ofrecidos por soluciones comerciales basadas en la nube pública (como Tuya Smart o Sonoff/eWeLink en servidores de la región europea). La comparativa obtenida se ilustra en la Figura~\ref{fig:latencia_comparativa}.
 
@@ -55,7 +55,7 @@ El análisis temporal revela que la API nativa de ESPHome, al operar de forma di
 
 Por otro lado, se ha evaluado el impacto de la carga computacional en el servidor central (Raspberry Pi 4 con 1\,GB de RAM) durante la monitorización y registro continuado de datos en producción. El uso medio de la unidad central de procesamiento (CPU) se estabilizó sistemáticamente en valores por debajo del 5\,\% debido al carácter estático de las consultas del motor analítico local y a la optimización de los contenedores Docker. 
 
-La memoria de acceso aleatorio (RAM) registró una ocupación media constante de 620\,MB (aproximadamente el 62\,\% de la capacidad física del dispositivo). Esto valida la viabilidad del empleo de un nodo perimetral de bajo coste y prestaciones moderadas para orquestar la lógica contextual de la vivienda de forma robusta e ininterrumpida.
+La memoria de acceso aleatorio (RAM) registró una ocupación media constante de 620\,MB (aproximadamente el 62\,\% de la capacidad física del dispositivo). Esto valida la viabilidad del empleo de un nodo perimetral de bajo coste y prestaciones moderadas para gestionar la lógica contextual de la vivienda de forma sólida e ininterrumpida.
 
 \subsection{Fiabilidad y tolerancia a fallos}
 \label{sec:fiabilidad_fallos}
@@ -69,7 +69,7 @@ La robustez operacional de la máquina de estados de contexto reside en la toler
 \subsection{Pruebas funcionales y validación del motor de automatizaciones}
 \label{sec:pruebas_funcionales}
 
-La verificación del comportamiento dinámico de la infraestructura requiere contrastar el funcionamiento del motor lógico y las reglas de orquestación frente a estímulos reales del entorno. Para llevar a cabo esta validación de forma trazable y científica, se ha adoptado como herramienta principal el motor de trazas de ejecución de Home Assistant (\textit{Automation Traces}). Esta funcionalidad del orquestador registra y representa gráficamente el flujo lógico exacto que sigue cada automatización tras ser disparada. En particular, almacena un historial estructurado en formato JSON que detalla:
+La verificación del comportamiento dinámico de la infraestructura requiere contrastar el funcionamiento del motor lógico y las reglas de gestión centralizada frente a estímulos reales del entorno. Para llevar a cabo esta validación de forma trazable y científica, se ha adoptado como herramienta principal el motor de trazas de ejecución de Home Assistant (\textit{Automation Traces}). Esta funcionalidad del servidor central registra y representa gráficamente el flujo lógico exacto que sigue cada automatización tras ser disparada. En particular, almacena un historial estructurado en formato JSON que detalla:
 
 \begin{itemize}
     \item \textbf{Evento disparador (\textit{Trigger}):} la entidad y cambio de estado específico que inició la evaluación.
@@ -78,14 +78,14 @@ La verificación del comportamiento dinámico de la infraestructura requiere con
     \item \textbf{Tiempos de cómputo y latencias internas:} la marca temporal exacta de cada transición de la secuencia, lo que permite auditar retardos internos.
 \end{itemize}
 
-A continuación, se define la batería de casos de prueba funcionales diseñados para validar los escenarios lógicos esenciales descritos en el modelado del sistema (Sección~\ref{sec:modelado_logico}). Cada caso de prueba ha sido verificado mediante su respectivo registro de traza en el orquestador, garantizando que no se producen bloqueos lógicos ni solapamientos indeseados:
+A continuación, se define la batería de casos de prueba funcionales diseñados para validar los escenarios lógicos esenciales descritos en el modelado del sistema (Sección~\ref{sec:modelado_logico}). Cada caso de prueba ha sido verificado mediante su respectivo registro de traza en el servidor central, garantizando que no se producen bloqueos lógicos ni solapamientos indeseados:
 
 \subsubsection{Caso de prueba PR-AUTO-01: Inferencia de ocupación y control de iluminación ergonómica}
 \label{sec:pr_auto_01}
 \begin{itemize}
     \item \textbf{Objetivo:} validar que al detectarse presencia en el escritorio bajo condiciones de baja iluminación se enciende la luz de apoyo de forma automática.
     \item \textbf{Estímulo de entrada:} cambio de estado del sensor del radar mmWave (\texttt{binary\_sensor.radar\_presence} a \texttt{on}) con una lectura analógica del LDR por debajo del umbral de luz diurna (\texttt{sensor.ldr\_iluminancia < 200\,lx}).
-    \item \textbf{Flujo esperado en la traza:} el orquestador intercepta el disparo del radar, evalúa como verdadera la condición de baja iluminación del LDR y ejecuta la acción de encendido en el relé de estado sólido de potencia (\texttt{switch.ssr\_rele\_iluminacion} a \texttt{on}).
+    \item \textbf{Flujo esperado en la traza:} el servidor central intercepta el disparo del radar, evalúa como verdadera la condición de baja iluminación del LDR y ejecuta la acción de encendido en el relé de estado sólido de potencia (\texttt{switch.ssr\_rele\_iluminacion} a \texttt{on}).
     \item \textbf{Demostración en vídeo:} se ha registrado la secuencia física en el archivo \texttt{videos/demo\_PR\_AUTO\_01.mp4}.
     \item \textbf{Resultado y traza de ejecución:} exitoso. La traza de Home Assistant confirma un tiempo de conmutación de 115\,ms (ver Figura~\ref{fig:traza_auto_01}).
 \end{itemize}
@@ -101,8 +101,6 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
             \centering\vspace{0.3cm}
             \sffamily\color{gray}
             \textbf{[Captura de Pantalla: Traza de Automatización PR-AUTO-01]}\\[0.2cm]
-            Aquí se insertará la imagen de la traza de ejecución de Home Assistant\\
-            (\textit{Automation Trace}) para verificar el flujo de estados.\\
         \end{minipage}%
     }
     \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-01 (iluminación automática por presencia y luminosidad).}
@@ -114,7 +112,7 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
 \begin{itemize}
     \item \textbf{Objetivo:} validar la detección de paso y activación de contramedidas disuasorias cuando se interrumpe la barrera del diodo láser de la puerta.
     \item \textbf{Estímulo de entrada:} cambio en el estado del sensor del receptor magnético de la puerta (\texttt{binary\_sensor.puerta\_reed} a \texttt{on}) o cambio del receptor de la barrera óptica láser a estado sin luz (\texttt{binary\_sensor.laser\_receptor} a \texttt{on}).
-    \item \textbf{Flujo esperado en la traza:} el orquestador evalúa la desconexión física. Si el sistema de alerta perimetral está armado, se dispara la alarma visual en la interfaz del usuario, se incrementa el contador de accesos en la base de datos y se activa la conmutación de seguridad en los diodos de disuasión.
+    \item \textbf{Flujo esperado en la traza:} el servidor central evalúa la desconexión física. Si el sistema de alerta perimetral está armado, se dispara la alarma visual en la interfaz del usuario, se incrementa el contador de accesos en la base de datos y se activa la conmutación de seguridad en los diodos de disuasión.
     \item \textbf{Demostración en vídeo:} se ha registrado la secuencia física en el archivo \texttt{videos/demo\_PR\_AUTO\_02.mp4}.
     \item \textbf{Resultado y traza de ejecución:} exitoso. El motor de trazas registra la correcta evaluación paralela de las condiciones de armado e incrementa el contador en SQLite (ver Figura~\ref{fig:traza_auto_02}).
 \end{itemize}
@@ -130,8 +128,6 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
             \centering\vspace{0.3cm}
             \sffamily\color{gray}
             \textbf{[Captura de Pantalla: Traza de Automatización PR-AUTO-02]}\\[0.2cm]
-            Aquí se insertará la imagen de la traza de ejecución de Home Assistant\\
-            (\textit{Automation Trace}) para verificar el flujo de estados.\\
         \end{minipage}%
     }
     \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-02 (barrera óptica y control de accesos).}
@@ -143,7 +139,7 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
 \begin{itemize}
     \item \textbf{Objetivo:} validar que el sistema monitoriza el tiempo de permanencia estática del usuario en la silla de trabajo y genera las alertas ergonómicas establecidas.
     \item \textbf{Estímulo de entrada:} permanencia ininterrumpida de la entidad de presencia del radar (\texttt{binary\_sensor.radar\_presence} en estado \texttt{on}) durante un periodo acumulativo continuo superior a $25\,\text{minutos}$.
-    \item \textbf{Flujo esperado en la traza:} tras expirar el temporizador de control, el motor lógico del orquestador realiza la transición interna al estado \texttt{Alerta Ergonómica}, enviando una notificación interactiva \textit{push} al dispositivo móvil del usuario y modificando el color del LED indicador del Nodo Escritorio.
+    \item \textbf{Flujo esperado en la traza:} tras expirar el temporizador de control, el motor lógico del servidor central realiza la transición interna al estado \texttt{Alerta Ergonómica}, enviando una notificación interactiva \textit{push} al dispositivo móvil del usuario y modificando el color del LED indicador del Nodo Escritorio.
     \item \textbf{Demostración en vídeo:} se ha registrado la secuencia física en el archivo \texttt{videos/demo\_PR\_AUTO\_03.mp4}.
     \item \textbf{Resultado y traza de ejecución:} exitoso. El motor de trazas confirma el envío inmediato del paquete TCP de notificación al cumplirse el retardo (ver Figura~\ref{fig:traza_auto_03}).
 \end{itemize}
@@ -159,8 +155,6 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
             \centering\vspace{0.3cm}
             \sffamily\color{gray}
             \textbf{[Captura de Pantalla: Traza de Automatización PR-AUTO-03]}\\[0.2cm]
-            Aquí se insertará la imagen de la traza de ejecución de Home Assistant\\
-            (\textit{Automation Trace}) para verificar el flujo de estados.\\
         \end{minipage}%
     }
     \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-03 (temporizador y alerta ergonómica Pomodoro).}
@@ -172,7 +166,7 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
 \begin{itemize}
     \item \textbf{Objetivo:} validar el paso automático del sistema al estado de ahorro de energía y ausencia cuando el usuario abandona la estancia o inicia el reposo nocturno.
     \item \textbf{Estímulo de entrada:} ausencia absoluta de movimiento por el radar mmWave (\texttt{binary\_sensor.radar\_presence} en estado \texttt{off}) durante un retardo de cortesía de $10\,\text{minutos}$, o conmutación manual del conmutador de cabecera a modo \texttt{Noche}.
-    \item \textbf{Flujo esperado en la traza:} el orquestador evalúa la persistencia del estado de reposo, ejecuta la transición de la máquina de estados a \texttt{Ausente} o \texttt{Durmiendo} y desencadena un comando de apagado masivo de todos los relés y actuadores del sistema (\texttt{switch.ssr\_rele\_iluminacion} a \texttt{off}, etc.).
+    \item \textbf{Flujo esperado en la traza:} el servidor central evalúa la persistencia del estado de reposo, ejecuta la transición de la máquina de estados a \texttt{Ausente} o \texttt{Durmiendo} y desencadena un comando de apagado masivo de todos los relés y actuadores del sistema (\texttt{switch.ssr\_rele\_iluminacion} a \texttt{off}, etc.).
     \item \textbf{Demostración en vídeo:} se ha registrado la secuencia física en el archivo \texttt{videos/demo\_PR\_AUTO\_04.mp4}.
     \item \textbf{Resultado y traza de ejecución:} exitoso. El motor de trazas confirma el apagado coordinado y secuencial (ver Figura~\ref{fig:traza_auto_04}).
 \end{itemize}
@@ -188,8 +182,6 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
             \centering\vspace{0.3cm}
             \sffamily\color{gray}
             \textbf{[Captura de Pantalla: Traza de Automatización PR-AUTO-04]}\\[0.2cm]
-            Aquí se insertará la imagen de la traza de ejecución de Home Assistant\\
-            (\textit{Automation Trace}) para verificar el flujo de estados.\\
         \end{minipage}%
     }
     \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-04 (transición automática a modo ausente/apagado general).}

@@ -2,7 +2,7 @@
 \section{Diseño del sistema}
 \label{sec:diseno_sistema}
 
-El diseño de un sistema basado en inteligencia ambiental requiere la definición de una arquitectura robusta que articule la adquisición de datos, el transporte de señales y la lógica de conmutación perimetral. En este capítulo se detalla la modelización estructural de la infraestructura, abstrayendo los componentes en capas funcionales. Asimismo, se expone el modelado lógico mediante casos de uso, la topología física de los nodos de hardware, el desarrollo analítico del algoritmo de fusión de sensores y la estructuración de los flujos de información locales.
+El diseño de un sistema basado en inteligencia ambiental requiere la definición de una arquitectura sólida que articule la adquisición de datos, el transporte de señales y la lógica de conmutación perimetral. En este capítulo se detalla la modelización estructural de la infraestructura, abstrayendo los componentes en capas funcionales. Asimismo, se expone el modelado lógico mediante casos de uso, la topología física de los nodos de hardware, el desarrollo analítico del algoritmo de fusión de sensores y la estructuración de los flujos de información locales.
 
 \subsection{Arquitectura general del sistema}
 Para garantizar la modularidad, la mantenibilidad y el aislamiento perimetral exigido por los requisitos no funcionales, se ha diseñado una arquitectura jerárquica dividida en cuatro capas operativas independientes. Esta estructura conceptual abstrae la complejidad del hardware y asegura un acoplamiento débil entre los componentes del sistema \cite{bass2012software}.
@@ -10,7 +10,7 @@ Para garantizar la modularidad, la mantenibilidad y el aislamiento perimetral ex
 \begin{itemize}
     \item \textbf{Capa de adquisición y actuación física:} constituida por los microcontroladores distribuidos (nodos ESP32) y sus respectivos transductores analógicos y digitales (radar FMCW, fotorresistor LDR, sensores climáticos y relés de estado sólido). Su función se limita a la digitalización de variables físicas y a la ejecución inmediata de comandos eléctricos.
     \item \textbf{Capa de transporte y red:} configurada sobre una topolog\'ia en estrella segmentada dentro de la red de \'area local (WLAN). Utiliza el protocolo de transporte TCP/IP sobre enlaces Wi-Fi para dar soporte a la comunicaci\'on bidireccional punto a punto mediante la API nativa de ESPHome. Las conexiones directas de red garantizan el intercambio inmediato de estados e informaci\'on de sensores sin necesidad de intermediarios.
-    \item \textbf{Capa de orquestación y lógica contextual:} representa el núcleo computacional del proyecto (motor de contexto), centralizado en la plataforma Home Assistant sobre el servidor perimetral (Raspberry Pi 4). Esta capa unifica las lecturas heterogéneas de la capa física, ejecuta las máquinas de estado y gobierna la proactividad del entorno mediante el disparo de las automatizaciones programadas.
+    \item \textbf{Capa de gestión centralizada y lógica contextual:} representa el núcleo computacional del proyecto (motor de contexto), centralizado en la plataforma Home Assistant sobre el servidor perimetral (Raspberry Pi 4). Esta capa unifica las lecturas heterogéneas de la capa física, ejecuta las máquinas de estado y gobierna la proactividad del entorno mediante el disparo de las automatizaciones programadas.
     \item \textbf{Capa de persistencia y aplicación:} encargada del almacenamiento de las series temporales de telemetría en una base de datos local optimizada y de la representación gráfica del estado del sistema a través de una interfaz de usuario centralizada o \textit{dashboard} accesible por el administrador.
 \end{itemize}
 
@@ -37,7 +37,7 @@ Para garantizar la modularidad, la mantenibilidad y el aislamiento perimetral ex
     ]
         % Nodes with increased vertical spacing (3.0cm intervals)
         \node[layer, fill=Morado!10, draw=Morado!80] (l4) at (0, 9.0) {Capa de persistencia y aplicación\\{\normalfont\footnotesize (Base de datos de series temporales en memoria y Dashboard de usuario)}};
-        \node[layer, fill=Azul!10, draw=Azul!80] (l3) at (0, 6.0) {Capa de orquestación y lógica contextual\\{\normalfont\footnotesize (Motor de contexto, máquina de estados finitos y automatizaciones en Home Assistant)}};
+        \node[layer, fill=Azul!10, draw=Azul!80] (l3) at (0, 6.0) {Capa de gestión centralizada y lógica contextual\\{\normalfont\footnotesize (Motor de contexto, máquina de estados finitos y automatizaciones en Home Assistant)}};
         \node[layer, fill=Verde!10, draw=Verde!80] (l2) at (0, 3.0) {Capa de transporte y red\\{\normalfont\footnotesize (API nativa de ESPHome sobre conexiones TCP en Wi-Fi local)}};
         \node[layer, fill=Naranja!10, draw=Naranja!80] (l1) at (0, 0.0) {Capa de adquisición y actuación física\\{\normalfont\footnotesize (Placas de desarrollo ESP32, fotorresistor LDR, sensor climático, radar mmWave y relés)}};
 
@@ -178,7 +178,7 @@ Para solventar contingencias críticas de hardware (como la degradación o fallo
 \subsection{Diseño de la base de datos y flujos de información}
 El flujo de información sigue un modelo síncrono y bidireccional basado en la API nativa de ESPHome \cite{al2015internet}. Los nodos sensores operan de forma autónoma, digitalizando las variables térmicas, lumínicas y espaciales a una frecuencia de muestreo parametrizada. Cada lectura actualiza una entidad expuesta en el servidor a través de sockets TCP directos en el puerto 6053, sin necesidad de parsear tramas de texto complejas ni depender de brokers de mensajería intermedios.
 
-El orquestador central captura las actualizaciones de estado de manera inmediata. Al recibir un nuevo evento, se despierta el hilo de ejecución del motor de contexto, que evalúa las condiciones de la FSM. Si se determina un cambio de estado, se genera un evento interno en el bus de Home Assistant que dispara dos acciones concurrentes:
+El servidor central central captura las actualizaciones de estado de manera inmediata. Al recibir un nuevo evento, se despierta el hilo de ejecución del motor de contexto, que evalúa las condiciones de la FSM. Si se determina un cambio de estado, se genera un evento interno en el bus de Home Assistant que dispara dos acciones concurrentes:
 \begin{enumerate}
     \item \textbf{Actuación perimetral:} se invoca el servicio de conmutación correspondiente de vuelta hacia el nodo ESP32 a través del canal abierto de la API, forzando la activación física del relé.
     \item \textbf{Persistencia temporal:} el estado indexado y la telemetría asociada se envían al subsistema de almacenamiento local. La base de datos, estructurada como un motor de series temporales de ejecución en memoria con volcado cíclico al almacenamiento secundario local, registra la tupla compuesta por el identificador de la entidad, el valor transformado y la marca de tiempo precisa (\textit{timestamp}) proporcionada por el sistema operativo del servidor. Esto permite la auditoría posterior de las rutinas del usuario sin comprometer datos fuera de la red local.
@@ -211,7 +211,7 @@ El orquestador central captura las actualizaciones de estado de manera inmediata
     ]
         % Nodes
         \node[block, fill=Naranja!10, draw=Naranja!80] (sensores) at (-4.0, 1.5) {Nodos de Control\\(ESP32)};
-        \node[block, fill=Azul!10, draw=Azul!80] (ha) at (4.0, 1.5) {Orquestador\\(Home Assistant)};
+        \node[block, fill=Azul!10, draw=Azul!80] (ha) at (4.0, 1.5) {Servidor central\\(Home Assistant)};
         \node[block, fill=Morado!10, draw=Morado!80] (db) at (4.0, -1.8) {Persistencia\\(Base de Datos)};
         \node[block, fill=Rojo!10, draw=Rojo!80] (rele) at (-4.0, -1.8) {Actuador\\(Módulo Relé)};
 
@@ -240,19 +240,19 @@ El flujo de información atraviesa dos pilas de protocolos distintas. Las placas
     \setlength{\tabcolsep}{4pt}
     \renewcommand{\arraystretch}{1.2}
     \begin{tabular}{|c|c|c|}
-        \hline
+        \hhline{|-|-|-|}
         \rowcolor[gray]{0.9} 
-        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{Capa OSI}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering\textbf{Red sensórica (WPAN)}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering\textbf{Red troncal (WLAN)}\vspace{0.2cm}} \\ \hline
-        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{7. Aplicación}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Perfiles GAP / GATT (tramas \textit{advertising})\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering API nativa ESPHome\vspace{0.2cm}} \\ \hline
-        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{6. Presentación}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Integrado en capa 7\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Protocol Buffers (binario)\vspace{0.2cm}} \\ \hline
-        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{5. Sesión}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Sin conexión (\textit{connectionless})\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Sockets TCP persistentes\vspace{0.2cm}} \\ \hline
-        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{4. Transporte}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering No aplica en topología pasiva\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering TCP (con control de flujo)\vspace{0.2cm}} \\ \hline
-        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{3. Red}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering No aplica en topología punto a punto\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering IPv4 (Enrutamiento local)\vspace{0.2cm}} \\ \hline
-        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{1 y 2. Física / Enlace}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Direccionamiento MAC BLE. Modulación GFSK (banda 2.4 GHz).\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Direccionamiento MAC Wi-Fi. IEEE 802.11ax (OFDMA).\vspace{0.2cm}} \\ \hline
+        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{Capa OSI}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering\textbf{Red sensórica (WPAN)}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering\textbf{Red troncal (WLAN)}\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{7. Aplicación}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Perfiles GAP / GATT (tramas \textit{advertising})\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering API nativa ESPHome\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{6. Presentación}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Integrado en capa 7\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Protocol Buffers (binario)\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{5. Sesión}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Sin conexión (\textit{connectionless})\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Sockets TCP persistentes\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{4. Transporte}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering No aplica en topología pasiva\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering TCP (con control de flujo)\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{3. Red}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering No aplica en topología punto a punto\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering IPv4 (Enrutamiento local)\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+        \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{1 y 2. Física / Enlace}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Direccionamiento MAC BLE. Modulación GFSK (banda 2.4 GHz).\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Direccionamiento MAC Wi-Fi. IEEE 802.11ax (OFDMA).\vspace{0.2cm}} \\ \hhline{|-|-|-|}
     \end{tabular}
     \caption{Pila de protocolos y mapeo del Modelo OSI en la arquitectura de red.}
     \label{tab:protocolos_osi}
 \end{table}
 
 \textbf{Mecanismo de consistencia y control de flujo:}
-Al operar sobre la API nativa de ESPHome, se prescinde de la capa de sobrecarga de QoS de MQTT. En su lugar, el protocolo de ESPHome emplea sockets TCP persistentes orientados a conexión que garantizan la entrega en orden de todas las tramas de datos. La API implementa un mecanismo de latido activo (\textit{keepalive}) para detectar desconexiones en un plazo inferior a 5 segundos, y un sistema de cola en memoria local para registrar eventos transitorios y retransmitirlos automáticamente al restablecer el enlace con el orquestador.
+Al operar sobre la API nativa de ESPHome, se prescinde de la capa de sobrecarga de QoS de MQTT. En su lugar, el protocolo de ESPHome emplea sockets TCP persistentes orientados a conexión que garantizan la entrega en orden de todas las tramas de datos. La API implementa un mecanismo de latido activo (\textit{keepalive}) para detectar desconexiones en un plazo inferior a 5 segundos, y un sistema de cola en memoria local para registrar eventos transitorios y retransmitirlos automáticamente al restablecer el enlace con el servidor central.

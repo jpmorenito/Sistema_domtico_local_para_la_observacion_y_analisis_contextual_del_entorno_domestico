@@ -2,14 +2,14 @@
 \section{Manual técnico y de código}
 \label{anexo:manual_tecnico_codigo}
 
-En este anexo se detalla el conjunto completo de códigos y configuraciones desarrollados para el despliegue del sistema domótico local. Se incluye la infraestructura de red virtualizada bajo Docker, el código declarativo de firmware para los tres nodos inalámbricos basados en ESPHome y las nueve automatizaciones que gobiernan la lógica de contexto y bienestar en el orquestador Home Assistant.
+En este anexo se detalla el conjunto completo de códigos y configuraciones desarrollados para el despliegue del sistema domótico local. Se incluye la infraestructura de red virtualizada bajo Docker, el código declarativo de firmware para los tres nodos inalámbricos basados en ESPHome y las nueve automatizaciones que gobiernan la lógica de contexto y bienestar en el servidor central Home Assistant.
 
 \subsection{Infraestructura y contenedores perimetrales (Docker)}
 El servidor central se implementa sobre una placa Raspberry Pi 4 ejecutando el sistema operativo Raspberry Pi OS. Para garantizar el aislamiento de dependencias, la portabilidad y la reproducibilidad técnica, los servicios de Home Assistant, ESPHome y Portainer se orquestan como contenedores independientes compartiendo el espacio de red física del host.
 
-A continuación, se presenta la especificación del archivo de orquestación \texttt{docker-compose.yml}:
+A continuación, se presenta la especificación del archivo de gestión centralizada \texttt{docker-compose.yml}:
 
-\begin{lstlisting}[language=YAML, caption={Archivo de orquestación de contenedores en la Raspberry Pi 4 (docker-compose.yml).}, label={lst:docker_compose}]
+\begin{lstlisting}[language=YAML, caption={Archivo de gestión centralizada de contenedores en la Raspberry Pi 4 (docker-compose.yml).}, label={lst:docker_compose}]
 version: '3.8'
 
 services:
@@ -228,7 +228,7 @@ binary_sensor:
       - delayed_off: 100ms
 \end{lstlisting}
 
-\subsection{Automatizaciones del orquestador perimetral (Home Assistant)}
+\subsection{Automatizaciones del servidor central perimetral (Home Assistant)}
 El archivo de configuración \texttt{automations.yaml} aloja el motor de reglas lógicas que rigen el comportamiento inteligente de la estancia. Se detallan a continuación las nueve automatizaciones operativas:
 
 \subsubsection{Termostato inteligente (Modo Estudio)}
