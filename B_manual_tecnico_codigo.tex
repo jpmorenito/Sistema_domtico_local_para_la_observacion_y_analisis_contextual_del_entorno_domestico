@@ -56,7 +56,7 @@ volumes:
 \subsection{Firmware de los nodos perimetrales (ESPHome)}
 Los nodos perimetrales inalámbricos se basan en el microcontrolador SoC ESP32. Su programación se realiza mediante archivos de configuración declarativos en formato YAML, que el compilador de ESPHome traduce automáticamente a código de producción C++ optimizado.
 
-\subsubsection{Nodo de Ambiente (esp32-nodo-ambiente.yaml)}
+\subsubsection{Nodo de ambiente (esp32-nodo-ambiente.yaml)}
 Este firmware gestiona la lectura unifilar del sensor de temperatura y humedad DHT11, la entrada analógica del fotorresistor LDR, el detector acústico digital filtrado contra rebotes electromecánicos y el relé de estado sólido que controla la iluminación principal de la estancia.
 
 \begin{lstlisting}[language=YAML, caption={Firmware completo del Nodo de Ambiente.}, label={lst:code_nodo_ambiente}]
@@ -118,7 +118,7 @@ binary_sensor:
       - delayed_off: 500ms
 \end{lstlisting}
 
-\subsubsection{Nodo de Escritorio (esp32-zona-escritorio.yaml)}
+\subsubsection{Nodo de escritorio (esp32-zona-escritorio.yaml)}
 Este firmware inicializa el bus de comunicación serie UART a 256.000 baudios para procesar la telemetría espacial del radar de microondas FMCW (HLK-LD2410). Expone tanto los estados binarios de detección como las métricas analógicas de distancia, además de incorporar el interruptor digital para el emisor láser secundario.
 
 \begin{lstlisting}[language=YAML, caption={Firmware completo del Nodo de Escritorio.}, label={lst:code_nodo_escritorio}]
@@ -189,7 +189,7 @@ switch:
     restore_mode: ALWAYS_OFF
 \end{lstlisting}
 
-\subsubsection{Nodo de Puerta (esp32-zona-puerta.yaml)}
+\subsubsection{Nodo de puerta (esp32-zona-puerta.yaml)}
 Este firmware controla la monitorización digital del sensor de contacto magnético (interruptor Reed) en la puerta de acceso, aplicando filtros antirebote de 100\,ms por software para registrar los eventos de apertura y cierre de forma inmediata.
 
 \begin{lstlisting}[language=YAML, caption={Firmware completo del Nodo de Puerta.}, label={lst:code_nodo_puerta}]
@@ -231,7 +231,7 @@ binary_sensor:
 \subsection{Automatizaciones del servidor central perimetral (Home Assistant)}
 El archivo de configuración \texttt{automations.yaml} aloja el motor de reglas lógicas que rigen el comportamiento inteligente de la estancia. Se detallan a continuación las nueve automatizaciones operativas:
 
-\subsubsection{Termostato inteligente (Modo Estudio)}
+\subsubsection{Termostato inteligente (modo estudio)}
 Activa de forma automatizada un actuador auxiliar de potencia (cuyo proxy Bluetooth comanda el encendido eléctrico de un radiador local) si el estado de contexto determinado para la estancia es de \texttt{Estudio} ininterrumpido durante 5 minutos y la lectura térmica desciende por debajo de 19,5\,\text{°C}.
 
 \begin{lstlisting}[language=YAML, caption={Código de control térmico reactivo al contexto de estudio.}, label={lst:auto_climatizacion}]
@@ -253,7 +253,7 @@ Activa de forma automatizada un actuador auxiliar de potencia (cuyo proxy Blueto
         entity_id: 'switch.bluetooth_proxy_ea49ac_actuador_dormitorio'
 \end{lstlisting}
 
-\subsubsection{Resumen diario de bienestar (Calidad de Vida)}
+\subsubsection{Resumen diario de bienestar (calidad de vida)}
 Regla de análisis local ejecutada diariamente a las 22:00:00. Evalúa los históricos de tiempo activo en el escritorio y las horas de descanso nocturno y genera un reporte analítico adaptativo mediante plantillas Jinja2, el cual es transmitido por vía de notificación push al usuario sin contactar con servidores externos.
 
 \begin{lstlisting}[language=YAML, caption={Código del analista de bienestar diario local.}, label={lst:auto_bienestar_resumen}]
@@ -277,7 +277,7 @@ Regla de análisis local ejecutada diariamente a las 22:00:00. Evalúa los hist�
   mode: 'single'
 \end{lstlisting}
 
-\subsubsection{Detección espacial de la zona de estudio (Radar)}
+\subsubsection{Detección espacial de la zona de estudio (radar)}
 Esta regla infiere el paso de la estancia a modo de \texttt{Estudio} basándose en la distancia reportada por la telemetría del radar LD2410 del Nodo de Escritorio. Si el radar reporta la presencia estática de un cuerpo en un radio inferior a 1,2 metros durante más de 2 minutos, se conmuta el estado lógico general de la estancia a \texttt{Estudio}. Por contra, si no se registra presencia en ese radio durante el mismo lapso, el sistema devuelve el contexto a \texttt{Ocio}.
 
 \begin{lstlisting}[language=YAML, caption={Fusión de distancia de radar para la detección de la zona de estudio.}, label={lst:auto_detect_estudio}]
@@ -326,7 +326,7 @@ Esta regla infiere el paso de la estancia a modo de \texttt{Estudio} basándose 
   mode: 'single'
 \end{lstlisting}
 
-\subsubsection{Fusión sensorial para la detección del sueño (Radar y LDR)}
+\subsubsection{Fusión sensorial para la detección del sueño (radar y LDR)}
 Infiere dinámicamente si el usuario se encuentra durmiendo o si se ha despertado. Transiciona al estado \texttt{Durmiendo} si el sensor LDR del Nodo Ambiente registra un valor de luminosidad inferior a 0,5\,V de forma ininterrumpida durante 10 minutos. Para transicionar de vuelta al modo de vigilia (\texttt{Ocio}), el motor lógico requiere que el radar del Nodo Escritorio registre movimiento continuo durante al menos 2 minutos, o bien que la luminosidad analógica en la estancia supere el umbral de 1\,V durante el mismo intervalo.
 
 \begin{lstlisting}[language=YAML, caption={Regla lógica de transiciones de sueño mediante fusión de luminosidad y radar.}, label={lst:auto_detect_sueno}]
@@ -512,7 +512,7 @@ Control inteligente del relé de alimentación de la luz de estudio basándose e
   mode: 'restart'
 \end{lstlisting}
 
-\subsubsection{Avisos de descanso activo (Método Pomodoro Espacial)}
+\subsubsection{Avisos de descanso activo (método Pomodoro espacial)}
 Promueve hábitos saludables y mitiga la fatiga cognitiva y el sedentarismo. Si el estado contextual permanece de forma continuada en \texttt{Estudio} durante 50 minutos, se envía una notificación push de bienestar y se realiza una llamada interactiva al relé del Nodo Ambiente para hacer parpadear la lámpara principal de la habitación tres veces en intervalos de un segundo, indicando al usuario que debe iniciar un descanso dinámico de 5 minutos.
 
 \begin{lstlisting}[language=YAML, caption={Regla de control temporal Pomodoro con alertas físicas y móviles.}, label={lst:auto_pomodoro}]
