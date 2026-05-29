@@ -270,24 +270,22 @@ El sistema opera en segundo plano tomando decisiones que ayudan en la rutina sin
     \item \textbf{Ahorro Energético Ausente}: El sistema apagará automáticamente el relé de las luces tras 20 minutos de inactividad global absoluta en la habitación.
 \end{itemize}
 
-\subsection{Guía de resolución de incidencias}
-A continuación, se ofrecen las soluciones a los problemas más frecuentes:
+\subsection{Preguntas frecuentes}
+A continuación, se resuelven las dudas y problemas técnicos más comunes que pueden surgir durante el uso diario del sistema.
 
-\begin{itemize}
-    \item \textbf{P: Las placas ESP32 no conectan a la red Wi-Fi.}
-    \begin{itemize}
-        \item \textbf{R:} Comprueba que tu router transmita en la banda de $2.4\,\text{GHz}$. Los chips ESP32 no son compatibles con la frecuencia de $5\,\text{GHz}$.
-    \end{itemize}
-    \item \textbf{P: La luz automática no enciende al sentarme en la mesa.}
-    \begin{itemize}
-        \item \textbf{R:} Verifica el nivel que marca el sensor LDR en Home Assistant. Si el nivel de luz natural en la habitación es alto, la automatización ignorará el encendido de la lámpara.
-    \end{itemize}
-    \item \textbf{P: No se actualizan los datos de los sensores en el móvil cuando salgo de casa.}
-    \begin{itemize}
-        \item \textbf{R:} Asegúrate de tener habilitada y encendida la conexión VPN en la aplicación móvil de Tailscale y de contar con cobertura de datos 4G/5G.
-    \end{itemize}
-    \item \textbf{P: Un nodo aparece como No disponible en el panel.}
-    \begin{itemize}
-        \item \textbf{R:} Desconecta y vuelve a conectar físicamente la alimentación (5V) del nodo. Si el problema persiste, verifica desde el panel de ESPHome en el servidor si coinciden las contraseñas de encriptación de la API.
-    \end{itemize}
-\end{itemize}
+\begin{enumerate}
+    \item \textbf{¿Qué hago si las placas ESP32 no se conectan a la red Wi-Fi?} \\
+    Comprueba que tu router transmita en la banda de $2.4\,\text{GHz}$. Los chips ESP32 no son compatibles con la frecuencia de $5\,\text{GHz}$ utilizada por muchos enrutadores modernos.
+
+    \item \textbf{¿Por qué la luz automática no se enciende al sentarme en el escritorio?} \\
+    Verifica el nivel que marca el sensor de luz (LDR) en la interfaz de Home Assistant. Si el nivel de luz natural en la habitación es suficientemente alto, la automatización ignorará el encendido de la lámpara de forma deliberada para ahorrar energía.
+
+    \item \textbf{¿Por qué no se actualizan los datos en mi teléfono móvil cuando salgo de casa?} \\
+    Asegúrate de tener habilitada y encendida la conexión VPN en la aplicación móvil de Tailscale, y de contar con cobertura de datos 4G/5G estable en tu dispositivo.
+    
+    \item \textbf{¿Qué hago si un nodo aparece como "No disponible" en el panel de control?} \\
+    Desconecta y vuelve a conectar físicamente la alimentación ($5\,\text{V}$) del nodo afectado. Si el problema persiste, verifica desde el panel de configuración de ESPHome en el servidor central si la clave de encriptación de la API sigue coincidiendo.
+    
+    \item \textbf{¿El sistema sigue funcionando si se corta la conexión a internet de la vivienda?} \\
+    Sí. Al tratarse de una arquitectura cien por cien local, la detección de presencia, las lecturas de los sensores y las automatizaciones seguirán ejecutándose de forma ininterrumpida al estar controladas por la Raspberry Pi. Sin embargo, perderás temporalmente la capacidad de acceder al panel de forma remota mediante Tailscale.
+\end{enumerate}
