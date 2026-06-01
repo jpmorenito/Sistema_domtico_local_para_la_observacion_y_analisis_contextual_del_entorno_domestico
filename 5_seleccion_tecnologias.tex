@@ -88,6 +88,8 @@ Tal y como se detalla en la comparativa técnica de la Tabla~\ref{tab:pir_vs_mmw
     \label{fig:hw_esp32}
 \end{figure}
 
+\newpage
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.35\textwidth]{Img/sensor_hlk_ld2410c.png}
@@ -101,6 +103,8 @@ Tal y como se detalla en la comparativa técnica de la Tabla~\ref{tab:pir_vs_mmw
     \caption{Sensor digital de temperatura y humedad DHT11.}
     \label{fig:hw_dht}
 \end{figure}
+
+\newpage
 
 \begin{figure}[H]
     \centering
@@ -116,6 +120,8 @@ Tal y como se detalla en la comparativa técnica de la Tabla~\ref{tab:pir_vs_mmw
     \label{fig:hw_sonido}
 \end{figure}
 
+\newpage
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.35\textwidth]{Img/sensor_reed_modulo.png}
@@ -130,6 +136,8 @@ Tal y como se detalla en la comparativa técnica de la Tabla~\ref{tab:pir_vs_mmw
     \label{fig:hw_rele}
 \end{figure}
 
+\newpage
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.35\textwidth]{Img/laser_ky008.png}
@@ -143,6 +151,8 @@ Tal y como se detalla en la comparativa técnica de la Tabla~\ref{tab:pir_vs_mmw
     \caption{Cables Dupont puente de conexión (macho-macho, macho-hembra y hembra-hembra).}
     \label{fig:hw_dupont}
 \end{figure}
+
+\newpage
 
 \begin{figure}[H]
     \centering
@@ -282,3 +292,29 @@ Para el intercambio de telemetría y eventos de control entre los nodos instrume
 La cohesión de la arquitectura se logra mediante la estandarización de las interfaces de intercambio de datos. Los nodos ESP32 digitalizan los transductores analógicos e interactúan de forma nativa con los sensores digitales empleando buses serie locales (UART, unifilar). Posteriormente, ESPHome traduce esta telemetría física en variables de estado que son expuestas y actualizadas síncronamente hacia el servidor a través del socket binario de la API.
 
 Esta comunicación directa prescinde de brokers de mensajería intermedios (como Eclipse Mosquitto), reduciendo sustancialmente la sobrecarga computacional de la Raspberry Pi 4 de 1 GB. Home Assistant absorbe de forma concurrente los eventos de la API y los mapea inmediatamente a su bus lógico interno de entidades. Esta cadena de integración elimina la necesidad de configurar manualmente tópicos o parsear tramas de datos complejas en el servidor central, permitiendo que el motor de inferencia evalúe de manera uniforme variables físicas tan diversas como la distancia del radar, la caída de tensión del LDR o el estado del interruptor magnético de la puerta, consolidando una infraestructura de computación sensible al contexto sólida, segura y completamente independiente de conectividad externa.
+
+El resultado final del montaje y el encapsulado físico de los tres nodos prototipados en sus respectivas ubicaciones de la estancia se ilustra en las \mbox{Figuras~\ref{fig:foto_nodo1}, \ref{fig:foto_nodo2}~y~\ref{fig:foto_nodo3}}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{Img/nodo_ambiente.jpg}
+    \caption{Prototipo físico y ensamblado final del Nodo 1 (Nodo Ambiente).}
+    \label{fig:foto_nodo1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{Img/nodo_escritorio.jpg}
+    \caption{Prototipo físico y ensamblado final del Nodo 2 (Nodo Escritorio).}
+    \label{fig:foto_nodo2}
+\end{figure}
+
+\newpage
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{Img/nodo_puerta.jpg}
+    \caption{Prototipo físico e instalación definitiva en el marco del Nodo 3 (Nodo Puerta).}
+    \label{fig:foto_nodo3}
+\end{figure}
+
