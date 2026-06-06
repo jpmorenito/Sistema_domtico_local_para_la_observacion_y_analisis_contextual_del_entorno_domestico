@@ -221,6 +221,7 @@ binary_sensor:
       mode:
         input: true
         pullup: true
+      inverted: true
     name: 'Sensor Puerta'
     device_class: door
     filters:
@@ -575,3 +576,28 @@ Regla de eficiencia ecológica y seguridad. Si el sensor de ocupación general d
       action: 'input_select.select_option'
   mode: 'single'
 \end{lstlisting}
+
+\subsubsection{Retorno a la habitación desde ausencia}
+Esta regla permite la salida reactiva del modo \texttt{Ausente}. Cuando el sensor de ocupación del radar del Nodo Escritorio conmuta a encendido (\texttt{on}) y el selector de estado de la estancia se encuentra bloqueado en \texttt{Ausente}, el motor lógico asume la reincorporación física del usuario a la habitación, desbloqueando el sistema al transicionar el contexto al estado general de \texttt{Ocio}. Esto permite que el resto de automatizaciones de inferencia adaptativa (como el sensor Bayesiano y la detección de estudio) vuelvan a operar normalmente.
+
+\begin{lstlisting}[language=YAML, caption={Automatización para restablecer el estado tras la reincorporación al entorno.}, label={lst:auto_retorno}]
+- id: '1779447855315'
+  alias: 'Contexto: Vuelta a la Habitacion'
+  description: 'Pasa la habitacion a Ocio al detectar presencia si estaba en Ausente.'
+  trigger:
+    - entity_id: 'binary_sensor.esp32_zona_escritorio_ocupacion_general'
+      to: 'on'
+      trigger: 'state'
+  conditions:
+    - condition: 'state'
+      entity_id: 'input_select.estado_habitacion'
+      state: 'Ausente'
+  actions:
+    - target:
+        entity_id: 'input_select.estado_habitacion'
+      data:
+        option: 'Ocio'
+      action: 'input_select.select_option'
+  mode: 'single'
+\end{lstlisting}
+

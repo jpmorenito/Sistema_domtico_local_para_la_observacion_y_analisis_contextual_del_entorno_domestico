@@ -92,17 +92,26 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
 
 \begin{figure}[H]
     \centering
-    % Para incluir la captura real: descomenta la siguiente línea y comenta el bloque fbox inferior.
-    % \includegraphics[width=0.90\textwidth]{Img/traza_auto_01.png}
-    \setlength{\fboxsep}{10pt}
-    \setlength{\fboxrule}{1pt}
-    \fbox{%
-        \begin{minipage}{0.90\textwidth}
-            \centering\vspace{0.3cm}
-            \sffamily\color{gray}
-            \textbf{[Captura de Pantalla: Traza de Automatización PR-AUTO-01]}\\[0.2cm]
-        \end{minipage}%
-    }
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Img/Pruebas/iluminacion_activa_1.png}
+        \caption{Disparo inicial.}
+        \label{fig:iluminacion_activa_1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Img/Pruebas/iluminacion_activa_2.png}
+        \caption{Evaluación de condiciones.}
+        \label{fig:iluminacion_activa_2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Img/Pruebas/iluminacion_activa_3.png}
+        \caption{Encendido del relé.}
+        \label{fig:iluminacion_activa_3}
+    \end{subfigure}
     \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-01 (iluminación automática por presencia y luminosidad).}
     \label{fig:traza_auto_01}
 \end{figure}
@@ -119,17 +128,26 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
 
 \begin{figure}[H]
     \centering
-    % Para incluir la captura real: descomenta la siguiente línea y comenta el bloque fbox inferior.
-    % \includegraphics[width=0.90\textwidth]{Img/traza_auto_02.png}
-    \setlength{\fboxsep}{10pt}
-    \setlength{\fboxrule}{1pt}
-    \fbox{%
-        \begin{minipage}{0.90\textwidth}
-            \centering\vspace{0.3cm}
-            \sffamily\color{gray}
-            \textbf{[Captura de Pantalla: Traza de Automatización PR-AUTO-02]}\\[0.2cm]
-        \end{minipage}%
-    }
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Img/Pruebas/alarma_seguridad_1.png}
+        \caption{Detección del intruso.}
+        \label{fig:alarma_seguridad_1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Img/Pruebas/alarma_seguridad_2.png}
+        \caption{Evaluación del armado.}
+        \label{fig:alarma_seguridad_2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Img/Pruebas/alarma_seguridad_3.png}
+        \caption{Disparo de alarma.}
+        \label{fig:alarma_seguridad_3}
+    \end{subfigure}
     \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-02 (barrera óptica y control de accesos).}
     \label{fig:traza_auto_02}
 \end{figure}
@@ -146,17 +164,33 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
 
 \begin{figure}[H]
     \centering
-    % Para incluir la captura real: descomenta la siguiente línea y comenta el bloque fbox inferior.
-    % \includegraphics[width=0.90\textwidth]{Img/traza_auto_03.png}
-    \setlength{\fboxsep}{10pt}
-    \setlength{\fboxrule}{1pt}
-    \fbox{%
-        \begin{minipage}{0.90\textwidth}
-            \centering\vspace{0.3cm}
-            \sffamily\color{gray}
-            \textbf{[Captura de Pantalla: Traza de Automatización PR-AUTO-03]}\\[0.2cm]
-        \end{minipage}%
-    }
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Img/Pruebas/pomodoro_1.png}
+        \caption{Inicio del temporizador.}
+        \label{fig:pomodoro_1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Img/Pruebas/pomodoro_2a.png}
+        \caption{Evaluación de estado.}
+        \label{fig:pomodoro_2a}
+    \end{subfigure}
+    \\ \vspace{0.3cm}
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Img/Pruebas/pomodoro_2b.png}
+        \caption{Acción de aviso.}
+        \label{fig:pomodoro_2b}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Img/Pruebas/pomodoro_3.png}
+        \caption{Ejecución de parpadeo.}
+        \label{fig:pomodoro_3}
+    \end{subfigure}
     \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-03 (temporizador y alerta ergonómica Pomodoro).}
     \label{fig:traza_auto_03}
 \end{figure}
@@ -173,17 +207,26 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
 
 \begin{figure}[H]
     \centering
-    % Para incluir la captura real: descomenta la siguiente línea y comenta el bloque fbox inferior.
-    % \includegraphics[width=0.90\textwidth]{Img/traza_auto_04.png}
-    \setlength{\fboxsep}{10pt}
-    \setlength{\fboxrule}{1pt}
-    \fbox{%
-        \begin{minipage}{0.90\textwidth}
-            \centering\vspace{0.3cm}
-            \sffamily\color{gray}
-            \textbf{[Captura de Pantalla: Traza de Automatización PR-AUTO-04]}\\[0.2cm]
-        \end{minipage}%
-    }
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Img/Pruebas/ausencia_automatica_1.png}
+        \caption{Inactividad en radar.}
+        \label{fig:ausencia_automatica_1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Img/Pruebas/ausencia_automatica_2.png}
+        \caption{Verificación de estado.}
+        \label{fig:ausencia_automatica_2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Img/Pruebas/ausencia_automatica_3.png}
+        \caption{Paso a modo Ausente.}
+        \label{fig:ausencia_automatica_3}
+    \end{subfigure}
     \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-04 (transición automática a modo ausente/apagado general).}
     \label{fig:traza_auto_04}
 \end{figure}
