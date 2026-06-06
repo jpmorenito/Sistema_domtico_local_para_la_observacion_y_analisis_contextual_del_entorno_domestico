@@ -278,21 +278,21 @@ Regla de análisis local ejecutada diariamente a las 22:00:00. Evalúa los hist�
 \end{lstlisting}
 
 \subsubsection{Detección espacial de la zona de estudio (radar)}
-Esta regla infiere el paso de la estancia a modo de \texttt{Estudio} basándose en la distancia reportada por la telemetría del radar LD2410 del Nodo de Escritorio. Si el radar reporta la presencia estática de un cuerpo en un radio inferior a 1,2 metros durante más de 2 minutos, se conmuta el estado lógico general de la estancia a \texttt{Estudio}. Por contra, si no se registra presencia en ese radio durante el mismo lapso, el sistema devuelve el contexto a \texttt{Ocio}.
+Esta regla infiere el paso de la estancia a modo de \texttt{Estudio} basándose en la distancia reportada por la telemetría del radar LD2410 del Nodo de Escritorio. Si el radar reporta la presencia estática de un cuerpo en un radio inferior a 1,5 metros durante más de 2 minutos, se conmuta el estado lógico general de la estancia a \texttt{Estudio}. Por contra, si se registra una distancia superior a 0,5 metros durante el mismo lapso, el sistema devuelve el contexto a \texttt{Ocio}.
 
 \begin{lstlisting}[language=YAML, caption={Fusión de distancia de radar para la detección de la zona de estudio.}, label={lst:auto_detect_estudio}]
-- id: '1779303721704'
+- id: '1780310641735'
   alias: 'Contexto: Deteccion de Estudio (Radar Espacial)'
   description: 'Infiere si estas estudiando basandose en tu distancia al radar LD2410.'
   triggers:
     - entity_id: 'sensor.esp32_zona_escritorio_distancia_del_estatico'
-      below: 120
+      below: 150
       for:
         minutes: 2
       id: 'en_escritorio'
       trigger: 'numeric_state'
     - entity_id: 'sensor.esp32_zona_escritorio_distancia_del_estatico'
-      above: 120
+      above: 50
       for:
         minutes: 2
       id: 'fuera_de_escritorio'
@@ -352,6 +352,11 @@ Infiere dinámicamente si el usuario se encuentra durmiendo o si se ha despertad
         minutes: 2
       id: 'se_despierta_luz'
       trigger: 'numeric_state'
+    - trigger: 'numeric_state'
+      entity_id:
+        - 'binary_sensor.esp32_zona_escritorio_detectado_estatico'
+      below: 290
+      above: 200
   conditions: []
   actions:
     - choose:
