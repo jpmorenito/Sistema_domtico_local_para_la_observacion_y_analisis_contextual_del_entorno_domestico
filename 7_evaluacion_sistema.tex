@@ -86,27 +86,26 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
     \item \textbf{Objetivo:} validar que al detectarse presencia en el escritorio bajo condiciones de baja iluminación se enciende la luz de apoyo de forma automática.
     \item \textbf{Estímulo de entrada:} cambio a \texttt{on} en el radar del escritorio (\texttt{binary\_}\allowbreak\texttt{sensor.}\allowbreak\texttt{radar\_}\allowbreak\texttt{presence}) con una lectura del LDR por debajo de 200\,lx (\texttt{sensor.}\allowbreak\texttt{ldr\_}\allowbreak\texttt{iluminancia}).
     \item \textbf{Flujo esperado en la traza:} el servidor intercepta el disparo, valida la oscuridad y activa el relé de iluminación (\texttt{switch.}\allowbreak\texttt{ssr\_}\allowbreak\texttt{rele\_}\allowbreak\texttt{iluminacion} a \texttt{on}).
-    \item \textbf{Demostración en vídeo:} se ha registrado la secuencia física en el archivo \texttt{videos/demo\_PR\_AUTO\_01.mp4}.
     \item \textbf{Resultado y traza de ejecución:} exitoso. La traza de Home Assistant confirma un tiempo de conmutación de 115\,ms (ver Figura~\ref{fig:traza_auto_01}).
 \end{itemize}
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.95\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Img/Pruebas/iluminacion_activa_1.png}
         \caption{Disparo inicial.}
         \label{fig:iluminacion_activa_1}
     \end{subfigure}
     \\ \vspace{0.4cm}
-    \begin{subfigure}[b]{0.95\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Img/Pruebas/iluminacion_activa_2.png}
         \caption{Evaluación de condiciones.}
         \label{fig:iluminacion_activa_2}
     \end{subfigure}
     \\ \vspace{0.4cm}
-    \begin{subfigure}[b]{0.95\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Img/Pruebas/iluminacion_activa_3.png}
         \caption{Encendido del relé.}
@@ -122,27 +121,26 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
     \item \textbf{Objetivo:} validar la detección de paso y activación de contramedidas disuasorias cuando se interrumpe la barrera del diodo láser de la puerta.
     \item \textbf{Estímulo de entrada:} cambio en el estado del sensor del receptor magnético de la puerta (\texttt{binary\_sensor.}\allowbreak\texttt{puerta\_reed} a \texttt{on}) o cambio del receptor de la barrera óptica láser a estado sin luz (\texttt{binary\_sensor.}\allowbreak\texttt{laser\_receptor} a \texttt{on}).
     \item \textbf{Flujo esperado en la traza:} el servidor central evalúa la desconexión física. Si el sistema de alerta perimetral está armado, se dispara la alarma visual en la interfaz del usuario, se incrementa el contador de accesos en la base de datos y se activa la conmutación de seguridad en los diodos de disuasión.
-    \item \textbf{Demostración en vídeo:} se ha registrado la secuencia física en el archivo \texttt{videos/demo\_PR\_AUTO\_02.mp4}.
     \item \textbf{Resultado y traza de ejecución:} exitoso. El motor de trazas registra la correcta evaluación paralela de las condiciones de armado e incrementa el contador en SQLite (ver Figura~\ref{fig:traza_auto_02}).
 \end{itemize}
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.95\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Img/Pruebas/alarma_seguridad_1.png}
         \caption{Detección del intruso.}
         \label{fig:alarma_seguridad_1}
     \end{subfigure}
     \\ \vspace{0.4cm}
-    \begin{subfigure}[b]{0.95\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Img/Pruebas/alarma_seguridad_2.png}
         \caption{Evaluación del armado.}
         \label{fig:alarma_seguridad_2}
     \end{subfigure}
     \\ \vspace{0.4cm}
-    \begin{subfigure}[b]{0.95\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Img/Pruebas/alarma_seguridad_3.png}
         \caption{Disparo de alarma.}
@@ -158,34 +156,33 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
     \item \textbf{Objetivo:} validar que el sistema monitoriza el tiempo de permanencia estática del usuario en la silla de trabajo y genera las alertas ergonómicas establecidas.
     \item \textbf{Estímulo de entrada:} permanencia ininterrumpida de la entidad de presencia del radar (\texttt{binary\_sensor.}\allowbreak\texttt{radar\_presence} en estado \texttt{on}) durante un periodo acumulativo continuo superior a $25\,\text{minutos}$.
     \item \textbf{Flujo esperado en la traza:} tras expirar el temporizador de control, el motor lógico del servidor central realiza la transición interna al estado \texttt{Alerta Ergonómica}, enviando una notificación interactiva \textit{push} al dispositivo móvil del usuario y modificando el color del LED indicador del Nodo Escritorio.
-    \item \textbf{Demostración en vídeo:} se ha registrado la secuencia física en el archivo \texttt{videos/demo\_PR\_AUTO\_03.mp4}.
     \item \textbf{Resultado y traza de ejecución:} exitoso. El motor de trazas confirma el envío inmediato del paquete TCP de notificación al cumplirse el retardo (ver Figura~\ref{fig:traza_auto_03}).
 \end{itemize}
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.95\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Img/Pruebas/pomodoro_1.png}
         \caption{Inicio del temporizador.}
         \label{fig:pomodoro_1}
     \end{subfigure}
     \\ \vspace{0.4cm}
-    \begin{subfigure}[b]{0.95\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Img/Pruebas/pomodoro_2a.png}
         \caption{Evaluación de estado.}
         \label{fig:pomodoro_2a}
     \end{subfigure}
     \\ \vspace{0.4cm}
-    \begin{subfigure}[b]{0.95\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Img/Pruebas/pomodoro_2b.png}
         \caption{Acción de aviso.}
         \label{fig:pomodoro_2b}
     \end{subfigure}
     \\ \vspace{0.4cm}
-    \begin{subfigure}[b]{0.95\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Img/Pruebas/pomodoro_3.png}
         \caption{Ejecución de parpadeo.}
@@ -201,27 +198,26 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
     \item \textbf{Objetivo:} validar el paso automático del sistema al estado de ahorro de energía y ausencia cuando el usuario abandona la estancia o inicia el reposo nocturno.
     \item \textbf{Estímulo de entrada:} ausencia absoluta de movimiento por el radar mmWave (\texttt{binary\_sensor.}\allowbreak\texttt{radar\_presence} en estado \texttt{off}) durante un retardo de cortesía de $10\,\text{minutos}$, o conmutación manual del conmutador de cabecera a modo \texttt{Noche}.
     \item \textbf{Flujo esperado en la traza:} el servidor central evalúa la persistencia del estado de reposo, ejecuta la transición de la máquina de estados a \texttt{Ausente} o \texttt{Durmiendo} y desencadena un comando de apagado masivo de todos los relés y actuadores del sistema (\texttt{switch.}\allowbreak\texttt{ssr\_rele\_iluminacion} a \texttt{off}, etc.).
-    \item \textbf{Demostración en vídeo:} se ha registrado la secuencia física en el archivo \texttt{videos/demo\_PR\_AUTO\_04.mp4}.
     \item \textbf{Resultado y traza de ejecución:} exitoso. El motor de trazas confirma el apagado coordinado y secuencial (ver Figura~\ref{fig:traza_auto_04}).
 \end{itemize}
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.95\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Img/Pruebas/ausencia_automatica_1.png}
         \caption{Inactividad en radar.}
         \label{fig:ausencia_automatica_1}
     \end{subfigure}
     \\ \vspace{0.4cm}
-    \begin{subfigure}[b]{0.95\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Img/Pruebas/ausencia_automatica_2.png}
         \caption{Verificación de estado.}
         \label{fig:ausencia_automatica_2}
     \end{subfigure}
     \\ \vspace{0.4cm}
-    \begin{subfigure}[b]{0.95\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Img/Pruebas/ausencia_automatica_3.png}
         \caption{Paso a modo Ausente.}
