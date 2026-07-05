@@ -1,0 +1,36 @@
+@startuml
+skinparam shadowing false
+skinparam ActivityBackgroundColor #F8F9FA
+skinparam ActivityBorderColor #343A40
+skinparam ActivityHeaderBackgroundColor #E9ECEF
+
+start
+:Arranque del Nodo (ESP32);
+:Inicializar periféricos (GPIO, ADC, UART, DHT);
+:Conectar a la red inalámbrica Wi-Fi local;
+if (¿Conectado exitosamente?) then (Sí)
+  :Establecer socket TCP con Servidor Central (puerto 6053);
+  :Habilitar cifrado local Noise y mDNS;
+  label sensor_loop
+  repeat
+    :Muestrear transductores (LDR, DHT11, Radar, Reed);
+    if (¿Cambio de estado o intervalo expirado?) then (Sí)
+      :Serializar telemetría usando Protocol Buffers;
+      :Transmitir paquete binario por socket TCP;
+    else (No)
+    endif
+    if (¿Llega comando desde Servidor?) then (Sí)
+      :Conmutar pin GPIO del actuador (Relé/Láser);
+      :Confirmar ejecución de acción al Servidor;
+    else (No)
+    endif
+    :Esperar ciclo de muestreo (Sleep temporal);
+  backward:Bucle continuo;
+  repeat while (¿Conexión activa?)
+  :Activar reconexión automática;
+  goto sensor_loop
+else (No)
+  :Reintentar conexión Wi-Fi;
+  goto sensor_loop
+endif
+@endum

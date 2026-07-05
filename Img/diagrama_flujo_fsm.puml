@@ -1,0 +1,54 @@
+@startuml
+skinparam shadowing false
+skinparam ActivityBackgroundColor #F8F9FA
+skinparam ActivityBorderColor #343A40
+skinparam ActivityHeaderBackgroundColor #E9ECEF
+
+start
+:Servidor central recibe telemetría de nodo;
+:Identificar variable (LDR, Ocupación, Distancia, Reed);
+if (¿Estado actual == Ausente?) then (Sí)
+  if (¿Ocupación detectada por Radar?) then (Sí)
+    :Transicionar a estado Ocio;
+    :Registrar marca de tiempo en DB;
+  else (No)
+    :Mantener estado Ausente;
+  endif
+elseif (¿Estado actual == Ocio?) then (Sí)
+  if (¿Ausencia por Radar > 20 minutos?) then (Sí)
+    :Transicionar a estado Ausente;
+    :Ejecutar apagado ecológico de periféricos;
+  elseif (¿Usuario en Escritorio (Distancia < 1.2m) durante > 2 min?) then (Sí)
+    :Transicionar a estado Estudio;
+    :Activar temporizador Pomodoro;
+  else (No)
+    :Mantener estado Ocio;
+  endif
+elseif (¿Estado actual == Estudio?) then (Sí)
+  if (¿Usuario fuera de Escritorio durante > 2 min?) then (Sí)
+    :Transicionar a estado Ocio;
+    :Detener temporizador Pomodoro;
+  elseif (¿Luz LDR < 0.5V durante > 10 min?) then (Sí)
+    :Transicionar a estado Durmiendo;
+  else (No)
+    :Monitorear ergonomía y temporizador Pomodoro;
+    if (¿Pomodoro >= 50 min?) then (Sí)
+      :Hacer parpadear relé de luz (3 veces);
+      :Enviar notificación push de descanso activo;
+      :Reiniciar temporizador;
+    else (No)
+    endif
+    :Mantener estado Estudio;
+  endif
+elseif (¿Estado actual == Durmiendo?) then (Sí)
+  if (¿Movimiento por Radar > 2 min OR Luz LDR > 1.0V > 2 min?) then (Sí)
+    :Transicionar a estado Ocio;
+  elseif (¿Ausencia por Radar > 20 minutos?) then (Sí)
+    :Transicionar a estado Ausente (Redundancia de seguridad);
+  else (No)
+    :Mantener estado Durmiendo;
+  endif
+endif
+:Persistir tupla (Estado, Valor, Timestamp) en la base de datos local;
+stop
+@endum

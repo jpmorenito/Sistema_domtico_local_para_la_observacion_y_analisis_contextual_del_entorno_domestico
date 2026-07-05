@@ -1,0 +1,336 @@
+- id: climatizacion_estudio_001
+  alias: 'Termostato Inteligente: Modo Estudio'
+  trigger:
+  - platform: state
+    entity_id: sensor.contexto_de_la_habitacion
+    to: Actividad / Estudiando
+    for:
+      minutes: 5
+  condition:
+  - condition: numeric_state
+    entity_id: sensor.esp32_nodo_ambiente_temperatura_habitacion
+    below: 19.5
+  action:
+  - service: switch.turn_on
+    target:
+      entity_id: switch.bluetooth_proxy_ea49ac_actuador_dormitorio
+- id: informe_diario_qol
+  alias: 'Analista Local: Resumen Diario de Bienestar'
+  description: Genera un reporte diario analizando las horas de estudio y sueño del
+    nuevo motor de contexto.
+  triggers:
+  - at: '22:00:00'
+    trigger: time
+  actions:
+  - data:
+      title: Informe de Inteligencia Ambiental
+      message: "Resumen de tu jornada: - Tiempo efectivo de estudio: {{ states('sensor.tiempo_de_estudio') | float(0) | round(2)
+        }} horas. - Tiempo de descanso (anoche): {{ states('sensor.tiempo_de_sueno') | float(0) | round(2)
+        }} horas.\n{% if states('sensor.tiempo_de_estudio') | float(0) | round(2) | float > 4.0 %}\n  Gran
+        rendimiento hoy. El sistema ha mantenido un confort térmico constante.\n{%
+        else %}\n  Jornada ligera. Sistemas en modo ahorro energético.\n{% endif %}\n"
+    action: notify.notify
+  mode: single
+- id: '1779306431260'
+  alias: 'Contexto: Detección de Sueño (Fusión Radar + LDR)'
+  description: Infiere si estás durmiendo o si te has despertado cruzando la luz y
+    el movimiento.
+  triggers:
+  - entity_id: sensor.esp32_nodo_ambiente_nivel_de_luz
+    below: 0.5
+    for:
+      minutes: 10
+    id: se_duerme
+    trigger: numeric_state
+  - entity_id: binary_sensor.esp32_zona_escritorio_detectado_movimiento
+    to: 'on'
+    for:
+      minutes: 2
+    id: se_despierta_movimiento
+    trigger: state
+  - entity_id: sensor.esp32_nodo_ambiente_nivel_de_luz
+    above: 1
+    for:
+      minutes: 2
+    id: se_despierta_luz
+    trigger: numeric_state
+  - trigger: numeric_state
+    entity_id:
+    - binary_sensor.esp32_zona_escritorio_detectado_estatico
+    below: 290
+    above: 200
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: se_duerme
+      - condition: state
+        entity_id: input_select.estado_habitacion
+        state: Ocio
+      sequence:
+      - target:
+          entity_id: input_select.estado_habitacion
+        data:
+          option: Durmiendo
+        action: input_select.select_option
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: trigger
+          id: se_despierta_movimiento
+        - condition: trigger
+          id: se_despierta_luz
+      - condition: state
+        entity_id: input_select.estado_habitacion
+        state: Durmiendo
+      sequence:
+      - target:
+          entity_id: input_select.estado_habitacion
+        data:
+          option: Ocio
+        action: input_select.select_option
+  mode: single
+- id: '1779308813969'
+  alias: 'Seguridad: Alarma por Radar (Modo Manual)'
+  description: Dispara la alarma si el radar detecta presencia mientras el láser está
+    encendido.
+  triggers:
+  - entity_id: binary_sensor.esp32_zona_escritorio_ocupacion_general
+    to: 'on'
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: switch.esp32_zona_escritorio_laser_escritorio
+    state: 'on'
+  actions:
+  - data:
+      title: "\U0001F6A8 ALERTA DE INTRUSIÓN"
+      message: Se ha detectado movimiento en tu habitación mientras la alarma estaba
+        armada.
+    action: notify.notify
+  - target:
+      entity_id: switch.esp32_nodo_ambiente_rele_principal
+    action: switch.turn_on
+  mode: single
+- id: '1779386894074'
+  alias: 'Bienestar: Alerta Anti-Procrastinación de Sueño'
+  description: Enciende la luz a la hora de dormir y obliga a apagarla desde la app,
+    repitiendo el proceso durante una hora.
+  triggers:
+  - at: '23:00:00'
+    trigger: time
+  conditions:
+  - condition: state
+    entity_id: input_select.estado_habitacion
+    state:
+    - Ocio
+    - Estudio
+  actions:
+  - repeat:
+      count: 4
+      sequence:
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: input_select.estado_habitacion
+          state: Durmiendo
+      - target:
+          entity_id: switch.esp32_nodo_ambiente_rele_principal
+        action: switch.turn_on
+      - wait_for_trigger:
+        - entity_id: switch.esp32_nodo_ambiente_rele_principal
+          to: 'off'
+          trigger: state
+        timeout: 00:15:00
+      - delay: 00:15:00
+  mode: single
+- id: '1779387255691'
+  alias: 'Bienestar: Iluminación Ergonomía Activa'
+  description: Controla el relé de iluminación por necesidad real de luz únicamente
+    en estado de Estudio.
+  triggers:
+  - entity_id: sensor.esp32_nodo_ambiente_nivel_de_luz
+    below: 1.5
+    id: poca_luz
+    trigger: numeric_state
+  - entity_id: sensor.esp32_nodo_ambiente_nivel_de_luz
+    above: 2.2
+    id: mucha_luz
+    trigger: numeric_state
+  - entity_id: input_select.estado_habitacion
+    to: Estudio
+    id: entra_estudio
+    trigger: state
+  - entity_id: input_select.estado_habitacion
+    from: Estudio
+    id: sale_estudio
+    trigger: state
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_select.estado_habitacion
+        state: Estudio
+      - condition: numeric_state
+        entity_id: sensor.esp32_nodo_ambiente_nivel_de_luz
+        below: 1.5
+      - condition: or
+        conditions:
+        - condition: trigger
+          id: poca_luz
+        - condition: trigger
+          id: entra_estudio
+      sequence:
+      - target:
+          entity_id: switch.esp32_nodo_ambiente_rele_principal
+        action: switch.turn_on
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: trigger
+          id: mucha_luz
+        - condition: trigger
+          id: sale_estudio
+        - condition: not
+          conditions:
+          - condition: state
+            entity_id: input_select.estado_habitacion
+            state: Estudio
+      sequence:
+      - target:
+          entity_id: switch.esp32_nodo_ambiente_rele_principal
+        action: switch.turn_off
+  mode: restart
+- id: '1779446976418'
+  alias: 'Bienestar: Break Dinámico (Pomodoro)'
+  description: Hace parpadear la luz principal y envía una notificación tras 50 minutos
+    seguidos en estado Estudio.
+  triggers:
+  - entity_id: input_select.estado_habitacion
+    to: Estudio
+    for: 00:50:00
+    trigger: state
+  conditions: []
+  actions:
+  - data:
+      title: ⏳ ¡Hora de un descanso!
+      message: Llevas 50 minutos rindiendo. Levántate 5 minutos a estirar las piernas.
+    action: notify.notify
+  - repeat:
+      count: 3
+      sequence:
+      - target:
+          entity_id: switch.esp32_nodo_ambiente_rele_principal
+        action: switch.turn_on
+      - delay: 00:00:01
+      - target:
+          entity_id: switch.esp32_nodo_ambiente_rele_principal
+        action: switch.turn_off
+      - delay: 00:00:01
+  mode: single
+- id: '1779447855314'
+  alias: 'Contexto: Ausencia Automática por Inactividad'
+  description: Pasa la habitación a Ausente si el radar se queda completamente vacío
+    durante 20 minutos.
+  triggers:
+  - entity_id: binary_sensor.esp32_zona_escritorio_ocupacion_general
+    to: 'off'
+    for: 00:00:10
+    trigger: state
+  conditions:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: input_select.estado_habitacion
+      state: Ausente
+  actions:
+  - target:
+      entity_id: input_select.estado_habitacion
+    data:
+      option: Ausente
+    action: input_select.select_option
+  mode: single
+- id: '1780310641735'
+  alias: 'Contexto: Detección de Estudio (Radar Espacial)'
+  description: Infiere si estás estudiando basándose en tu distancia al radar LD2410.
+  triggers:
+  - entity_id:
+    - sensor.esp32_zona_escritorio_distancia_del_estatico
+    below: 150
+    for:
+      minutes: 2
+    id: en_escritorio
+    trigger: numeric_state
+  - entity_id:
+    - sensor.esp32_zona_escritorio_distancia_del_estatico
+    above: 50
+    for:
+      minutes: 2
+    id: fuera_de_escritorio
+    trigger: numeric_state
+  conditions:
+  - condition: state
+    entity_id: input_select.estado_habitacion
+    state:
+    - Ocio
+    - Estudio
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: en_escritorio
+      sequence:
+      - target:
+          entity_id: input_select.estado_habitacion
+        data:
+          option: Estudio
+        action: input_select.select_option
+    - conditions:
+      - condition: trigger
+        id: fuera_de_escritorio
+      sequence:
+      - target:
+          entity_id: input_select.estado_habitacion
+        data:
+          option: Ocio
+        action: input_select.select_option
+  mode: single
+- id: '1779447855315'
+  alias: 'Contexto: Vuelta a la Habitación'
+  description: Pasa la habitación a Ocio al detectar presencia si estaba en Ausente.
+  trigger:
+  - entity_id: binary_sensor.esp32_zona_escritorio_ocupacion_general
+    to: 'on'
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: input_select.estado_habitacion
+    state: Ausente
+  actions:
+  - target:
+      entity_id: input_select.estado_habitacion
+    data:
+      option: Ocio
+    action: input_select.select_option
+  mode: single
+
+- id: '1779450000000'
+  alias: 'Gestión Energética: Apagado Global'
+  description: Apaga todos los actuadores (relé y láser) cuando la habitación pasa a Ausente o Durmiendo.
+  triggers:
+  - entity_id: input_select.estado_habitacion
+    to: 'Ausente'
+    trigger: state
+  - entity_id: input_select.estado_habitacion
+    to: 'Durmiendo'
+    trigger: state
+  conditions: []
+  actions:
+  - target:
+      entity_id: 
+      - switch.esp32_nodo_ambiente_rele_principal
+      - switch.esp32_zona_escritorio_laser_escritorio
+    action: switch.turn_off
+  mode: single

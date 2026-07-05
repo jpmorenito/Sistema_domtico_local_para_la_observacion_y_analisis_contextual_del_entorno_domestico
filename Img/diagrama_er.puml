@@ -1,0 +1,63 @@
+@startuml
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam ClassBackgroundColor #F8F9FA
+skinparam ClassBorderColor #343A40
+skinparam ClassHeaderBackgroundColor #E9ECEF
+
+entity "Nodo (Node)" as Nodo {
+  * id_nodo : INTEGER [PK]
+  --
+  * nombre : VARCHAR(50)
+  * ip : VARCHAR(15)
+  * ubicacion : VARCHAR(50)
+}
+
+entity "Sensor" as Sensor {
+  * id_sensor : INTEGER [PK]
+  --
+  * nombre : VARCHAR(50)
+  * tipo : VARCHAR(30)
+  * id_nodo : INTEGER [FK]
+}
+
+entity "Lectura (Reading)" as Lectura {
+  * id_lectura : INTEGER [PK]
+  --
+  * fecha_hora : TIMESTAMP
+  * valor : FLOAT
+  * id_sensor : INTEGER [FK]
+}
+
+entity "Actuador (Actuator)" as Actuador {
+  * id_actuador : INTEGER [PK]
+  --
+  * nombre : VARCHAR(50)
+  * pin_gpio : INTEGER
+  * id_nodo : INTEGER [FK]
+}
+
+entity "EstadoContexto (ContextState)" as EstadoContexto {
+  * id_estado : INTEGER [PK]
+  --
+  * nombre_estado : VARCHAR(30)
+  * timestamp_inicio : TIMESTAMP
+  * timestamp_fin : TIMESTAMP
+}
+
+entity "AccionActuacion (ActuatorAction)" as AccionActuacion {
+  * id_accion : INTEGER [PK]
+  --
+  * fecha_hora : TIMESTAMP
+  * comando : VARCHAR(10)
+  * id_actuador : INTEGER [FK]
+  * id_estado : INTEGER [FK]
+}
+
+Nodo ||--o{ Sensor : "aloja"
+Nodo ||--o{ Actuador : "aloja"
+Sensor ||--o{ Lectura : "genera"
+Actuador ||--o{ AccionActuacion : "recibe"
+EstadoContexto ||--o{ AccionActuacion : "dispara"
+@endum

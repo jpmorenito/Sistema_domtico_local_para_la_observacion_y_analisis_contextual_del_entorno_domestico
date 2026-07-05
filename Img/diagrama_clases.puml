@@ -1,0 +1,108 @@
+@startuml
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam ClassBackgroundColor #F8F9FA
+skinparam ClassBorderColor #343A40
+skinparam ClassHeaderBackgroundColor #E9ECEF
+
+package "Firmware de los Nodos (ESPHome/C++)" {
+  class "ESPHomeApp" as App {
+    + setup() : void
+    + loop() : void
+  }
+
+  abstract class "Component" as Component {
+    + setup() : void
+    + loop() : void
+    + dump_config() : void
+  }
+
+  abstract class "Sensor" as SensorComponent {
+    - state : float
+    + get_state() : float
+    + publish_state(float val) : void
+  }
+
+  abstract class "BinarySensor" as BinarySensorComponent {
+    - state : bool
+    + get_state() : bool
+    + publish_state(bool val) : void
+  }
+
+  abstract class "Switch" as SwitchComponent {
+    - state : bool
+    + turn_on() : void
+    + turn_off() : void
+    # write_state(bool val) : void
+  }
+
+  class "DHTComponent" as DHTComponent {
+    - pin : int
+    - model : String
+    + update() : void
+  }
+
+  class "ADCComponent" as ADCComponent {
+    - pin : int
+    - attenuation : int
+    + update() : void
+  }
+
+  class "GPIOSwitch" as GPIOSwitch {
+    - pin : int
+    + write_state(bool val) : void
+  }
+
+  class "GPIOBinarySensor" as GPIOBinarySensor {
+    - pin : int
+    + update() : void
+  }
+
+  class "LD2410Component" as LD2410Component {
+    - uart_bus : UARTComponent
+    + update() : void
+  }
+
+  Component <|-- SensorComponent
+  Component <|-- BinarySensorComponent
+  Component <|-- SwitchComponent
+  
+  SensorComponent <|-- DHTComponent
+  SensorComponent <|-- ADCComponent
+  SwitchComponent <|-- GPIOSwitch
+  BinarySensorComponent <|-- GPIOBinarySensor
+  Component <|-- LD2410Component
+
+  App *-- Component : "orquesta"
+}
+
+package "Servidor Central (Home Assistant)" {
+  class "MotorContexto" as Motor {
+    - estado_actual : String
+    - tiempo_estudio : int
+    - tiempo_sueno : int
+    + procesar_evento(sensor_id : String, valor : float) : void
+    + evaluar_transiciones() : void
+    + ejecutar_accion(actuador_id : String, cmd : String) : void
+  }
+
+  class "EntidadEstado" as Entidad {
+    - entity_id : String
+    - state : String
+    - attributes : Map
+    + update_state(new_state : String) : void
+  }
+  
+  class "APIComunicaciones" as API {
+    - connection_socket : Socket
+    + send_state(entity_id : String, state : String) : void
+    + receive_command(entity_id : String, command : String) : void
+  }
+  
+  Motor *-- Entidad : "gestiona"
+  Motor ..> API : "usa"
+}
+
+App ..> API : "se conecta a"
+@endum

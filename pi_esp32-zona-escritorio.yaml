@@ -1,0 +1,35 @@
+esphome:
+  name: esp32-zona-escritorio
+  friendly_name: esp32-zona-escritorio
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Configuración de tu red Wi-Fi
+wifi:
+  ssid: "Livebox6s-479B"
+  password: "jjCLnhaS56aA"
+
+# API para que Home Assistant la detecte al instante
+api:
+
+# Para poder actualizarla por Wi-Fi en el futuro sin usar cable USB
+ota:
+  - platform: esphome
+
+# --- CONFIGURACIÓN DEL RADAR LD2410 (TFG) ---
+uart:
+  tx_pin: 17
+  rx_pin: 16
+  baud_rate: 256000
+  parity: NONE
+  stop_bits: 1
+
+ld2410:
+
+binary_sensor:
+  - platform: ld2410
+    has_target:
+      name: "hlk ld2410 910b ocupacion"

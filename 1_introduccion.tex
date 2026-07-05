@@ -27,7 +27,7 @@ En un segundo término, la innovación del proyecto reside en la aplicación pr�
 \subsubsection{Alcance del proyecto}
 El perímetro operativo de este Trabajo Fin de Grado comprende las siguientes actividades y entregables:
 \begin{itemize}
-    \item El diseño, ensamblaje y puesta en marcha de dos nodos de hardware distribuidos basados en la plataforma ESP32, equipados con sensórica biométrica y ambiental (FMCW, LDR, transductores climáticos, acústicos, etc.).
+    \item El diseño, ensamblaje y puesta en marcha de tres nodos de hardware distribuidos basados en la plataforma ESP32, equipados con sensórica biométrica y ambiental (FMCW, LDR, transductores climáticos, acústicos, etc.).
     \item La configuración e integración de la red de comunicaciones locales para el transporte de telemetría y comandos de actuación bajo entornos de red local.
     \item El desarrollo de un motor de contexto centralizado capaz de unificar las lecturas heterogéneas mediante lógica de fusión de datos, abstrayendo el comportamiento de la estancia en cuatro estados discretos.
     \item La programación y validación empírica de tres algoritmos de automatización proactiva orientados a la ergonomía visual, la higiene del sueño y la seguridad perimetral contra intrusiones.
@@ -77,12 +77,12 @@ La metodología se despliega a través de las siguientes fases secuenciales:
     ]
     
     % Explicit coordinates to guarantee it fits the page
-    \node[box] (req) at (0, 4) {Ingeniería de\\Requisitos};
-    \node[box] (arch) at (2.5, 2.5) {Diseño HW /\\Arquitectura};
-    \node[box] (firm) at (5, 1) {Desarrollo\\Firmware};
+    \node[box] (req) at (0, 4) {Ingeniería de\\requisitos};
+    \node[box] (arch) at (2.5, 2.5) {Diseño HW /\\arquitectura};
+    \node[box] (firm) at (5, 1) {Desarrollo\\firmware};
     
-    \node[box] (integ) at (7.5, 2.5) {Integración y\\Gestión centralizada};
-    \node[box] (test) at (10, 4) {Pruebas en\\Entorno Real};
+    \node[box] (integ) at (7.5, 2.5) {Integración y\\gestión centralizada};
+    \node[box] (test) at (10, 4) {Pruebas en\\entorno real};
     
     % Connections down
     \draw[arrow] (req) |- (arch);
@@ -94,7 +94,7 @@ La metodología se despliega a través de las siguientes fases secuenciales:
     
     % Horizontal verification arrows (dashed)
     \draw[thick, dashed, color=gray, -stealth] (arch) -- node[anchor=south, font=\scriptsize] {Verificación} (integ);
-    \draw[thick, dashed, color=gray, -stealth] (req) -- node[anchor=south, font=\scriptsize] {Validación del Sistema} (test);
+    \draw[thick, dashed, color=gray, -stealth] (req) -- node[anchor=south, font=\scriptsize] {Validación del sistema} (test);
     
     \end{tikzpicture}
     \caption{Adaptación del modelo del ciclo de vida en V para la metodología de desarrollo de este Trabajo Fin de Grado.}
@@ -104,4 +104,8 @@ La metodología se despliega a través de las siguientes fases secuenciales:
 \subsection{Estructura de la memoria}
 El presente documento se estructura en distintos capítulos organizados para detallar la progresión del proyecto:
 
-El Capítulo 1 introduce el contexto tecnológico, la problemática existente y los objetivos propuestos. El Capítulo 2 presenta la evolución de la domótica y el estado del arte de las tecnologías implicadas. El Capítulo 3 define el problema a resolver y analiza los requisitos del sistema, tanto funcionales como no funcionales. El Capítulo 4 detalla el diseño del sistema, abarcando su arquitectura y modelado lógico. El Capítulo 5 expone la selección e integración de las tecnologías de hardware y software empleadas. El Capítulo 6 describe el plan de implantación y las pruebas realizadas durante el despliegue. El Capítulo 7 realiza una evaluación del sistema desde el punto de vista técnico, económico y de sostenibilidad. El Capítulo 8 recoge el presupuesto del proyecto. El Capítulo 9 presenta los planos y esquemas de la infraestructura. Finalmente, el Capítulo 10 recoge las conclusiones derivadas del trabajo y expone las futuras líneas de investigación. Adicionalmente, se incluyen una serie de anexos con los manuales de usuario y técnicos correspondientes.
+Con el fin de guiar al lector, la presente memoria se ha estructurado de manera progresiva. Comienza con el Capítulo 1, donde se introduce la motivación del proyecto, la problemática de la privacidad en la domótica actual y los objetivos perseguidos. A continuación, el Capítulo 2 aborda la evolución del estado del arte, prestando especial atención a la transición hacia el procesamiento local y a los fundamentos teóricos del radar de ondas milimétricas. 
+
+Posteriormente, el Capítulo 3 se centra en la definición del problema y en el análisis detallado de los requisitos funcionales y no funcionales del sistema. Sobre esta base, el Capítulo 4 expone el diseño de la arquitectura jerárquica en capas y modela la máquina de estados lógicos. Por su parte, la selección e integración de los componentes específicos de hardware y de las plataformas de software libre se justifica en el Capítulo 5.
+
+El despliegue físico de los nodos y el plan de implantación se describen en el Capítulo 6, dando paso a la validación experimental y al análisis de rendimiento local en el Capítulo 7. Los aspectos económicos se detallan en el Capítulo 8 mediante la consolidación del presupuesto de ejecución, mientras que el Capítulo 9 reúne los esquemas electrónicos y planos de planta del entorno. Por último, el Capítulo 10 se sintetiza las conclusiones principales derivadas de la investigación y esboza las líneas de trabajo futuras. La memoria concluye con un conjunto de anexos que contienen los manuales técnicos y de usuario correspondientes.

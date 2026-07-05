@@ -1,0 +1,102 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+# Configuración para encender PC remotamente
+wake_on_lan:
+
+switch:
+  - platform: wake_on_lan
+    mac: "24:4B:FE:47:C4:2C" # Usa tu MAC real aquí
+    name: "PC Casa"
+    broadcast_address: "192.168.1.255"
+# ==========================================
+# SENSORES BINARIOS (ON/OFF)
+# ==========================================
+binary_sensor:
+  # Motor de Inferencia Bayesiana: Detección de Estudio
+  - platform: bayesian
+    name: "Probabilidad Estudiando"
+    prior: 0.25
+    probability_threshold: 0.80
+    observations:
+      - entity_id: "binary_sensor.esp32_zona_escritorio_ocupacion_general"
+        prob_given_true: 0.95
+        prob_given_false: 0.30
+        platform: "state"
+        to_state: "on"
+      - entity_id: "binary_sensor.esp32_zona_puerta_sensor_puerta"
+        prob_given_true: 0.85
+        prob_given_false: 0.50
+        platform: "state"
+        to_state: "off"
+      - entity_id: "binary_sensor.estado_del_pc"
+        prob_given_true: 0.90
+        prob_given_false: 0.10
+        platform: "state"
+        to_state: "on"
+
+# ==========================================
+# SENSORES VIRTUALES (PLANTILLAS / LÓGICA)
+# ==========================================
+template:
+  - sensor:
+      - name: "Contexto de la Habitacion"
+        unique_id: "contexto_habitacion_tfg_001"
+        state: >
+          {% set puerta = states('binary_sensor.esp32_zona_puerta_sensor_puerta') %}
+          {% set radar = states('binary_sensor.esp32_zona_escritorio_ocupacion_general') %}
+          {% set luz = states('sensor.esp32_nodo_ambiente_nivel_de_luz') | float(default=0) %}
+          {% set hora = now().hour %}
+
+          {% if puerta == 'on' and radar == 'off' %}
+            Puerta Abierta (Sin Presencia)
+          {% elif puerta == 'on' and radar == 'on' %}
+            Transición / Entrando
+          {% elif puerta == 'off' and radar == 'off' %}
+            Habitación Vacía
+          
+          {# ATENCIÓN: El motor Bayesiano ahora tiene prioridad absoluta #}
+          {% elif is_state('binary_sensor.probabilidad_estudiando', 'on') %}
+            Actividad / Estudiando
+          
+          {# Si el bayesiano dice que NO estás estudiando, evaluamos el resto #}
+          {% elif puerta == 'off' and radar == 'on' and luz < 50 and (hora >= 23 or hora <= 7) %}
+            Durmiendo
+          {% elif puerta == 'off' and radar == 'on' and luz < 50 %}
+            Cine / Relax
+          {% else %}
+            Estado Desconocido
+          {% endif %}
+        icon: >
+          {% if is_state('sensor.contexto_de_la_habitacion', 'Habitación Vacía') %} mdi:door-closed
+          {% elif is_state('sensor.contexto_de_la_habitacion', 'Durmiendo') %} mdi:bed
+          {% elif is_state('sensor.contexto_de_la_habitacion', 'Actividad / Estudiando') %} mdi:desk
+          {% else %} mdi:eye-outline
+          {% endif %}
+# ==========================================
+# SENSORES DE ANÁLISIS ESTADÍSTICO
+# ==========================================
+sensor:
+  - platform: history_stats
+    name: "Horas de Estudio Hoy"
+    entity_id: sensor.contexto_de_la_habitacion
+    state: "Actividad / Estudiando"
+    type: time
+    start: "{{ now().replace(hour=0, minute=0, second=0) }}"
+    end: "{{ now() }}"
+
+  - platform: history_stats
+    name: "Horas de Sueño Hoy"
+    entity_id: sensor.contexto_de_la_habitacion
+    state: "Durmiendo"
+    type: time
+    start: "{{ now().replace(hour=12, minute=0, second=0) - timedelta(days=1) }}"
+    end: "{{ now().replace(hour=12, minute=0, second=0) }}"

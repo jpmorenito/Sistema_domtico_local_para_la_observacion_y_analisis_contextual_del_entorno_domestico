@@ -2,7 +2,7 @@
 \section{Manual técnico y de código}
 \label{anexo:manual_tecnico_codigo}
 
-En este anexo se detalla el conjunto completo de códigos y configuraciones desarrollados para el despliegue del sistema domótico local. Se incluye la infraestructura de red virtualizada bajo Docker, el código declarativo de firmware para los tres nodos inalámbricos basados en ESPHome y las nueve automatizaciones que gobiernan la lógica de contexto y bienestar en el servidor central Home Assistant.
+En este anexo se detalla el conjunto completo de códigos y configuraciones desarrollados para el despliegue del sistema domótico local. Se incluye la infraestructura de red virtualizada bajo Docker, el código declarativo de firmware para los tres nodos inalámbricos basados en ESPHome y las diez automatizaciones que gobiernan la lógica de contexto y bienestar en el servidor central Home Assistant.
 
 \subsection{Infraestructura y contenedores perimetrales (Docker)}
 El servidor central se implementa sobre una placa Raspberry Pi 4 ejecutando el sistema operativo Raspberry Pi OS. Para garantizar el aislamiento de dependencias, la portabilidad y la reproducibilidad técnica, los servicios de Home Assistant, ESPHome y Portainer se orquestan como contenedores independientes compartiendo el espacio de red física del host.
@@ -17,7 +17,7 @@ services:
     container_name: homeassistant
     image: 'ghcr.io/home-assistant/home-assistant:stable'
     volumes:
-      - /home/jpmorenito/homeassistant/config:/config
+      - /home/usuario/homeassistant/config:/config
       - /etc/localtime:/etc/localtime:ro
     environment:
       - TZ=Europe/Madrid
@@ -29,7 +29,7 @@ services:
     container_name: esphome
     image: 'ghcr.io/esphome/esphome:latest'
     volumes:
-      - /home/jpmorenito/esphome/config:/config
+      - /home/usuario/esphome/config:/config
       - /etc/localtime:/etc/localtime:ro
     environment:
       - TZ=Europe/Madrid
@@ -72,8 +72,8 @@ esp32:
 logger:
 
 wifi:
-  ssid: 'Livebox6s-4ADB_EXT'
-  password: 'PjEM5okD45N4'
+  ssid: 'nombre_red_wifi'
+  password: 'contrasena_wifi'
 
 api:
 
@@ -134,8 +134,8 @@ esp32:
 logger:
 
 wifi:
-  ssid: 'Livebox6s-4ADB_EXT'
-  password: 'PjEM5okD45N4'
+  ssid: 'nombre_red_wifi'
+  password: 'contrasena_wifi'
 
 api:
 
@@ -205,8 +205,8 @@ esp32:
 logger:
 
 wifi:
-  ssid: 'Livebox6s-4ADB_EXT'
-  password: 'PjEM5okD45N4'
+  ssid: 'nombre_red_wifi'
+  password: 'contrasena_wifi'
 
 api:
 
@@ -230,7 +230,7 @@ binary_sensor:
 \end{lstlisting}
 
 \subsection{Automatizaciones del servidor central perimetral (Home Assistant)}
-El archivo de configuración \texttt{automations.yaml} aloja el motor de reglas lógicas que rigen el comportamiento inteligente de la estancia. Se detallan a continuación las nueve automatizaciones operativas:
+El archivo de configuración \texttt{automations.yaml} aloja el motor de reglas lógicas que rigen el comportamiento inteligente de la estancia. Se detallan a continuación las diez automatizaciones operativas:
 
 \subsubsection{Termostato inteligente (modo estudio)}
 Activa de forma automatizada un actuador auxiliar de potencia (cuyo proxy Bluetooth comanda el encendido eléctrico de un radiador local) si el estado de contexto determinado para la estancia es de \texttt{Estudio} ininterrumpido durante 5 minutos y la lectura térmica desciende por debajo de 19,5\,\text{°C}.
@@ -255,7 +255,7 @@ Activa de forma automatizada un actuador auxiliar de potencia (cuyo proxy Blueto
 \end{lstlisting}
 
 \subsubsection{Resumen diario de bienestar (calidad de vida)}
-Regla de análisis local ejecutada diariamente a las 22:00:00. Evalúa los históricos de tiempo activo en el escritorio y las horas de descanso nocturno y genera un reporte analítico adaptativo mediante plantillas Jinja2, el cual es transmitido por vía de notificación push al usuario sin contactar con servidores externos.
+Regla de análisis local ejecutada diariamente a las 22:00:00. Evalúa los históricos de tiempo activo en el escritorio y las horas de descanso nocturno y genera un reporte analítico adaptativo mediante plantillas Jinja2. Para evitar ruidos visuales derivados de la precisión de punto flotante en las bases de datos lógicas, las lecturas temporales se formatean dinámicamente limitando su salida a dos cifras decimales redondeadas mediante filtros de conversión de datos. El informe resultante es transmitido por vía de notificación push al usuario sin contactar con servidores externos.
 
 \begin{lstlisting}[language=YAML, caption={Código del analista de bienestar diario local.}, label={lst:auto_bienestar_resumen}]
 - id: 'informe_diario_qol'
@@ -268,8 +268,8 @@ Regla de análisis local ejecutada diariamente a las 22:00:00. Evalúa los hist�
     - data:
         title: 'Informe de Inteligencia Ambiental'
         message: |
-          Resumen de tu jornada: - Tiempo efectivo de estudio: {{ states(''sensor.tiempo_de_estudio'') }} horas. - Tiempo de descanso (anoche): {{ states(''sensor.tiempo_de_sueno'') }} horas.
-          {% if states(''sensor.tiempo_de_estudio'') | float > 4.0 %}
+          Resumen de tu jornada: - Tiempo efectivo de estudio: {{ states(''sensor.tiempo_de_estudio'') | float(0) | round(2) }} horas. - Tiempo de descanso (anoche): {{ states(''sensor.tiempo_de_sueno'') | float(0) | round(2) }} horas.
+          {% if states(''sensor.tiempo_de_estudio'') | float(0) > 4.0 %}
             Gran rendimiento hoy. El sistema ha mantenido un confort termico constante.
           {% else %}
             Jornada ligera. Sistemas en modo ahorro energetico.

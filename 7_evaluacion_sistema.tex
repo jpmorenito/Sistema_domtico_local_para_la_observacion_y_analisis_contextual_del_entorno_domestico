@@ -1,5 +1,5 @@
 \newpage
-\section{Evaluación del Sistema}
+\section{Evaluación del sistema}
 \label{cap:evaluacion_sistema}
 
 La culminación de la fase de despliegue físico da paso a la auditoría técnica del prototipo. En este capítulo se analiza empíricamente el rendimiento del sistema, evaluando la latencia en las comunicaciones y la carga computacional del servidor perimetral, la fiabilidad de las inferencias lógicas del motor de contexto, la eficiencia energética global y el análisis de los riesgos y contingencias operacionales.
@@ -27,9 +27,9 @@ Los resultados medidos en la red local inalámbrica bajo la API nativa de ESPHom
         \draw[-, thick] (0,0) -- (0,4.5);
         
         % Etiquetas del sistema (alineadas a la derecha, a la izquierda del eje Y)
-        \node[anchor=east, font=\footnotesize\bfseries] at (-0.25, 3.6) {API nativa ESPHome (Local)};
-        \node[anchor=east, font=\footnotesize] at (-0.25, 2.2) {Sonoff Cloud (Remoto)};
-        \node[anchor=east, font=\footnotesize] at (-0.25, 0.8) {Tuya Cloud (Remoto)};
+        \node[anchor=east, font=\footnotesize\bfseries] at (-0.25, 3.6) {API nativa ESPHome (local)};
+        \node[anchor=east, font=\footnotesize] at (-0.25, 2.2) {Sonoff cloud (remoto)};
+        \node[anchor=east, font=\footnotesize] at (-0.25, 0.8) {Tuya cloud (remoto)};
         
         % Barras de datos y valores
         % 1. API Nativa ESPHome (Local) -- 115 ms -> 115/150 = 0.767 cm
@@ -139,15 +139,20 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
         \caption{Evaluación del armado.}
         \label{fig:alarma_seguridad_2}
     \end{subfigure}
-    \\ \vspace{0.4cm}
+    \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-02 (barrera óptica y control de accesos).}
+    \label{fig:traza_auto_02}
+\end{figure}
+
+\begin{figure}[H]
+    \ContinuedFloat
+    \centering
     \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Img/Pruebas/alarma_seguridad_3.png}
         \caption{Disparo de alarma.}
         \label{fig:alarma_seguridad_3}
     \end{subfigure}
-    \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-02 (barrera óptica y control de accesos).}
-    \label{fig:traza_auto_02}
+    \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-02 (cont.).}
 \end{figure}
 
 \subsubsection{Caso de prueba PR-AUTO-03: Mitigación del sedentarismo (Pomodoro espacial)}
@@ -171,7 +176,7 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
     \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Img/Pruebas/pomodoro_2a.png}
-        \caption{Evaluación de estado.}
+        \caption{Evaluación del flujo lógico de condiciones.}
         \label{fig:pomodoro_2a}
     \end{subfigure}
     \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-03 (temporizador y alerta ergonómica Pomodoro).}
@@ -184,14 +189,14 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
     \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Img/Pruebas/pomodoro_2b.png}
-        \caption{Acción de aviso.}
+        \caption{Evaluación del flujo lógico de condiciones.}
         \label{fig:pomodoro_2b}
     \end{subfigure}
     \\ \vspace{0.4cm}
     \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Img/Pruebas/pomodoro_3.png}
-        \caption{Ejecución de parpadeo.}
+        \caption{Ejecución del bucle de parpadeo de aviso.}
         \label{fig:pomodoro_3}
     \end{subfigure}
     \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-03 (cont.).}
@@ -221,15 +226,20 @@ A continuación, se define la batería de casos de prueba funcionales diseñados
         \caption{Verificación de estado.}
         \label{fig:ausencia_automatica_2}
     \end{subfigure}
-    \\ \vspace{0.4cm}
+    \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-04 (transición automática a modo ausente/apagado general).}
+    \label{fig:traza_auto_04}
+\end{figure}
+
+\begin{figure}[H]
+    \ContinuedFloat
+    \centering
     \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Img/Pruebas/ausencia_automatica_3.png}
         \caption{Paso a modo Ausente.}
         \label{fig:ausencia_automatica_3}
     \end{subfigure}
-    \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-04 (transición automática a modo ausente/apagado general).}
-    \label{fig:traza_auto_04}
+    \caption{Traza de depuración en Home Assistant para el caso de prueba PR-AUTO-04 (cont.).}
 \end{figure}
 
 
@@ -246,7 +256,8 @@ Un requisito de diseño ineludible en infraestructuras inteligentes con operaci�
     \setlength{\tabcolsep}{3pt}
     \begin{tabular}{|l|c|c|c|l|}
         \hline
-        \textbf{Componente} & \textbf{Voltaje (V)} & \textbf{Corriente (mA)} & \textbf{Potencia (W)} & \textbf{Régimen} \\ \hline
+        \rowcolor[gray]{0.9} 
+        \multicolumn{1}{|c|}{\textbf{Componente}} & \textbf{Voltaje (V)} & \textbf{Corriente (mA)} & \textbf{Potencia (W)} & \multicolumn{1}{c|}{\textbf{Régimen}} \\ \hline
         Raspberry Pi 4       & 5.0 & 700 & 3.50 & Continuo (24/7) \\ \hline
         Nodo Ambiente        & 5.0 & 80  & 0.40 & Continuo (24/7) \\ \hline
         Nodo Escritorio      & 5.0 & 160 & 0.80 & Continuo (24/7) \\ \hline

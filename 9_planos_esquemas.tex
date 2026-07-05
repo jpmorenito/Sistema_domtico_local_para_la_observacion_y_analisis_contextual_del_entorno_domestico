@@ -10,9 +10,9 @@ La correcta implementación física y lógica de una infraestructura domótica b
 El sistema ha sido desplegado y evaluado en una habitación de estudio con una geometría rectangular de dimensiones aproximadas de $4.0\,\text{m} \times 3.5\,\text{m}$. La ubicación física de cada uno de los tres nodos empotrados responde a criterios de optimización de cobertura de sensado, proximidad a los elementos del entorno y minimización del ruido ambiental:
 
 \begin{itemize}
-    \item \textbf{Nodo 1 (Nodo Ambiente - $N_1$):} ubicado a la derecha del escritorio sobre la pared norte de la estancia. Esta posición elevada permite realizar lecturas térmicas, acústicas y lumínicas representativas del volumen general de la estancia sin obstrucciones.
-    \item \textbf{Nodo 2 (Nodo Escritorio - $N_2$):} situado en el extremo derecho del escritorio de trabajo. Este nodo alberga el radar de ondas milimétricas (FMCW) HLK-LD2410C, orientado diagonalmente hacia la silla de estudio. Su cono de detección angular (de aproximadamente $120^\circ$) cubre la zona espacial de permanencia del usuario, permitiendo discriminar micromovimientos asociados a la respiración.
-    \item \textbf{Nodo 3 (Nodo Puerta - $N_3$):} instalado directamente en la esquina inferior derecha, sobre la pared lateral derecha en el marco superior de la puerta de acceso. Gobierna el sensor de contacto de la puerta y el diodo láser emisor de la barrera óptica.
+    \item \textbf{Nodo 1 (Nodo Ambiente, $N_1$):} ubicado a la derecha del escritorio sobre la pared norte de la estancia. Esta posición elevada permite realizar lecturas térmicas, acústicas y lumínicas representativas del volumen general de la estancia sin obstrucciones.
+    \item \textbf{Nodo 2 (Nodo Escritorio, $N_2$):} situado en el extremo derecho del escritorio de trabajo. Este nodo alberga el radar de ondas milimétricas (FMCW) HLK-LD2410C, orientado diagonalmente hacia la silla de estudio. Su cono de detección angular (de aproximadamente $120^\circ$) cubre la zona espacial de permanencia del usuario, permitiendo discriminar micromovimientos asociados a la respiración.
+    \item \textbf{Nodo 3 (Nodo Puerta, $N_3$):} instalado directamente en la esquina inferior derecha, sobre la pared lateral derecha en el marco superior de la puerta de acceso. Gobierna el sensor de contacto de la puerta y el diodo láser emisor de la barrera óptica.
 \end{itemize}
 
 La distribución espacial de estos componentes, el mobiliario y la zona activa de influencia del transductor radar se representan vectorialmente en el plano de la estancia de la Figura~\ref{fig:plano_distribucion_planta}.
@@ -120,7 +120,7 @@ En la Figura~\ref{fig:esquema_amb_puerta} se detallan las conexiones electrónic
         \draw[arrow] (sound.east) -- node[above=3pt, midway, font=\tiny\bfseries] {GPIO 27} (esp_amb.210);
         \draw[arrow] (esp_amb.0) -- node[above=3pt, midway, font=\tiny\bfseries] {GPIO 26} (ssr.west);
         
-        \node[anchor=west, font=\bfseries\small, color=Azul!80!black] at (-5.5, 5.4) {NODO 1: MONITORIZACIÓN AMBIENTAL};
+        \node[anchor=west, font=\bfseries\small, color=Azul!80!black] at (-5.5, 5.4) {Nodo 1: monitorización ambiental};
         
         % Línea de separación estética
         \draw[dashed, gray!45, thick] (-6.0, -0.6) -- (6.0, -0.6);
@@ -133,7 +133,7 @@ En la Figura~\ref{fig:esquema_amb_puerta} se detallan las conexiones electrónic
             
             \draw[arrow] (reed.east) -- node[above=3pt, midway, font=\tiny\bfseries] {GPIO 4 (Pull-up)} (esp_puerta.180);
             
-            \node[anchor=west, font=\bfseries\small, color=Rojo!80!black] at (-5.5, 2.2) {NODO 3: SEGURIDAD DE ACCESO};
+            \node[anchor=west, font=\bfseries\small, color=Rojo!80!black] at (-5.5, 2.2) {Nodo 3: seguridad de acceso};
         \end{scope}
     \end{tikzpicture}
     \caption{Esquema de conexionado electrónico y puertos GPIO para el Nodo 1 (Ambiente) y el Nodo 3 (Puerta) con distribución vertical espaciada anti-solapamiento.}
@@ -202,17 +202,17 @@ La arquitectura lógica de red del sistema se ilustra en la Figura~\ref{fig:topo
     ]%
         % ================= NODO DE APORTACIÓN FÍSICA E INSTALACIONES (EJE CENTRAL) =================
         % 1. Enrutador local (a la izquierda de la escena)
-        \node[rtr] (router) at (-6.5, 0) {Router\\Doméstico\\(192.168.1.1)};
+        \node[rtr] (router) at (-6.5, 0) {Router\\doméstico\\(192.168.1.1)};
         % 2. Tres nodos sensores en la columna central
         \node[device] (n1) at (-1.5, 1.8) {Nodo 1 (Ambiente)\\ESP32\\IP: 192.168.1.150};
         \node[device] (n2) at (-1.5, 0) {Nodo 2 (Escritorio)\\ESP32\\IP: 192.168.1.151};
         \node[device] (n3) at (-1.5, -1.8) {Nodo 3 (Puerta)\\ESP32\\IP: 192.168.1.152};
         % 3. Servidor central en el borde (a la derecha)
-        \node[srv] (rpi) at (4.5, -0.6) {Raspberry Pi 4 (Servidor)\\IP Local: 192.168.1.100\\[0.2cm]
+        \node[srv] (rpi) at (4.5, -0.6) {Raspberry Pi 4 (Servidor)\\IP local: 192.168.1.100\\[0.2cm]
             \parbox{2.9cm}{\centering\color{black!80}\bfseries\tiny
             \begin{tabular}{|c|}
             \hline
-            \textbf{Entorno Docker} \\
+            \textbf{entorno Docker} \\
             Home Assistant (8123) \\
             ESPHome API (6053) \\
             SQLite DB \\
@@ -233,12 +233,12 @@ La arquitectura lógica de red del sistema se ilustra en la Figura~\ref{fig:topo
         % Enlace Ethernet Gigabit (Ruta inferior perimetral por debajo de n3, pos=0.35 para centrar en el espacio)
         \draw[eth] (router.south) -- ++(0, -1.6) -| node[above, pos=0.35, font=\tiny\bfseries, color=blue!80!black] {Ethernet Cat6} (rpi.south);
         % Conexión lógica WAN a Internet (Ruta superior perimetral por encima de n1, pos=0.35 para centrar en el espacio)
-        \node[cloud_node] (cloud) at (4.5, 1.8) {Internet\\(Red Pública)};
+        \node[cloud_node] (cloud) at (4.5, 1.8) {Internet\\(red pública)};
         \draw[line] (router.north) -- ++(0, 1.8) -| node[above, pos=0.35, font=\tiny\bfseries] {Internet WAN} (cloud.north);
         % Conexión directa Servidor - Nube (línea vertical sin cruces)
         \draw[line] (rpi.north) -- (cloud.south);
         % Terminal de Administración de Cliente (más a la derecha para dejar espacio)
-        \node[device] (client) at (9.5, 0.6) {Dispositivo Cliente\\(Smartphone / PC)\\IP VPN: 100.75.10.20};
+        \node[device] (client) at (9.5, 0.6) {Dispositivo cliente\\(Smartphone / PC)\\IP VPN: 100.75.10.20};
         % Enlace del Cliente a Internet
         \draw[line] (client.north) |- (cloud.east);
         % Túnel seguro VPN Tailscale (Ruta por flanco derecho, etiqueta centrada debajo de la sección horizontal)

@@ -26,20 +26,20 @@ En las arquitecturas comerciales típicas de la última década, la inteligencia
     ]
     
     % Cloud Architecture
-    \node[cloud] (internet) at (0, 5) {Servidor\\Cloud};
+    \node[cloud] (internet) at (0, 5) {Servidor\\cloud};
     \node[local] (home1) at (0, 1.5) {};
-    \node[above=0.1cm of home1, font=\scriptsize\bfseries] {Red Local};
-    \node[device] (sensor1) at (0, 1) {Sensores /\\Actuadores};
+    \node[above=0.1cm of home1, font=\scriptsize\bfseries] {Red local};
+    \node[device] (sensor1) at (0, 1) {Sensores /\\actuadores};
     
-    \draw[arrow, red] (sensor1) -- node[anchor=west, font=\scriptsize, align=left] {Alta latencia\\Dependencia} (internet);
+    \draw[arrow, red] (sensor1) -- node[anchor=west, font=\scriptsize, align=left] {Alta latencia\\dependencia} (internet);
     
     % Edge Architecture
     \node[local] (home2) at (6, 1.5) {};
-    \node[above=0.1cm of home2, font=\scriptsize\bfseries] {Red Local (Aislada)};
-    \node[device] (sensor2) at (6, 0.2) {Sensores /\\Actuadores};
-    \node[device, fill=blue!10] (edge) at (6, 2.3) {Servidor central\\Edge};
+    \node[above=0.1cm of home2, font=\scriptsize\bfseries] {Red local (aislada)};
+    \node[device] (sensor2) at (6, 0.2) {Sensores /\\actuadores};
+    \node[device, fill=blue!10] (edge) at (6, 2.3) {Servidor central\\edge};
     
-    \draw[arrow, green!50!black] (sensor2) -- node[anchor=west, font=\scriptsize, align=left] {Baja latencia\\Privacidad} (edge);
+    \draw[arrow, green!50!black] (sensor2) -- node[anchor=west, font=\scriptsize, align=left] {Baja latencia\\privacidad} (edge);
     
     \end{tikzpicture}
     \caption{Comparativa arquitectónica: dependencia de la nube frente a procesamiento local (\textit{edge computing}).}
@@ -105,7 +105,7 @@ Mediante la evaluación continua del desfase de fase de los ecos en compuertas d
         % Draw sensor box on top
         \node[draw, rectangle, fill=gray!20, minimum width=1cm, minimum height=0.5cm, font=\scriptsize] (pir) at (0,3) {PIR};
         
-        \node[font=\scriptsize, align=center] at (0,-1) {Detección binaria\\Zonas ciegas en estático};
+        \node[font=\scriptsize, align=center] at (0,-1) {Detección binaria\\zonas ciegas en estático};
         
         % Person
         \fill[black] (0.5,0.5) circle (0.15); % head
@@ -128,7 +128,7 @@ Mediante la evaluación continua del desfase de fase de los ecos en compuertas d
         \draw[green!50!black] (0,2.2) arc(90:135:0.7);
         \draw[green!50!black] (0,2.0) arc(90:135:0.9);
         
-        \node[font=\scriptsize, align=center] at (0,-1) {Detección continua\\Resolución submilimétrica};
+        \node[font=\scriptsize, align=center] at (0,-1) {Detección continua\\resolución submilimétrica};
         
         % Person
         \fill[black] (0.5,0.5) circle (0.15); % head

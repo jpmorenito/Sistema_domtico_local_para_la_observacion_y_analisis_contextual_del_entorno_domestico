@@ -1,0 +1,1204 @@
+File: 10_conclusiones.tex | Line: 12
+Matches: ['Desarrollo de hardware y adquisición local de señales:']
+Text: \item \textbf{Desarrollo de hardware y adquisición local de señales:} se diseñaron y ensamblaron tres nodos perimetrales autónomos basados en el SoC ESP32. Cada uno de ellos integra transductores climáticos, lumínicos, acústicos, de presencia y de control de accesos, garantizando la cobertura de sensado espacial necesaria sin requerir un sobredimensionamiento del coste material.
+--------------------------------------------------------------------------------
+File: 10_conclusiones.tex | Line: 13
+Matches: ['Implementación del firmware declarativo y filtrado local:']
+Text: \item \textbf{Implementación del firmware declarativo y filtrado local:} mediante el empleo de ESPHome, se generó un \textit{firmware} altamente optimizado en C++ para cada microcontrolador. Esto ha permitido realizar tareas críticas de filtrado temporal en el propio origen del sensado (como el retardo contra rebotes acústicos o el filtrado de vibraciones en la barrera de puerta), reduciendo significativamente la sobrecarga de paquetes en la red inalámbrica local.
+--------------------------------------------------------------------------------
+File: 10_conclusiones.tex | Line: 14
+Matches: ['Diseño de un motor lógicos de contexto tolerante a fallos:']
+Text: \item \textbf{Diseño de un motor lógicos de contexto tolerante a fallos:} se modeló e implementó una máquina de estados finitos (FSM) en Home Assistant que realiza tareas de fusión sensorial redundante. La combinación inteligente de la telemetría espacial del radar mmWave y la iluminancia del sensor LDR demostró ser capaz de discriminar con precisión los estados conductuales del usuario (\texttt{Estudio}, \texttt{Descanso}, \texttt{Ausente} y \texttt{Entrada/Salida}), anulando las limitaciones típicas de los detectores PIR comerciales y superando con éxito condiciones de fallo inducido en sensores analógicos individuales.
+--------------------------------------------------------------------------------
+File: 10_conclusiones.tex | Line: 15
+Matches: ['Privacidad y seguridad en las comunicaciones:']
+Text: \item \textbf{Privacidad y seguridad en las comunicaciones:} toda la información capturada por el sistema permanece encapsulada dentro de la frontera física del hogar. La comunicación local entre nodos y servidor está cifrada nativamente con el protocolo Noise (mediante sockets TCP en la API de ESPHome). El acceso remoto administrativo y la visualización del cuadro de mandos Lovelace se resuelven de forma segura mediante un túnel de cifrado extremo a extremo utilizando la VPN Tailscale (sobre protocolo WireGuard), lo que evita la exposición pública de puertos en el enrutador local y neutraliza ataques masivos desde la red pública.
+--------------------------------------------------------------------------------
+File: 10_conclusiones.tex | Line: 16
+Matches: ['Métricas operacionales sobresalientes:']
+Text: \item \textbf{Métricas operacionales sobresalientes:} los ensayos empíricos revelaron una latencia de conmutación de extremo a extremo de solo 115\,ms, lo que supone una respuesta entre 8 y 10 veces más rápida que las soluciones comerciales basadas en nubes públicas extranjeras (como Tuya Cloud o Sonoff Cloud). El impacto computacional se estabilizó en valores mínimos (uso de CPU inferior al 5\,\% y consumo de RAM de 620\,MB en la Raspberry Pi 4), demostrando la viabilidad de plataformas de bajo coste en la periferia de red.
+--------------------------------------------------------------------------------
+File: 10_conclusiones.tex | Line: 17
+Matches: ['Sostenibilidad y bajo coste operativo:']
+Text: \item \textbf{Sostenibilidad y bajo coste operativo:} con una potencia combinada de tan solo 5.15\,W, el coste operacional proyectado es inferior a 9.02\,\euro/año, logrando una alta eficiencia ecológica y económica al prescindir de servidores remotos y simplificar la red.
+--------------------------------------------------------------------------------
+File: 10_conclusiones.tex | Line: 25
+Matches: ['Restricciones en la precisión de la sensórica física:']
+Text: \item \textbf{Restricciones en la precisión de la sensórica física:} el uso de sensores de bajo coste introduce márgenes de error que limitan el análisis analítico. El DHT11 presenta una lenta tasa de muestreo (cada 2 segundos) y una tolerancia térmica de $\pm 2^\circ\text{C}$, lo que resulta impreciso para auditorías climáticas finas. Asimismo, la LDR posee una curva de respuesta no lineal muy sensible a su colocación, lo que exige calibraciones ad-hoc según la posición del mobiliario y la iluminación natural de la estancia.
+--------------------------------------------------------------------------------
+File: 10_conclusiones.tex | Line: 26
+Matches: ['Vulnerabilidad física del almacenamiento perimetral:']
+Text: \item \textbf{Vulnerabilidad física del almacenamiento perimetral:} el servidor central utiliza una tarjeta MicroSD como medio de almacenamiento secundario. A pesar de haber optimizado el motor de base de datos SQLite y limitado la persistencia histórica de estados a 10 días, el volumen continuo de lecturas analógicas (sobre todo de los sensores LDR y acústicos) ejerce un estrés de escritura constante que incrementa el riesgo de fallo físico de las celdas de memoria flash a medio plazo.
+--------------------------------------------------------------------------------
+File: 10_conclusiones.tex | Line: 27
+Matches: ['Aislamiento y dependencias de la banda ISM de 2.4\\,GHz:']
+Text: \item \textbf{Aislamiento y dependencias de la banda ISM de 2.4\,GHz:} al utilizar redes inalámbricas Wi-Fi convencionales para enlazar los nodos sensores, el sistema depende de la disponibilidad del espectro radioeléctrico en la banda de 2.4\,GHz. En entornos densos o zonas urbanas, la saturación del espectro puede provocar interferencias electromagnéticas puntuales, aumentando la tasa de reintentos y degradando temporalmente la latencia.
+--------------------------------------------------------------------------------
+File: 10_conclusiones.tex | Line: 28
+Matches: ['Requisitos de orientación y línea de visión del radar:']
+Text: \item \textbf{Requisitos de orientación y línea de visión del radar:} el radar FMCW HLK-LD2410C requiere una calibración y ubicación extremadamente precisas en el escritorio. Al operar por micro-detección de fluctuaciones electromagnéticas, la presencia de elementos en movimiento pasivo (como corrientes de aire moviendo cortinas o las aspas de un ventilador) genera interferencias de movimiento interpretadas erróneamente como presencia humana si no se configuran correctamente las compuertas de distancia (\textit{distance gates}).
+--------------------------------------------------------------------------------
+File: 10_conclusiones.tex | Line: 36
+Matches: ['Migración a redes de malla de bajo consumo (Zigbee / Matter):']
+Text: \item \textbf{Migración a redes de malla de bajo consumo (Zigbee / Matter):} reemplazar la red troncal Wi-Fi de los nodos sensores por el estándar IEEE 802.15.4 (mediante protocolos como Zigbee o Thread). Esto liberará la banda Wi-Fi doméstica, reducirá drásticamente el consumo eléctrico y permitirá diseñar nodos sensores ultra-compactos alimentados mediante baterías de larga duración o celdas solares.
+--------------------------------------------------------------------------------
+File: 10_conclusiones.tex | Line: 37
+Matches: ['Implementación de modelos predictivos locales (TinyML):']
+Text: \item \textbf{Implementación de modelos predictivos locales (TinyML):} incorporar algoritmos de aprendizaje automático directamente en los microcontroladores ESP32 (mediante TensorFlow Lite for Microcontrollers). Esto posibilitaría la clasificación local de patrones acústicos complejos (ej. detección de rotura de cristales o patrones de tos) o la predicción de hábitos de ocupación diarios sin depender de un motor lógico centralizado.
+--------------------------------------------------------------------------------
+File: 10_conclusiones.tex | Line: 38
+Matches: ['Redundancia física y almacenamiento externo:']
+Text: \item \textbf{Redundancia física y almacenamiento externo:} configurar copias de seguridad automatizadas y cifradas de la base de datos de Home Assistant hacia un servidor de almacenamiento conectado en red (NAS) local, o migrar el almacenamiento de la Raspberry Pi 4 de una MicroSD a una unidad de estado sólido (SSD) conectada por USB 3.0, eliminando el punto único de fallo del soporte de almacenamiento físico.
+--------------------------------------------------------------------------------
+File: 10_conclusiones.tex | Line: 39
+Matches: ['Procesamiento local de voz offline:']
+Text: \item \textbf{Procesamiento local de voz offline:} integrar en el servidor central la suite Home Assistant Assist con reconocimiento de voz y síntesis de audio 100\,\% locales (usando modelos Whisper y Piper optimizados). Esto posibilitará el control por comandos de voz de la vivienda de manera local, ágil y totalmente independiente de plataformas comerciales externas en la nube.
+--------------------------------------------------------------------------------
+File: 10_conclusiones.tex | Line: 40
+Matches: ['Evolución a instrumentación perimetral de alta precisión (sensado local avanzado):']
+Text: \item \textbf{Evolución a instrumentación perimetral de alta precisión (sensado local avanzado):} sustituir los transductores de bajo coste por sensores de grado metrológico e industrial que operen de forma local. La incorporación de sensores fotoacústicos de CO$_2$ (como el Sensirion SCD40) aportaría una métrica de presencia metabólica infalible ante oclusiones físicas. Asimismo, la migración hacia radares de ondas milimétricas con procesadores de señal digital (DSP) integrados (como la serie Texas Instruments IWR) posibilitaría la localización 3D de múltiples usuarios en tiempo real, el conteo de personas mediante sensores de tiempo de vuelo (ToF) multizona en los accesos (como el STMicroelectronics VL53L5CX), y la monitorización de constantes biométricas (frecuencias cardíaca y respiratoria) sin contacto físico, todo ello procesado localmente para mantener íntegro el principio de privacidad desde el diseño.
+--------------------------------------------------------------------------------
+File: 10_conclusiones.tex | Line: 41
+Matches: ['Control de acceso mediante códigos QR efímeros y jerarquía de roles:']
+Text: \item \textbf{Control de acceso mediante códigos QR efímeros y jerarquía de roles:} desarrollar un sistema de autenticación temporal basado en la lectura de códigos QR con caducidad. Esta funcionalidad permitiría ofrecer a los invitados o visitantes un acceso muy limitado y temporal a ciertos actuadores y sensores específicos de la estancia (por ejemplo, controlar la iluminación de forma manual), sin otorgarles control sobre todo el hogar. Esto sentaría las bases de una gestión avanzada de roles de usuario en Home Assistant, distinguiendo entre administradores con privilegios totales y usuarios finales con capacidades restringidas de control.
+--------------------------------------------------------------------------------
+File: 1_introduccion.tex | Line: 39
+Matches: ['Restricciones volumétricas del radar:']
+Text: \item \textbf{Restricciones volumétricas del radar:} el sensor HLK-LD2410 posee un rango de apertura angular acotado y una distancia máxima de operación de 8 metros, lo que restringe la detección a espacios cerrados de dimensiones medias, requiriendo un estudio de ubicación crítico para evitar zonas ciegas.
+--------------------------------------------------------------------------------
+File: 1_introduccion.tex | Line: 40
+Matches: ['Vulnerabilidad a interferencias mecánicas:']
+Text: \item \textbf{Vulnerabilidad a interferencias mecánicas:} al operar mediante ondas milimétricas, el radar es susceptible a falsos positivos provocados por elementos en movimiento constante no humano, tales como ventiladores o cortinas desplazadas por corrientes de aire, requiriendo una calibración fina de umbrales por software.
+--------------------------------------------------------------------------------
+File: 1_introduccion.tex | Line: 41
+Matches: ['Dependencia de la infraestructura de red local:']
+Text: \item \textbf{Dependencia de la infraestructura de red local:} al prescindir de servicios en la nube para garantizar la privacidad, la operatividad de los nodos y el intercambio de eventos están estrictamente vinculados a la disponibilidad y estabilidad de la red de área local (WLAN) del entorno de pruebas.
+--------------------------------------------------------------------------------
+File: 1_introduccion.tex | Line: 42
+Matches: ['Vulnerabilidades lógicas delegadas en el perímetro de red:']
+Text: \item \textbf{Vulnerabilidades lógicas delegadas en el perímetro de red:} aunque el procesamiento local elimina los vectores de ataque externos orientados a la interceptación de datos en tránsito hacia la nube, la seguridad global del ecosistema se desplaza y delega por completo en la robustez de los mecanismos de cifrado en la red local. Aunque los microcontroladores empotrados ESP32 presentan restricciones de recursos para gestionar capas de cifrado pesado como TLS/SSL tradicional, la adopción del protocolo Noise (integrado de forma nativa en la API de ESPHome) mitiga este riesgo al cifrar la telemetría en tránsito de extremo a extremo. No obstante, un compromiso de la seguridad de la red inalámbrica doméstica (WLAN) expondría la infraestructura a potenciales ataques de denegación de servicio o suplantación de identidad física.
+--------------------------------------------------------------------------------
+File: 1_introduccion.tex | Line: 53
+Matches: ['Diseño de hardware distribuido:']
+Text: \item \textbf{Diseño de hardware distribuido:} configurar y ensamblar una red de nodos de sensores y actuadores utilizando microcontroladores ESP32, garantizando la cobertura espacial del entorno de pruebas.
+--------------------------------------------------------------------------------
+File: 1_introduccion.tex | Line: 54
+Matches: ['Implementación de telemetría avanzada:']
+Text: \item \textbf{Implementación de telemetría avanzada:} sustituir la detección de presencia tradicional por telemetría espacial continua, empleando radares de ondas milimétricas (HLK-LD2410) combinados con mediciones lumínicas (LDR) y ambientales.
+--------------------------------------------------------------------------------
+File: 1_introduccion.tex | Line: 55
+Matches: ['Desarrollo del motor de contexto:']
+Text: \item \textbf{Desarrollo del motor de contexto:} programar un servidor central centralizado que, mediante técnicas de fusión de datos, asigne un estado unívoco a la habitación (ocio, estudio, durmiendo, ausente) en tiempo real.
+--------------------------------------------------------------------------------
+File: 1_introduccion.tex | Line: 56
+Matches: ['Automatización proactiva y seguridad:']
+Text: \item \textbf{Automatización proactiva y seguridad:} diseñar algoritmos de control lógico para la gestión ergonómica de la iluminación, la evaluación del descanso y el despliegue de un sistema de alarma sólido frente a vulnerabilidades lógicas, como las condiciones de carrera.
+--------------------------------------------------------------------------------
+File: 1_introduccion.tex | Line: 57
+Matches: ['Validación e integración:']
+Text: \item \textbf{Validación e integración:} evaluar el comportamiento de la arquitectura propuesta en escenarios de uso real, aplicando redundancias lógicas para verificar la tolerancia a fallos del hardware.
+--------------------------------------------------------------------------------
+File: 1_introduccion.tex | Line: 65
+Matches: ['Ingeniería de requisitos y restricciones:']
+Text: \item \textbf{Ingeniería de requisitos y restricciones:} definición formal de las necesidades funcionales y de las fronteras físicas del entorno para acotar la selección de componentes.
+--------------------------------------------------------------------------------
+File: 1_introduccion.tex | Line: 66
+Matches: ['Diseño de la arquitectura e integración de hardware:']
+Text: \item \textbf{Diseño de la arquitectura e integración de hardware:} fase donde se proyecta la topología de red y se realiza el ensamblaje electrónico, aplicando técnicas de instrumentación en frío y en caliente (uso de multímetros para validación de la caída de potencial en los divisores de tensión de los sensores) para garantizar la estabilidad eléctrica.
+--------------------------------------------------------------------------------
+File: 1_introduccion.tex | Line: 67
+Matches: ['Desarrollo del firmware y lógica de abstracción:']
+Text: \item \textbf{Desarrollo del firmware y lógica de abstracción:} programación de los microcontroladores mediante abstracciones de hardware declarativas, optimizando los intervalos de actualización y los rangos de atenuación analógica.
+--------------------------------------------------------------------------------
+File: 1_introduccion.tex | Line: 68
+Matches: ['Gestión centralizada y fusión de datos en el Edge:']
+Text: \item \textbf{Gestión centralizada y fusión de datos en el Edge:} implementación de las máquinas de estado y reglas lógicas redundantes en el nodo central para dotar al sistema de tolerancia a fallos ante pérdidas temporales de conectividad o lecturas anómalas de los transductores.
+--------------------------------------------------------------------------------
+File: 1_introduccion.tex | Line: 69
+Matches: ['Fase de pruebas experimentales y evaluación técnica:']
+Text: \item \textbf{Fase de pruebas experimentales y evaluación técnica:} protocolo de validación que abarca desde pruebas unitarias en caja negra hasta pruebas de integración en escenarios reales de uso continuo, analizando la fiabilidad de las transiciones de estado.
+--------------------------------------------------------------------------------
+File: 2_contexto_estado_arte.tex | Line: 12
+Matches: ['Sensibilidad al contexto:']
+Text: \item \textbf{Sensibilidad al contexto:} capacidad de adquirir e interpretar telemetría ambiental proveniente de sensores distribuidos para determinar el estado del entorno físico.
+--------------------------------------------------------------------------------
+File: 2_contexto_estado_arte.tex | Line: 13
+Matches: ['Autonomía proactiva:']
+Text: \item \textbf{Autonomía proactiva:} facultad de ejecutar acciones de control predictivas basadas en las inferencias contextuales, eliminando la necesidad de comandos manuales.
+--------------------------------------------------------------------------------
+File: 2_contexto_estado_arte.tex | Line: 14
+Matches: ['Interacción transparente:']
+Text: \item \textbf{Interacción transparente:} el usuario se sitúa en el centro del sistema, experimentando modificaciones adaptativas en el entorno (ajustes lumínicos, térmicos o de seguridad) sin percibir la infraestructura tecnológica subyacente.
+--------------------------------------------------------------------------------
+File: 2_contexto_estado_arte.tex | Line: 64
+Matches: ['Incapacidad de detección estática:']
+Text: \item \textbf{Incapacidad de detección estática:} si el sujeto permanece inmóvil (por ejemplo, durante la lectura, el trabajo en escritorio o el sueño), la radiación térmica proyectada sobre el sensor piroeléctrico se vuelve constante, anulando la variación de tensión. Esto genera falsos negativos que interrumpen de forma anómala las automatizaciones.
+--------------------------------------------------------------------------------
+File: 2_contexto_estado_arte.tex | Line: 65
+Matches: ['Sensibilidad a gradientes térmicos:']
+Text: \item \textbf{Sensibilidad a gradientes térmicos:} al depender de la temperatura diferencial, los sensores PIR son vulnerables a falsos positivos provocados por corrientes de aire caliente, radiación solar directa sobre superficies interiores o el encendido automático de sistemas de climatización por convección.
+--------------------------------------------------------------------------------
+File: 2_contexto_estado_arte.tex | Line: 188
+Matches: ['Reducido sobrecoste de protocolo (\\textit{overhead']
+Text: \item \textbf{Reducido sobrecoste de protocolo (\textit{overhead}):} la cabecera fija del protocolo es de únicamente 2 bytes, reduciendo el consumo de ancho de banda y los tiempos de serialización en procesadores limitados como el ESP32.
+--------------------------------------------------------------------------------
+File: 2_contexto_estado_arte.tex | Line: 189
+Matches: ['Gestión de la calidad de servicio (QoS):']
+Text: \item \textbf{Gestión de la calidad de servicio (QoS):} permite parametrizar el nivel de entrega de los mensajes (QoS 0, QoS 1 o QoS 2), asegurando la llegada de eventos críticos relativos a la seguridad perimetral frente a telemetrías ambientales repetitivas.
+--------------------------------------------------------------------------------
+File: 2_contexto_estado_arte.tex | Line: 190
+Matches: ['Mecanismo de testamento (\\textit{Last Will and Testament']
+Text: \item \textbf{Mecanismo de testamento (\textit{Last Will and Testament}):} permite al \textit{broker} notificar de forma proactiva y automática la desconexión abrupta de un nodo sensor por fallo eléctrico o pérdida de Wi-Fi, habilitando la ejecución inmediata de rutinas de contingencia en el servidor central local.
+--------------------------------------------------------------------------------
+File: 2_contexto_estado_arte.tex | Line: 197
+Matches: ['Aislamiento en silos tecnológicos:']
+Text: \item \textbf{Aislamiento en silos tecnológicos:} los fabricantes tienden a restringir la interoperabilidad nativa, forzando al usuario a depender de pasarelas de traducción propietarias y aplicaciones de software independientes que complican la unificación de datos.
+--------------------------------------------------------------------------------
+File: 2_contexto_estado_arte.tex | Line: 198
+Matches: ['Dependencia de la nube:']
+Text: \item \textbf{Dependencia de la nube:} la lógica de conmutación y la ejecución de las automatizaciones de estas soluciones comerciales se procesan en servidores remotos. Si la conexión a internet del hogar se degrada o el servidor del proveedor experimenta una interrupción del servicio, el entorno pierde por completo sus capacidades autónomas.
+--------------------------------------------------------------------------------
+File: 2_contexto_estado_arte.tex | Line: 199
+Matches: ['Monetización e intrusión en la privacidad:']
+Text: \item \textbf{Monetización e intrusión en la privacidad:} el almacenamiento masivo de históricos de presencia, hábitos horarios y perfiles acústicos en infraestructuras externas plantea serios dilemas éticos y legales bajo normativas de protección de datos, al delegar la custodia de información sensible a terceros cuyos modelos de negocio suelen incluir la explotación analítica de datos agregados \cite{perera2014context}.
+--------------------------------------------------------------------------------
+File: 3_analisis_requisitos.tex | Line: 10
+Matches: ['Restricciones de conectividad y latencia:']
+Text: \item \textbf{Restricciones de conectividad y latencia:} el sistema opera sobre una red local aislada para garantizar la resiliencia frente a caídas del servicio de Internet (arquitectura \textit{offline-first}). Esto exige que el servidor central y los sensores compartan el mismo dominio de difusión (dominio de \textit{broadcast}) y estén sometidos a una estricta política de red.
+--------------------------------------------------------------------------------
+File: 3_analisis_requisitos.tex | Line: 11
+Matches: ['Restricciones ambientales y volumétricas:']
+Text: \item \textbf{Restricciones ambientales y volumétricas:} la fiabilidad de la telemetría espacial está supeditada a la geometría de la habitación y a la existencia de línea de visión electromagnética directa entre el radar de ondas milimétricas y los sujetos, limitando las posiciones de instalación viables para evitar zonas de sombra acústica.
+--------------------------------------------------------------------------------
+File: 3_analisis_requisitos.tex | Line: 13
+Matches: ['Restricciones de hardware y procesamiento:']
+Text: \item \textbf{Restricciones de hardware y procesamiento:} la gestión centralizada central se ejecuta sobre un computador de placa única (SBC) local de recursos finitos. Esto impone una limitación directa sobre la complejidad computacional algorítmica y exige un control estricto sobre el uso de la memoria RAM y el desgaste de la unidad de almacenamiento.
+--------------------------------------------------------------------------------
+File: 3_analisis_requisitos.tex | Line: 14
+Matches: ['Restricciones de infraestructura de red:']
+Text: \item \textbf{Restricciones de infraestructura de red:} el sistema exige cobertura ininterrumpida de red inalámbrica IEEE 802.11 (Wi-Fi) en la banda de 2.4 GHz para la transmisión de la telemetría a través de la API local de los nodos distribuidos, requiriendo un nivel de señal (RSSI) estable para evitar la pérdida de eventos lógicos.
+--------------------------------------------------------------------------------
+File: 3_analisis_requisitos.tex | Line: 27
+Matches: ['Usuario habitual:']
+Text: \item \textbf{Usuario habitual:} actor principal y pasivo. Representa a la persona física que habita el entorno monitorizado. Su interacción consiste en realizar rutinas cotidianas (estudiar, dormir, salir) sin requerir la emisión de comandos explícitos al sistema.
+--------------------------------------------------------------------------------
+File: 3_analisis_requisitos.tex | Line: 28
+Matches: ['Administrador del sistema:']
+Text: \item \textbf{Administrador del sistema:} actor activo con privilegios elevados. Encargado del mantenimiento de la infraestructura, el acceso al panel de control analítico, la calibración de los umbrales de sensibilidad de los sensores y la auditoría de los registros de ejecución.
+--------------------------------------------------------------------------------
+File: 3_analisis_requisitos.tex | Line: 29
+Matches: ['Motor de contexto (actor lógico):']
+Text: \item \textbf{Motor de contexto (actor lógico):} entidad de software autónoma que procesa la telemetría entrante, ejecuta los algoritmos de fusión de datos y emite las órdenes de actuación sobre el entorno físico.
+--------------------------------------------------------------------------------
+File: 3_analisis_requisitos.tex | Line: 69
+Matches: ['RF-01: Monitorización espacial continua.']
+Text: \item \textbf{RF-01: Monitorización espacial continua.} El sistema debe detectar la ocupación volumétrica con resolución submilimétrica, diferenciando de manera inequívoca los estados de movimiento dinámico y reposo biométrico absoluto.
+--------------------------------------------------------------------------------
+File: 3_analisis_requisitos.tex | Line: 70
+Matches: ['RF-02: Adquisición de telemetría ambiental.']
+Text: \item \textbf{RF-02: Adquisición de telemetría ambiental.} El sistema debe registrar variables de luminosidad ambiental e índices termohigrométricos para nutrir la matriz de contexto.
+--------------------------------------------------------------------------------
+File: 3_analisis_requisitos.tex | Line: 71
+Matches: ['RF-03: Inferencia algorítmica de estados.']
+Text: \item \textbf{RF-03: Inferencia algorítmica de estados.} El servidor central debe procesar las entradas sensoriales para asignar unívocamente un estado lógico continuo a la estancia (ocio, estudio, durmiendo, ausente).
+--------------------------------------------------------------------------------
+File: 3_analisis_requisitos.tex | Line: 72
+Matches: ['RF-04: Actuación física proactiva.']
+Text: \item \textbf{RF-04: Actuación física proactiva.} El sistema debe controlar la apertura y cierre de relés de estado sólido para la iluminación en función de reglas paramétricas asociadas a la productividad (gestión de tiempos ininterrumpidos) y la ergonomía visual.
+--------------------------------------------------------------------------------
+File: 3_analisis_requisitos.tex | Line: 73
+Matches: ['RF-05: Emisión de notificaciones y alertas.']
+Text: \item \textbf{RF-05: Emisión de notificaciones y alertas.} El sistema debe poseer la capacidad de notificar eventos críticos o advertencias de inactividad prolongada al dispositivo móvil del Administrador.
+--------------------------------------------------------------------------------
+File: 3_analisis_requisitos.tex | Line: 79
+Matches: ['RNF-01: Operatividad perimetral aislada (\\textit{edge computing']
+Text: \item \textbf{RNF-01: Operatividad perimetral aislada (\textit{edge computing}).} El procesamiento algorítmico, las máquinas de estado y el registro en bases de datos deben ejecutarse estrictamente en la red local, garantizando la operatividad sin salida a internet.
+--------------------------------------------------------------------------------
+File: 3_analisis_requisitos.tex | Line: 80
+Matches: ['RNF-02: Baja latencia transaccional.']
+Text: \item \textbf{RNF-02: Baja latencia transaccional.} El tiempo de respuesta entre el registro de un evento físico (ej. cruce del umbral de la puerta) y la ejecución de la acción en el actuador (ej. conmutación del relé) no debe exceder de 1000 milisegundos.
+--------------------------------------------------------------------------------
+File: 3_analisis_requisitos.tex | Line: 81
+Matches: ['RNF-03: Resiliencia ante caídas de red.']
+Text: \item \textbf{RNF-03: Resiliencia ante caídas de red.} El servidor central debe identificar la desconexión abrupta de cualquier nodo sensor y aplicar un protocolo de contingencia mediante el mecanismo de supervisión activa (\textit{keepalive}) de la API nativa de comunicaciones del firmware de los nodos.
+--------------------------------------------------------------------------------
+File: 3_analisis_requisitos.tex | Line: 82
+Matches: ['RNF-04: Tolerancia a fallos lógicos.']
+Text: \item \textbf{RNF-04: Tolerancia a fallos lógicos.} El motor de contexto debe implementar reglas condicionales redundantes para rectificar falsos positivos de hardware y forzar transiciones de estado seguras (ej. auto-armado por inactividad).
+--------------------------------------------------------------------------------
+File: 3_analisis_requisitos.tex | Line: 149
+Matches: ['Objetivo Específico (OE)', 'Requisitos Func. (RF)', 'Req. No Func. (RNF)']
+Text: \parbox[c]{5cm}{\vspace{0.3cm}\centering \textbf{Objetivo Específico (OE)}\vspace{0.3cm}} & \parbox[c]{4cm}{\centering \textbf{Requisitos Func. (RF)}} & \parbox[c]{4cm}{\centering \textbf{Req. No Func. (RNF)}} \\ \hhline{|-|-|-|}
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 11
+Matches: ['Capa de adquisición y actuación física:']
+Text: \item \textbf{Capa de adquisición y actuación física:} constituida por los microcontroladores distribuidos (nodos ESP32) y sus respectivos transductores analógicos y digitales (radar FMCW, fotorresistor LDR, sensores climáticos y relés de estado sólido). Su función se limita a la digitalización de variables físicas y a la ejecución inmediata de comandos eléctricos.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 12
+Matches: ['Capa de transporte y red:']
+Text: \item \textbf{Capa de transporte y red:} configurada sobre una topolog\'ia en estrella segmentada dentro de la red de \'area local (WLAN). Utiliza el protocolo de transporte TCP/IP sobre enlaces Wi-Fi para dar soporte a la comunicaci\'on bidireccional punto a punto mediante la API nativa de ESPHome. Las conexiones directas de red garantizan el intercambio inmediato de estados e informaci\'on de sensores sin necesidad de intermediarios.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 13
+Matches: ['Capa de gestión centralizada y lógica contextual:']
+Text: \item \textbf{Capa de gestión centralizada y lógica contextual:} representa el núcleo computacional del proyecto (motor de contexto), centralizado en la plataforma Home Assistant sobre el servidor perimetral (Raspberry Pi 4). Esta capa unifica las lecturas heterogéneas de la capa física, ejecuta las máquinas de estado y gobierna la proactividad del entorno mediante el disparo de las automatizaciones programadas.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 14
+Matches: ['Capa de persistencia y aplicación:']
+Text: \item \textbf{Capa de persistencia y aplicación:} encargada del almacenamiento de las series temporales de telemetría en una base de datos local optimizada y de la representación gráfica del estado del sistema a través de una interfaz de usuario centralizada o \textit{dashboard} accesible por el administrador.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 59
+Matches: ['Actor principal:']
+Text: \item \textbf{Actor principal:} usuario habitual.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 60
+Matches: ['Actor secundario:']
+Text: \item \textbf{Actor secundario:} motor de contexto.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 61
+Matches: ['Descripción:']
+Text: \item \textbf{Descripción:} el usuario habitual entra, permanece inmóvil o abandona la estancia. El sistema evalúa continuamente las compuertas de distancia del radar FMCW y las fluctuaciones lumínicas para actualizar el estado contextual de la habitación en tiempo real, operando de manera transparente.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 66
+Matches: ['Actor principal:']
+Text: \item \textbf{Actor principal:} motor de contexto.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 67
+Matches: ['Actor secundario:']
+Text: \item \textbf{Actor secundario:} usuario habitual.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 68
+Matches: ['Descripción:']
+Text: \item \textbf{Descripción:} al detectarse la transición al estado de \textit{estudio} bajo umbrales de luminosidad natural inferiores a los límites paramétricos establecidos, el sistema conmuta automáticamente el relé principal para activar la iluminación de apoyo, protegiendo la salud visual del usuario sin requerir su intervención.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 73
+Matches: ['Actor principal:']
+Text: \item \textbf{Actor principal:} motor de contexto.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 74
+Matches: ['Actor secundario:']
+Text: \item \textbf{Actor secundario:} administrador (vía dispositivo móvil).
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 75
+Matches: ['Descripción:']
+Text: \item \textbf{Descripción:} el sistema monitoriza la persistencia ininterrumpida del estado de \textit{estudio}. Si el temporizador lógico alcanza el umbral de 50 minutos sin alteraciones, el motor de contexto genera un parpadeo cíclico en la iluminación general mediante la alternancia del relé y despacha de forma simultánea una notificación \textit{push} de advertencia ergonómica al terminal del usuario.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 84
+Matches: ['Gestión lumínica:']
+Text: \item \textbf{Gestión lumínica:} un fotorresistor (LDR) acoplado a un circuito divisor de tensión que transforma las variaciones de resistencia óhmica en una señal de tensión analógica, mapeada continuamente por el convertidor analógico-digital (ADC) del microcontrolador.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 85
+Matches: ['Actuación de potencia:']
+Text: \item \textbf{Actuación de potencia:} un módulo de relé de estado sólido con aislamiento galvánico mediante optoacopladores, conectado a un pin GPIO configurado como salida digital, encargado de interrumpir o habilitar el paso de corriente alterna hacia la luminaria principal de la estancia.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 86
+Matches: ['Telemetría termo-higrométrica:']
+Text: \item \textbf{Telemetría termo-higrométrica:} un transductor digital de temperatura y humedad relativa, conectado mediante un bus serie unifilar (\textit{single-wire}), que suministra lecturas calibradas periódicas para evaluar las condiciones de habitabilidad de la estancia.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 87
+Matches: ['Monitoreo acústico:']
+Text: \item \textbf{Monitoreo acústico:} un sensor de sonido de alta sensibilidad (\textit{big sound}), equipado con un micrófono de electret y un comparador analógico basado en el circuito integrado LM393. Este dispositivo se conecta a interfaces digitales y analógicas del ESP32, permitiendo capturar picos de presión acústica ambientales para la inferencia de estados conductuales o la activación de alertas de intrusión.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 100
+Matches: ['Transductor volumétrico:']
+Text: \item \textbf{Transductor volumétrico:} el radar de ondas milimétricas HLK-LD2410C, interconectado con el soc ESP32 a través de un bus de comunicación serie UART (\textit{universal asynchronous receiver-transmitter}) empleando los pines dedicados de transmisión (TX) y recepción (RX). Esta interfaz de alta velocidad permite extraer de manera síncrona los vectores de energía y distancia correspondientes a objetivos dinámicos y estacionarios.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 101
+Matches: ['Emisor óptico:']
+Text: \item \textbf{Emisor óptico:} un módulo de diodo láser semiconductor conectado a un pin GPIO configurado como salida digital. Este componente actúa como un dispositivo indicador físico de estado y disuasión perimetral, gobernado por el motor algorítmico durante el armado del sistema de alarma o como señal de advertencia secundaria en los ciclos lógicos de trabajo.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 160
+Matches: ['Nombre', 'Tipo de dato', 'Descripción']
+Text: \multicolumn{1}{|c|}{\textbf{Nombre}} & \multicolumn{1}{c|}{\textbf{Tipo de dato}} & \multicolumn{1}{c|}{\textbf{Descripción}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 161
+Matches: ['Tabla de variables / Atributos']
+Text: \multicolumn{3}{|c|}{\textbf{Tabla de variables / Atributos}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 167
+Matches: ['Tabla de métodos / Funciones']
+Text: \multicolumn{3}{|c|}{\textbf{Tabla de métodos / Funciones}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 168
+Matches: ['Nombre', 'Dato(s) de entrada', 'Dato(s) de salida / Acción']
+Text: \multicolumn{1}{|c|}{\textbf{Nombre}} & \multicolumn{1}{c|}{\textbf{Dato(s) de entrada}} & \multicolumn{1}{c|}{\textbf{Dato(s) de salida / Acción}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 182
+Matches: ['Nombre', 'Tipo de dato', 'Descripción']
+Text: \multicolumn{1}{|c|}{\textbf{Nombre}} & \multicolumn{1}{c|}{\textbf{Tipo de dato}} & \multicolumn{1}{c|}{\textbf{Descripción}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 183
+Matches: ['Tabla de variables / Atributos']
+Text: \multicolumn{3}{|c|}{\textbf{Tabla de variables / Atributos}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 190
+Matches: ['Tabla de métodos / Funciones']
+Text: \multicolumn{3}{|c|}{\textbf{Tabla de métodos / Funciones}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 191
+Matches: ['Nombre', 'Dato(s) de entrada', 'Dato(s) de salida / Acción']
+Text: \multicolumn{1}{|c|}{\textbf{Nombre}} & \multicolumn{1}{c|}{\textbf{Dato(s) de entrada}} & \multicolumn{1}{c|}{\textbf{Dato(s) de salida / Acción}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 204
+Matches: ['Nombre', 'Tipo de dato', 'Descripción']
+Text: \multicolumn{1}{|c|}{\textbf{Nombre}} & \multicolumn{1}{c|}{\textbf{Tipo de dato}} & \multicolumn{1}{c|}{\textbf{Descripción}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 205
+Matches: ['Tabla de variables / Atributos']
+Text: \multicolumn{3}{|c|}{\textbf{Tabla de variables / Atributos}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 207
+Matches: ['Tabla de métodos / Funciones']
+Text: \multicolumn{3}{|c|}{\textbf{Tabla de métodos / Funciones}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 208
+Matches: ['Nombre', 'Dato(s) de entrada', 'Dato(s) de salida / Acción']
+Text: \multicolumn{1}{|c|}{\textbf{Nombre}} & \multicolumn{1}{c|}{\textbf{Dato(s) de entrada}} & \multicolumn{1}{c|}{\textbf{Dato(s) de salida / Acción}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 220
+Matches: ['Nombre', 'Tipo de dato', 'Descripción']
+Text: \multicolumn{1}{|c|}{\textbf{Nombre}} & \multicolumn{1}{c|}{\textbf{Tipo de dato}} & \multicolumn{1}{c|}{\textbf{Descripción}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 221
+Matches: ['Tabla de variables / Atributos']
+Text: \multicolumn{3}{|c|}{\textbf{Tabla de variables / Atributos}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 225
+Matches: ['Tabla de métodos / Funciones']
+Text: \multicolumn{3}{|c|}{\textbf{Tabla de métodos / Funciones}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 226
+Matches: ['Nombre', 'Dato(s) de entrada', 'Dato(s) de salida / Acción']
+Text: \multicolumn{1}{|c|}{\textbf{Nombre}} & \multicolumn{1}{c|}{\textbf{Dato(s) de entrada}} & \multicolumn{1}{c|}{\textbf{Dato(s) de salida / Acción}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 295
+Matches: ['Actuación perimetral:']
+Text: \item \textbf{Actuación perimetral:} se invoca el servicio de conmutación correspondiente de vuelta hacia el nodo ESP32 a través del canal abierto de la API, forzando la activación física del relé.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 296
+Matches: ['Persistencia temporal:']
+Text: \item \textbf{Persistencia temporal:} el estado indexado y la telemetría asociada se envían al subsistema de almacenamiento local. La base de datos, estructurada como un motor de series temporales de ejecución en memoria con volcado cíclico al almacenamiento secundario local, registra la tupla compuesta por el identificador de la entidad, el valor transformado y la marca de tiempo precisa (\textit{timestamp}) proporcionada por el sistema operativo del servidor. Esto permite la auditoría posterior de las rutinas del usuario sin comprometer datos fuera de la red local.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 355
+Matches: ['Tabla \\texttt{Nodo']
+Text: \item \textbf{Tabla \texttt{Nodo} (Primera Forma Normal o 1NF):} todos los atributos son atómicos (no repetitivos) y se identifican mediante una clave primaria única (\texttt{id\_nodo}).
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 356
+Matches: ['Tabla \\texttt{Sensor']
+Text: \item \textbf{Tabla \texttt{Sensor} (Segunda Forma Normal o 2NF):} cumple 1NF y no existen dependencias funcionales parciales; los atributos describen de forma exclusiva a la entidad sensor ligada por clave foránea a un nodo (\texttt{id\_nodo}).
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 357
+Matches: ['Tabla \\texttt{Lectura']
+Text: \item \textbf{Tabla \texttt{Lectura} y \texttt{EstadoContexto} (Tercera Forma Normal o 3NF):} cumple 2NF y se eliminan dependencias transitivas. El valor de la lectura de un sensor o el cambio de estado depende únicamente de la clave primaria, y no existe ningún atributo no primario dependiente de otro atributo no primario.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 371
+Matches: ['Tabla / Atributo', 'Tipo de dato', 'Restricción', 'Descripción']
+Text: \textbf{Tabla / Atributo} & \textbf{Tipo de dato} & \textbf{Restricción} & \textbf{Descripción} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 372
+Matches: ['Tabla: Nodo']
+Text: \multicolumn{4}{|c|}{\textbf{Tabla: Nodo}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 378
+Matches: ['Tabla: Sensor']
+Text: \multicolumn{4}{|c|}{\textbf{Tabla: Sensor}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 384
+Matches: ['Tabla: Lectura']
+Text: \multicolumn{4}{|c|}{\textbf{Tabla: Lectura}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 402
+Matches: ['Tabla / Atributo', 'Tipo de dato', 'Restricción', 'Descripción']
+Text: \textbf{Tabla / Atributo} & \textbf{Tipo de dato} & \textbf{Restricción} & \textbf{Descripción} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 403
+Matches: ['Tabla: Actuador']
+Text: \multicolumn{4}{|c|}{\textbf{Tabla: Actuador}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 409
+Matches: ['Tabla: EstadoContexto']
+Text: \multicolumn{4}{|c|}{\textbf{Tabla: EstadoContexto}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 415
+Matches: ['Tabla: AccionActuacion']
+Text: \multicolumn{4}{|c|}{\textbf{Tabla: AccionActuacion}} \\ \hline
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 428
+Matches: ['Capa WLAN:']
+Text: \item \textbf{Capa WLAN:} se configura de forma estática en uno de los tres canales no superpuestos (1, 6 u 11) con un ancho de banda de 20 MHz.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 429
+Matches: ['Capa WPAN (BLE):']
+Text: \item \textbf{Capa WPAN (BLE):} utiliza los canales 37, 38 y 39 en exclusiva para las tramas pasivas (\textit{advertising}) de los sensores. Estos canales se sitúan en los extremos y huecos de la banda, esquivando las frecuencias centrales Wi-Fi. Para las comunicaciones activas, se emplea el algoritmo AFH (\textit{Adaptive Frequency Hopping}) para esquivar el espectro saturado por la WLAN.
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 442
+Matches: ['Capa OSI', 'Red sensórica (WPAN)', 'Red troncal (WLAN)']
+Text: \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{Capa OSI}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering\textbf{Red sensórica (WPAN)}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering\textbf{Red troncal (WLAN)}\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 443
+Matches: ['7. Aplicación']
+Text: \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{7. Aplicación}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Perfiles GAP / GATT (tramas \textit{advertising})\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering API nativa ESPHome\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 444
+Matches: ['6. Presentación']
+Text: \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{6. Presentación}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Integrado en capa 7\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Protocol Buffers (binario)\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 445
+Matches: ['5. Sesión']
+Text: \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{5. Sesión}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Sin conexión (\textit{connectionless})\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Sockets TCP persistentes\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 446
+Matches: ['4. Transporte']
+Text: \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{4. Transporte}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering No aplica en topología pasiva\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering TCP (con control de flujo)\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 447
+Matches: ['3. Red']
+Text: \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{3. Red}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering No aplica en topología punto a punto\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering IPv4 (Enrutamiento local)\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 448
+Matches: ['1 y 2. Física / Enlace']
+Text: \parbox[c]{3.5cm}{\vspace{0.2cm}\centering\textbf{1 y 2. Física / Enlace}\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Direccionamiento MAC BLE. Modulación GFSK (banda 2.4 GHz).\vspace{0.2cm}} & \parbox[c]{5.25cm}{\vspace{0.2cm}\centering Direccionamiento MAC Wi-Fi. IEEE 802.11ax (OFDMA).\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+--------------------------------------------------------------------------------
+File: 4_diseno_sistema.tex | Line: 454
+Matches: ['Mecanismo de consistencia y control de flujo:']
+Text: \textbf{Mecanismo de consistencia y control de flujo:}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 22
+Matches: ['Características', 'Raspberry Pi 4B', 'Raspberry Pi 3B+', 'Orange Pi 5 Plus']
+Text: \parbox[c]{4.6cm}{\vspace{0.2cm}\centering\textbf{Características}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering\textbf{Raspberry Pi 4B}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering\textbf{Raspberry Pi 3B+}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering\textbf{Orange Pi 5 Plus}\vspace{0.2cm}} \\ \hhline{|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 23
+Matches: ['Procesador (CPU)']
+Text: \parbox[c]{4.6cm}{\vspace{0.2cm}\centering\textbf{Procesador (CPU)}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Cortex-A72 (4x @ 1.5GHz)\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Cortex-A53 (4x @ 1.4GHz)\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering RK3588 (Octa Core)\vspace{0.2cm}} \\ \hhline{|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 24
+Matches: ['Memoria RAM']
+Text: \parbox[c]{4.6cm}{\vspace{0.2cm}\centering\textbf{Memoria RAM}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering 1GB (LPDDR4)\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering 1GB (LPDDR2)\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering 8GB/\allowbreak 16GB\vspace{0.2cm}} \\ \hhline{|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 25
+Matches: ['Almacenamiento']
+Text: \parbox[c]{4.6cm}{\vspace{0.2cm}\centering\textbf{Almacenamiento}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering MicroSD / USB 3.0\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering MicroSD / USB 2.0\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Ranura M.2 NVMe\vspace{0.2cm}} \\ \hhline{|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 26
+Matches: ['Consumo']
+Text: \parbox[c]{4.6cm}{\vspace{0.2cm}\centering\textbf{Consumo}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering 3W / 6W\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering 2.5W / 5W\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering 5W / 12W+\vspace{0.2cm}} \\ \hhline{|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 27
+Matches: ['Inteligencia artificial']
+Text: \parbox[c]{4.6cm}{\vspace{0.2cm}\centering\textbf{Inteligencia artificial}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Procesamiento CPU\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Inviable\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering NPU (6 TOPS)\vspace{0.2cm}} \\ \hhline{|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 28
+Matches: ['Soporte software']
+Text: \parbox[c]{4.6cm}{\vspace{0.2cm}\centering\textbf{Soporte software}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Excelente\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Excelente\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Limitado/\allowbreak Fragmentado\vspace{0.2cm}} \\ \hhline{|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 29
+Matches: ['Coste aprox.']
+Text: \parbox[c]{4.6cm}{\vspace{0.2cm}\centering\textbf{Coste aprox.}\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Medio (45-55€)\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Bajo (35€)\vspace{0.2cm}} & \parbox[c]{2.9cm}{\vspace{0.2cm}\centering Alto (140-160€)\vspace{0.2cm}} \\ \hhline{|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 48
+Matches: ['Radar de ondas milimétricas HLK-LD2410C:']
+Text: \item \textbf{Radar de ondas milimétricas HLK-LD2410C:} dispositivo FMCW operando en la banda de 24 GHz. Se seleccionó por su capacidad analítica para segmentar la energía reflejada en compuertas de distancia fijas y discriminar micromovimientos asociados a la respiración humana, superando la limitación volumétrica de los sensores piroeléctricos.
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 49
+Matches: ['Módulo de sonido de alta sensibilidad (Big Sound):']
+Text: \item \textbf{Módulo de sonido de alta sensibilidad (Big Sound):} equipado con un micrófono de electret y el circuito comparador analógico LM393. Permite establecer un umbral de conmutación digital rápido mediante potenciómetro y capturar la amplitud de la señal analógica para auditorías de ruido ambiental.
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 50
+Matches: ['Transductor termo-higrométrico digital:']
+Text: \item \textbf{Transductor termo-higrométrico digital:} sensor climático que proporciona lecturas directas calibradas en origen de temperatura exterior y humedad relativa mediante un protocolo serie propietario de un solo hilo, reduciendo el uso de pines GPIO en el Nodo Ambiente.
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 51
+Matches: ['Fotorresistor LDR:']
+Text: \item \textbf{Fotorresistor LDR:} sensor de sulfuro de cadmio (CdS) integrado en un divisor de tensión pasivo. Proporciona una respuesta analógica inversamente proporcional a la iluminancia incidente, idónea para la calibración del comportamiento lumínico de la estancia.
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 52
+Matches: ['Módulo de relé optoacoplado:']
+Text: \item \textbf{Módulo de relé optoacoplado:} actuador de potencia con aislamiento galvánico provisto por un optoacoplador interno. Su inclusión previene el retorno de corrientes parásitas de alta tensión o transitorios de conmutación de la luminaria de corriente alterna hacia las líneas lógicas de baja tensión del ESP32.
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 53
+Matches: ['Módulo de diodo láser semiconductor:']
+Text: \item \textbf{Módulo de diodo láser semiconductor:} emisor de luz monocromática focalizada de baja potencia. Actúa como transductor de señalización óptica y disuasión perimetral dentro de las reglas de control de la estancia.
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 54
+Matches: ['Sensor magnético de contacto Reed:']
+Text: \item \textbf{Sensor magnético de contacto Reed:} interruptor encapsulado que se activa por campo magnético. Instalado en el perfil estructural del acceso principal para el envío de señales binarias inmediatas ante cambios de geometría en la puerta.
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 64
+Matches: ['Métrica', 'Sensor infrarrojo (PIR)', 'Radar mmWave (HLK-LD2410C)']
+Text: \parbox[c]{3.2cm}{\vspace{0.2cm}\centering\textbf{Métrica}\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering\textbf{Sensor infrarrojo (PIR)}\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering\textbf{Radar mmWave (HLK-LD2410C)}\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 65
+Matches: ['Principio']
+Text: \parbox[c]{3.2cm}{\vspace{0.2cm}\centering\textbf{Principio}\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Radiación térmica (infrarrojo)\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Radiofrecuencia modulada (FMCW 24 GHz)\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 66
+Matches: ['Detección estática']
+Text: \parbox[c]{3.2cm}{\vspace{0.2cm}\centering\textbf{Detección estática}\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Nula (falsos negativos frecuentes)\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Alta (detecta micromovimientos y respiración)\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 67
+Matches: ['Precisión espacial']
+Text: \parbox[c]{3.2cm}{\vspace{0.2cm}\centering\textbf{Precisión espacial}\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Binaria (presencia/ausencia)\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Cuantitativa (distancia en cm)\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 68
+Matches: ['Sensibilidad ambiental']
+Text: \parbox[c]{3.2cm}{\vspace{0.2cm}\centering\textbf{Sensibilidad ambiental}\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Propenso a falsos positivos (sol, calor)\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Inmune a cambios térmicos\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 69
+Matches: ['Ocultación']
+Text: \parbox[c]{3.2cm}{\vspace{0.2cm}\centering\textbf{Ocultación}\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Requiere línea de visión directa\vspace{0.2cm}} & \parbox[c]{5.2cm}{\vspace{0.2cm}\centering Alta penetración (atraviesa plásticos)\vspace{0.2cm}} \\ \hhline{|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 179
+Matches: ['Características', 'Home Assistant', 'OpenHAB', 'Domoticz', 'Ecosistemas comerciales']
+Text: \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Características}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering\textbf{Home Assistant}\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering\textbf{OpenHAB}\vspace{0.2cm}} & \parbox[c]{2.1cm}{\vspace{0.2cm}\centering\textbf{Domoticz}\vspace{0.2cm}} & \parbox[c]{2.5cm}{\vspace{0.2cm}\centering\textbf{Ecosistemas comerciales}\vspace{0.2cm}} \\ \hhline{|-|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 180
+Matches: ['Arquitectura']
+Text: \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Arquitectura}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering Dirigido por eventos (Python)\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering Java (pesado)\vspace{0.2cm}} & \parbox[c]{2.1cm}{\vspace{0.2cm}\centering C++ (ligero)\vspace{0.2cm}} & \parbox[c]{2.5cm}{\vspace{0.2cm}\centering Basado en la nube\vspace{0.2cm}} \\ \hhline{|-|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 181
+Matches: ['Primero local']
+Text: \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Primero local}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering Nativo (sin internet)\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering Nativo\vspace{0.2cm}} & \parbox[c]{2.1cm}{\vspace{0.2cm}\centering Nativo\vspace{0.2cm}} & \parbox[c]{2.5cm}{\vspace{0.2cm}\centering No\vspace{0.2cm}} \\ \hhline{|-|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 182
+Matches: ['Integraciones']
+Text: \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Integraciones}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering +2500\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering +/- 400\vspace{0.2cm}} & \parbox[c]{2.1cm}{\vspace{0.2cm}\centering +/- 300\vspace{0.2cm}} & \parbox[c]{2.5cm}{\vspace{0.2cm}\centering Limitadas\vspace{0.2cm}} \\ \hhline{|-|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 183
+Matches: ['Automatización']
+Text: \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Automatización}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering UI avanzada + YAML\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering Scripts complejos\vspace{0.2cm}} & \parbox[c]{2.1cm}{\vspace{0.2cm}\centering LUA/\allowbreak Blockly\vspace{0.2cm}} & \parbox[c]{2.5cm}{\vspace{0.2cm}\centering Rutinas básicas\vspace{0.2cm}} \\ \hhline{|-|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 184
+Matches: ['Interfaz API']
+Text: \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Interfaz API}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering WebSocket (tiempo real)\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering REST API\vspace{0.2cm}} & \parbox[c]{2.1cm}{\vspace{0.2cm}\centering JSON/\allowbreak MQTT\vspace{0.2cm}} & \parbox[c]{2.5cm}{\vspace{0.2cm}\centering REST API\vspace{0.2cm}} \\ \hhline{|-|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 202
+Matches: ['Características', 'HA Container (Docker)', 'HA OS', 'HA Core (venv)', 'HA Supervised']
+Text: \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Características}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering\textbf{HA Container (Docker)}\vspace{0.2cm}} & \parbox[c]{1.9cm}{\vspace{0.2cm}\centering\textbf{HA OS}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering\textbf{HA Core (venv)}\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering\textbf{HA Supervised}\vspace{0.2cm}} \\ \hhline{|-|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 203
+Matches: ['Acceso al SO']
+Text: \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Acceso al SO}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering Total (Raspberry OS)\vspace{0.2cm}} & \parbox[c]{1.9cm}{\vspace{0.2cm}\centering Nulo (cerrado)\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering Total\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering Total\vspace{0.2cm}} \\ \hhline{|-|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 204
+Matches: ['Gestión de dependencias']
+Text: \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Gestión de dependencias}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering Aislada (contenedor)\vspace{0.2cm}} & \parbox[c]{1.9cm}{\vspace{0.2cm}\centering SO\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering Manual\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering Supervisor\vspace{0.2cm}} \\ \hhline{|-|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 205
+Matches: ['Tienda de complementos']
+Text: \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Tienda de complementos}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering No (contenedores)\vspace{0.2cm}} & \parbox[c]{1.9cm}{\vspace{0.2cm}\centering Sí (1 clic)\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering No\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering Sí\vspace{0.2cm}} \\ \hhline{|-|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 206
+Matches: ['Flexibilidad']
+Text: \parbox[c]{4.5cm}{\vspace{0.2cm}\centering\textbf{Flexibilidad}\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering Máxima (microservicios)\vspace{0.2cm}} & \parbox[c]{1.9cm}{\vspace{0.2cm}\centering Baja\vspace{0.2cm}} & \parbox[c]{2.4cm}{\vspace{0.2cm}\centering Alta\vspace{0.2cm}} & \parbox[c]{2.2cm}{\vspace{0.2cm}\centering Media\vspace{0.2cm}} \\ \hhline{|-|-|-|-|-|}
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 214
+Matches: ['Aislamiento de dependencias y portabilidad:']
+Text: \item \textbf{Aislamiento de dependencias y portabilidad:} Docker permite ejecutar cada servicio (Home Assistant, ESPHome y Portainer) en contenedores ligeros aislados que comparten el mismo núcleo del sistema operativo. Esto evita conflictos de librerías y facilita la replicación de la infraestructura en cualquier otro hardware compatible.
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 215
+Matches: ['Gestión de microservicios con Docker Compose:']
+Text: \item \textbf{Gestión de microservicios con Docker Compose:} la infraestructura se define en un único archivo declarativo YAML. Esto agiliza la configuración, las actualizaciones y el mantenimiento del stack completo del servidor local.
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 216
+Matches: ['Administración visual con Portainer:']
+Text: \item \textbf{Administración visual con Portainer:} el uso del gestor de contenedores Portainer proporciona una interfaz gráfica para monitorizar el estado del hardware de la Raspberry Pi, inspeccionar los registros de ejecución (\textit{logs}) de cada contenedor y administrar los ciclos de vida de las imágenes y volúmenes de almacenamiento de forma simplificada, sin necesidad de recurrir a la línea de comandos para operaciones cotidianas.
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 217
+Matches: ['Eficiencia de recursos:']
+Text: \item \textbf{Eficiencia de recursos:} al prescindir del supervisor integrado en la alternativa *Supervised* o en HA OS, se reduce drásticamente la huella de memoria RAM (crítico en un hardware con recursos restringidos a 1 GB como la Raspberry Pi 4 de este proyecto), liberando recursos para la base de datos y la algoritmia del sistema.
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 218
+Matches: ['Acceso a nivel de sistema operativo:']
+Text: \item \textbf{Acceso a nivel de sistema operativo:} fundamental para la ejecución de scripts en Python personalizados fuera de las restricciones impuestas por el sistema operativo cerrado de HA OS.
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 219
+Matches: ['Arquitectura de microservicios y red nativa:']
+Text: \item \textbf{Arquitectura de microservicios y red nativa:} mediante \textit{Docker Compose}, se aíslan y gestionan de forma independiente los servicios críticos. Para garantizar la detección de dispositivos en la red local mediante mDNS y UPnP (fundamental para la API de ESPHome y el descubrimiento de dispositivos), los contenedores de Home Assistant y ESPHome se configuran en el modo de red del host (\textit{host network mode}), mientras que Portainer se despliega en una red de puente (\textit{bridge}) para el aislamiento de su interfaz de gestión.
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 282
+Matches: ['Cifrado extremo a extremo:']
+Text: \item \textbf{Cifrado extremo a extremo:} Tailscale establece una red mallada privada virtual (\textit{overlay network}) basada en el protocolo moderno de VPN WireGuard. Toda la telemetría y el tráfico administrativo viajan cifrados de extremo a extremo, impidiendo que terceros intercepten datos sensibles del hogar.
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 283
+Matches: ['Conexión directa peer-to-peer:']
+Text: \item \textbf{Conexión directa peer-to-peer:} a diferencia de otras VPN comerciales que enrutan el tráfico a través de servidores centralizados, Tailscale facilita la conexión directa entre dispositivos usando técnicas de evasión de cortafuegos (NAT traversal). Esto minimiza la latencia de respuesta y optimiza el ancho de banda.
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 284
+Matches: ['Ausencia de puertos abiertos en WAN:']
+Text: \item \textbf{Ausencia de puertos abiertos en WAN:} al no requerir la redirección de puertos (como SSH o el puerto de Home Assistant 8123) en el enrutador doméstico, el servidor central permanece invisible a escaneos de puertos y ataques masivos automatizados desde el exterior.
+--------------------------------------------------------------------------------
+File: 5_seleccion_tecnologias.tex | Line: 285
+Matches: ['Bajo consumo computacional:']
+Text: \item \textbf{Bajo consumo computacional:} la integración de Tailscale en Raspberry Pi OS Lite es sumamente ligera, consumiendo una cantidad de recursos de CPU y RAM prácticamente imperceptible, idónea para el hardware seleccionado de 1 GB.
+--------------------------------------------------------------------------------
+File: 6_plan_implantacion.tex | Line: 32
+Matches: ['Aprovisionamiento y validación analógica:']
+Text: \item \textbf{Aprovisionamiento y validación analógica:} ensamblaje preliminar de los componentes electrónicos en placa de pruebas (\textit{breadboard}) para la medición de caídas de tensión mediante multímetro, la calibración física de umbrales mediante el potenciómetro de precisión integrado en el módulo de detección acústica y la verificación general del comportamiento eléctrico en frío, minimizando el riesgo de cortocircuitos.
+--------------------------------------------------------------------------------
+File: 6_plan_implantacion.tex | Line: 33
+Matches: ['Despliegue del núcleo lógico perimetral:']
+Text: \item \textbf{Despliegue del núcleo lógico perimetral:} instalación del sistema operativo subyacente (Raspberry Pi OS) en el servidor perimetral (Raspberry Pi 4 con 1\,GB de RAM) y el despliegue del servidor central Home Assistant Container y la suite ESPHome como contenedores independientes aislados en Docker. En esta fase se configuró el motor de base de datos local SQLite y su base de datos (\texttt{home-assistant\_v2.db}), definiendo las políticas de depuración y retención del historial para garantizar el rendimiento en un hardware con limitaciones de memoria y almacenamiento. El estado operativo de los contenedores desplegados se muestra en la Figura~\ref{fig:portainer_containers}.
+--------------------------------------------------------------------------------
+File: 6_plan_implantacion.tex | Line: 42
+Matches: ['Inyección de firmware y ubicación física:']
+Text: \item \textbf{Inyección de firmware y ubicación física:} creación y compilación de los archivos de configuración declarativos (YAML) empleando el compilador cruzado de ESPHome para generar ejecutables optimizados en C++. El \textit{firmware} se transfirió inicialmente a través de conexión física USB y posteriormente mediante actualizaciones inalámbricas OTA (\textit{Over-the-Air}). Se validó la comunicación cifrada local mediante la API nativa de ESPHome, la cual opera mediante un socket TCP persistente utilizando el protocolo Noise y serialización binaria Protocol Buffers. Tras comprobar la conexión inalámbrica local estable, los microcontroladores ESP32 y sus sensores se instalaron en sus cajas protectoras y ubicaciones definitivas.
+--------------------------------------------------------------------------------
+File: 6_plan_implantacion.tex | Line: 43
+Matches: ['Ejecución del plan de pruebas e integración:']
+Text: \item \textbf{Ejecución del plan de pruebas e integración:} aplicación de estímulos físicos controlados sobre el entorno (variación de luz, generación de sonido, cruce de barreras y aperturas de acceso) para auditar el comportamiento lógico de los actuadores y realizar el ajuste fino de los tiempos de retraso y las transiciones del motor contextual en el servidor central.
+--------------------------------------------------------------------------------
+File: 6_plan_implantacion.tex | Line: 51
+Matches: ['Nodo Ambiente:']
+Text: \item \textbf{Nodo Ambiente:} el sensor de temperatura y humedad DHT11 se conecta mediante un bus digital unifilar (\textit{single-wire}) al pin GPIO 4. El fotorresistor (LDR) se integra en un circuito divisor de tensión analógico, cuya salida de voltaje se introduce directamente al pin GPIO 32 para ser digitalizada por el convertidor analógico-digital (ADC) interno del microcontrolador. El relé de estado sólido, que actúa como interruptor de potencia para controlar la luminaria principal de la habitación, se gobierna mediante una señal de salida digital en el pin GPIO 26. Por su parte, el transductor acústico (Big Sound) se conecta exclusivamente por vía digital al pin GPIO 27. El filtrado de rebotes e interrupciones repetitivas provocadas por picos de sonido cortos se realiza mediante un filtro de retardo por software en el \textit{firmware} de ESPHome (\texttt{delayed\_off: 500ms}) como se detalla en el Código~\ref{lst:esphome_sonido}, mientras que la calibración de la sensibilidad se efectúa físicamente mediante el potenciómetro analógico integrado en el módulo de sonido.
+--------------------------------------------------------------------------------
+File: 6_plan_implantacion.tex | Line: 63
+Matches: ['Nodo Escritorio:']
+Text: \item \textbf{Nodo Escritorio:} la interfaz del radar de ondas milimétricas FMCW (HLK-LD2410) se conecta al bus serie UART del ESP32, requiriendo el cruce de los canales de comunicación: el pin de transmisión (TX) del radar se conecta al pin GPIO 16 (configurado como RX en el microcontrolador) y el pin de recepción (RX) del radar se conecta al pin GPIO 17 (TX en el microcontrolador), operando de forma asíncrona a una tasa de transferencia de 256\,000 baudios para garantizar la tasa de refresco requerida por la telemetría espacial.
+--------------------------------------------------------------------------------
+File: 6_plan_implantacion.tex | Line: 64
+Matches: ['Nodo Puerta:']
+Text: \item \textbf{Nodo Puerta:} el sensor de puerta magnético (interruptor Reed) se conecta entre el pin GPIO 4 y el plano de masa física (GND). Mediante el \textit{firmware} de ESPHome se activa la resistencia de polarización de subida (\textit{pull-up}) interna del microcontrolador, garantizando una lectura lógica alta (3.3\,V) estable cuando el contacto está abierto, la cual cae instantáneamente a un nivel lógico bajo (0\,V) cuando el imán de la hoja de la puerta cierra mecánicamente el circuito. Asimismo, el módulo de diodo emisor láser semiconductor se conecta a una salida digital en el pin GPIO 5, gobernado de forma directa por la máquina de estados de seguridad perimetral para actuar como barrera visual disuasoria en el umbral del acceso principal. Los fragmentos clave de esta configuración se listan en el Código~\ref{lst:esphome_puerta}.
+--------------------------------------------------------------------------------
+File: 6_plan_implantacion.tex | Line: 95
+Matches: ['Diagnóstico de la instrumentación analógica:']
+Text: \item \textbf{Diagnóstico de la instrumentación analógica:} se utilizó instrumentación de laboratorio (multímetro digital) para registrar la tensión de salida del circuito divisor de tensión del LDR frente a variaciones de flujo luminoso. Esta prueba permitió calibrar el comportamiento del ADC y descartar defectos de fabricación en las soldaduras físicas (como falsos contactos o derivaciones), previniendo la inyección de lecturas anómalas en el microcontrolador.
+--------------------------------------------------------------------------------
+File: 6_plan_implantacion.tex | Line: 96
+Matches: ['Calibración del rango y sensibilidad del radar:']
+Text: \item \textbf{Calibración del rango y sensibilidad del radar:} el radar FMCW (HLK-LD2410) se evaluó monitorizando el bus serie UART mediante comandos de depuración en caliente para contrastar la sectorización espacial teórica con el comportamiento real. Se determinó que los micromovimientos provocados por elementos inanimados oscilantes (tales como corrientes de aire en las cortinas) generaban falsas detecciones de energía en rangos lejanos. Este ruido se mitigó ajustando dinámicamente, mediante la consola de configuración, los umbrales de sensibilidad en las compuertas de distancia (\textit{distance gates}) correspondientes, logrando aislar exclusivamente la presencia humana real. La interfaz de monitorización de compuertas en el servidor ESPHome se ilustra en la Figura~\ref{fig:esphome_radar_diag}.
+--------------------------------------------------------------------------------
+File: 6_plan_implantacion.tex | Line: 110
+Matches: ['Evaluación de ergonomía proactiva (Pomodoro Espacial):']
+Text: \item \textbf{Evaluación de ergonomía proactiva (Pomodoro Espacial):} se simuló un estado de presencia ininterrumpida en el área de trabajo en modo de estudio. Al alcanzarse los 50 minutos de actividad continua definidos en la regla de negocio (\texttt{input\_select.estado\_habitacion} en estado \texttt{Estudio}), el servidor central procesó la telemetría e inició con éxito la acción del parpadeo intermitente de la iluminación física (mediante la conmutación secuencial del GPIO 26 en intervalos de un segundo) y envió la alerta asíncrona \textit{push} al terminal móvil del usuario a través del servicio de notificación centralizado, logrando interrumpir al usuario para evitar la fatiga cognitiva.
+--------------------------------------------------------------------------------
+File: 6_plan_implantacion.tex | Line: 111
+Matches: ['Evaluación de tolerancia a fallos lógicos:']
+Text: \item \textbf{Evaluación de tolerancia a fallos lógicos:} para verificar la resiliencia del motor contextual bayesiano ante fallos de lectura, se simuló el bloqueo en nivel analógico bajo del fotorresistor (LDR), lo que induciría teóricamente al sistema a deducir erróneamente un estado de descanso (\texttt{Durmiendo}). A continuación, se procedió a evacuar la estancia por completo. Al no registrarse micromovimientos en el radar de ondas milimétricas en el Nodo Escritorio (\texttt{binary\_sensor.esp32\_zona\_escritorio\_ocupacion\_general} en estado apagado) y transcurrir el margen de tiempo de seguridad de la regla de inactividad, el motor de contexto bayesiano invalidó la lectura anómala del sensor lumínico y forzó la transición lógica directa al estado seguro de \texttt{Ausente}. El código YAML que rige esta transición en el servidor central se lista en el Código~\ref{lst:ha_inactividad}, y el panel general Lovelace con las métricas activas se ilustra en la Figura~\ref{fig:ha_lovelace_dashboard}.
+--------------------------------------------------------------------------------
+File: 6_plan_implantacion.tex | Line: 160
+Matches: ['Nota sobre los parámetros temporales de prueba:']
+Text: \textbf{Nota sobre los parámetros temporales de prueba:} Con el propósito de verificar esta automatización de inactividad de forma ágil durante los ensayos en el laboratorio de pruebas y la posterior demostración ante el tribunal de evaluación académica, el retardo temporal de ausencia se redujo temporalmente en el archivo de automatizaciones de Home Assistant (\texttt{automations.yaml}) de los 20 minutos teóricos de producción a un valor de prueba de 10 segundos (\texttt{for: 00:00:10}), restaurando la lógica al retardo completo tras verificar su resiliencia.
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 65
+Matches: ['Fusión sensorial redundante:']
+Text: \item \textbf{Fusión sensorial redundante:} en el caso práctico de una lectura errónea o persistencia en nivel bajo del sensor de luminosidad LDR en horas nocturnas (lo que forzaría teóricamente una inferencia permanente del estado \texttt{Durmiendo}), el sistema valida la transición cruzando los datos del radar de ondas milimétricas del Nodo Escritorio. Si el radar no registra presencia absoluta durante el retardo de seguridad paramétrico, la prioridad de iluminación decae y el motor realiza la transición al estado \texttt{Ausente}, evitando la parálisis o el bloqueo lógico del sistema de potencia.
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 66
+Matches: ['Tolerancia a cortes de red e interrupciones de alimentación:']
+Text: \item \textbf{Tolerancia a cortes de red e interrupciones de alimentación:} la arquitectura de comunicaciones locales cuenta con un sistema de reintento activo de sincronización de sockets en la API de ESPHome. Ante caídas puntuales del enrutador Wi-Fi o desconexiones eléctricas transitorias de los microcontroladores, cada nodo ESP32 intenta restablecer el canal de socket TCP de forma autónoma. Home Assistant recupera dinámicamente las entidades vinculadas sin requerir un reinicio manual del servidor o de los nodos. Por motivos de seguridad física, las salidas de los relés se configuran mediante el \textit{firmware} en modo apagado persistente (\texttt{restore\_mode: ALWAYS\_OFF}) para evitar la activación involuntaria de cargas eléctricas ante el restablecimiento del flujo de corriente tras un apagón general.
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 75
+Matches: ['Evento disparador (\\textit{Trigger']
+Text: \item \textbf{Evento disparador (\textit{Trigger}):} la entidad y cambio de estado específico que inició la evaluación.
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 76
+Matches: ['Caminos de decisión (\\textit{Conditions']
+Text: \item \textbf{Caminos de decisión (\textit{Conditions}):} el resultado binario (verdadero/falso) obtenido al evaluar cada una de las variables condicionales y de fusión de sensores.
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 77
+Matches: ['Acciones ejecutadas (\\textit{Actions']
+Text: \item \textbf{Acciones ejecutadas (\textit{Actions}):} la secuencia cronológica de órdenes de control transmitidas a los actuadores físicos a través del canal de comunicación local.
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 78
+Matches: ['Tiempos de cómputo y latencias internas:']
+Text: \item \textbf{Tiempos de cómputo y latencias internas:} la marca temporal exacta de cada transición de la secuencia, lo que permite auditar retardos internos.
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 86
+Matches: ['Objetivo:']
+Text: \item \textbf{Objetivo:} validar que al detectarse presencia en el escritorio bajo condiciones de baja iluminación se enciende la luz de apoyo de forma automática.
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 87
+Matches: ['Estímulo de entrada:']
+Text: \item \textbf{Estímulo de entrada:} cambio a \texttt{on} en el radar del escritorio (\texttt{binary\_}\allowbreak\texttt{sensor.}\allowbreak\texttt{radar\_}\allowbreak\texttt{presence}) con una lectura del LDR por debajo de 200\,lx (\texttt{sensor.}\allowbreak\texttt{ldr\_}\allowbreak\texttt{iluminancia}).
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 88
+Matches: ['Flujo esperado en la traza:']
+Text: \item \textbf{Flujo esperado en la traza:} el servidor intercepta el disparo, valida la oscuridad y activa el relé de iluminación (\texttt{switch.}\allowbreak\texttt{ssr\_}\allowbreak\texttt{rele\_}\allowbreak\texttt{iluminacion} a \texttt{on}).
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 89
+Matches: ['Resultado y traza de ejecución:']
+Text: \item \textbf{Resultado y traza de ejecución:} exitoso. La traza de Home Assistant confirma un tiempo de conmutación de 115\,ms (ver Figura~\ref{fig:traza_auto_01}).
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 121
+Matches: ['Objetivo:']
+Text: \item \textbf{Objetivo:} validar la detección de paso y activación de contramedidas disuasorias cuando se interrumpe la barrera del diodo láser de la puerta.
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 122
+Matches: ['Estímulo de entrada:']
+Text: \item \textbf{Estímulo de entrada:} cambio en el estado del sensor del receptor magnético de la puerta (\texttt{binary\_sensor.}\allowbreak\texttt{puerta\_reed} a \texttt{on}) o cambio del receptor de la barrera óptica láser a estado sin luz (\texttt{binary\_sensor.}\allowbreak\texttt{laser\_receptor} a \texttt{on}).
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 123
+Matches: ['Flujo esperado en la traza:']
+Text: \item \textbf{Flujo esperado en la traza:} el servidor central evalúa la desconexión física. Si el sistema de alerta perimetral está armado, se dispara la alarma visual en la interfaz del usuario, se incrementa el contador de accesos en la base de datos y se activa la conmutación de seguridad en los diodos de disuasión.
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 124
+Matches: ['Resultado y traza de ejecución:']
+Text: \item \textbf{Resultado y traza de ejecución:} exitoso. El motor de trazas registra la correcta evaluación paralela de las condiciones de armado e incrementa el contador en SQLite (ver Figura~\ref{fig:traza_auto_02}).
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 161
+Matches: ['Objetivo:']
+Text: \item \textbf{Objetivo:} validar que el sistema monitoriza el tiempo de permanencia estática del usuario en la silla de trabajo y genera las alertas ergonómicas establecidas.
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 162
+Matches: ['Estímulo de entrada:']
+Text: \item \textbf{Estímulo de entrada:} permanencia ininterrumpida de la entidad de presencia del radar (\texttt{binary\_sensor.}\allowbreak\texttt{radar\_presence} en estado \texttt{on}) durante un periodo acumulativo continuo superior a $25\,\text{minutos}$.
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 163
+Matches: ['Flujo esperado en la traza:']
+Text: \item \textbf{Flujo esperado en la traza:} tras expirar el temporizador de control, el motor lógico del servidor central realiza la transición interna al estado \texttt{Alerta Ergonómica}, enviando una notificación interactiva \textit{push} al dispositivo móvil del usuario y modificando el color del LED indicador del Nodo Escritorio.
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 164
+Matches: ['Resultado y traza de ejecución:']
+Text: \item \textbf{Resultado y traza de ejecución:} exitoso. El motor de trazas confirma el envío inmediato del paquete TCP de notificación al cumplirse el retardo (ver Figura~\ref{fig:traza_auto_03}).
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 208
+Matches: ['Objetivo:']
+Text: \item \textbf{Objetivo:} validar el paso automático del sistema al estado de ahorro de energía y ausencia cuando el usuario abandona la estancia o inicia el reposo nocturno.
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 209
+Matches: ['Estímulo de entrada:']
+Text: \item \textbf{Estímulo de entrada:} ausencia absoluta de movimiento por el radar mmWave (\texttt{binary\_sensor.}\allowbreak\texttt{radar\_presence} en estado \texttt{off}) durante un retardo de cortesía de $10\,\text{minutos}$, o conmutación manual del conmutador de cabecera a modo \texttt{Noche}.
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 210
+Matches: ['Flujo esperado en la traza:']
+Text: \item \textbf{Flujo esperado en la traza:} el servidor central evalúa la persistencia del estado de reposo, ejecuta la transición de la máquina de estados a \texttt{Ausente} o \texttt{Durmiendo} y desencadena un comando de apagado masivo de todos los relés y actuadores del sistema (\texttt{switch.}\allowbreak\texttt{ssr\_rele\_iluminacion} a \texttt{off}, etc.).
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 211
+Matches: ['Resultado y traza de ejecución:']
+Text: \item \textbf{Resultado y traza de ejecución:} exitoso. El motor de trazas confirma el apagado coordinado y secuencial (ver Figura~\ref{fig:traza_auto_04}).
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 259
+Matches: ['Componente', 'Voltaje (V)', 'Corriente (mA)', 'Potencia (W)', 'Régimen']
+Text: \multicolumn{1}{|c|}{\textbf{Componente}} & \textbf{Voltaje (V)} & \textbf{Corriente (mA)} & \textbf{Potencia (W)} & \multicolumn{1}{c|}{\textbf{Régimen}} \\ \hline
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 264
+Matches: ['Consumo Total', '5.15']
+Text: \textbf{Consumo Total} & -- & -- & \textbf{5.15} & -- \\ \hline
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 293
+Matches: ['Vulnerabilidad de acceso a la red local:']
+Text: \item \textbf{Vulnerabilidad de acceso a la red local:} el principal riesgo de seguridad de una instalación domótica local es la intrusión de agentes no autorizados en la red Wi-Fi. Si bien se elimina el riesgo de ataques remotos masivos por internet al no mapear puertos en el enrutador hacia la red WAN, un acceso local comprometido daría control del hardware. Como medida de seguridad, la comunicación por socket TCP entre ESPHome y Home Assistant se blinda activando la capa de cifrado Noise integrada de forma nativa en la API de ESPHome mediante una clave criptográfica precompartida de alta entropía. Adicionalmente, el acceso remoto administrativo a la Raspberry Pi se realiza de manera segura mediante la creación de un plano de control plano (*overlay network*) cifrado mediante la herramienta VPN peer-to-peer Tailscale, evitando la exposición pública de puertos de administración como SSH o el puerto 8123 de Home Assistant.
+--------------------------------------------------------------------------------
+File: 7_evaluacion_sistema.tex | Line: 294
+Matches: ['Degradación física del soporte de almacenamiento:']
+Text: \item \textbf{Degradación física del soporte de almacenamiento:} la Raspberry Pi 4 utiliza una tarjeta de memoria MicroSD como almacenamiento secundario para el sistema operativo y la base de datos de telemetría. Las constantes escrituras y actualizaciones de estado de los sensores pueden provocar la degradación y fallo físico de las celdas de memoria flash de la tarjeta por fatiga. Para mitigar esta contingencia, se ha configurado el subsistema de base de datos SQLite para realizar el vaciado periódico del búfer a disco y limitar el almacenamiento del historial de estados a un intervalo máximo de 10 días, reduciendo las operaciones aleatorias de escritura redundante y prolongando significativamente la vida útil del soporte de almacenamiento primario.
+--------------------------------------------------------------------------------
+File: 8_presupuesto.tex | Line: 18
+Matches: ['Descripción del componente', 'Fabricante', 'Cant.', 'Precio Unit.\\\\(\\euro)', 'Coste Total\\\\(\\euro)']
+Text: \parbox[c]{4.2cm}{\vspace{0.15cm}\centering\textbf{Descripción del componente}\vspace{0.15cm}} & \parbox[c]{2.0cm}{\centering\textbf{Fabricante}} & \parbox[c]{1.2cm}{\centering\textbf{Cant.}} & \parbox[c]{2.2cm}{\centering\textbf{Precio Unit.\\(\euro)}} & \parbox[c]{2.2cm}{\centering\textbf{Coste Total\\(\euro)}} \\ \hline
+--------------------------------------------------------------------------------
+File: 8_presupuesto.tex | Line: 31
+Matches: ['Subtotal Equipamiento', '124.00']
+Text: \parbox[c]{4.2cm}{\vspace{0.15cm}\textbf{Subtotal Equipamiento}\vspace{0.15cm}}   & --            & -- & --   & \textbf{124.00} \\ \hline
+--------------------------------------------------------------------------------
+File: 8_presupuesto.tex | Line: 50
+Matches: ['Software /\\\\Plataforma', 'Tipo de\\\\Licencia', 'Uso en el\\\\Proyecto', 'Coste\\\\(\\euro)']
+Text: \parbox[c]{3.2cm}{\vspace{0.15cm}\centering\textbf{Software /\\Plataforma}\vspace{0.15cm}} & \parbox[c]{3.0cm}{\centering\textbf{Tipo de\\Licencia}} & \parbox[c]{3.8cm}{\centering\textbf{Uso en el\\Proyecto}\vspace{0.15cm}} & \parbox[c]{1.5cm}{\centering\textbf{Coste\\(\euro)}} \\ \hline
+--------------------------------------------------------------------------------
+File: 8_presupuesto.tex | Line: 58
+Matches: ['Subtotal Licencias', '0.00']
+Text: \parbox[c]{3.2cm}{\vspace{0.15cm}\textbf{Subtotal Licencias}\vspace{0.15cm}}    & --                        & --                          & \textbf{0.00} \\ \hline
+--------------------------------------------------------------------------------
+File: 8_presupuesto.tex | Line: 70
+Matches: ['Consumo eléctrico anual:']
+Text: \item \textbf{Consumo eléctrico anual:} calculado en el Capítulo~\ref{cap:evaluacion_sistema} en base al perfil de potencia medio de $5.15$\,W de la instalación y un precio medio de electricidad de $0.20$\,\euro/kWh, lo que arroja un coste operativo de $9.02$\,\euro/año.
+--------------------------------------------------------------------------------
+File: 8_presupuesto.tex | Line: 71
+Matches: ['Amortización del equipamiento:']
+Text: \item \textbf{Amortización del equipamiento:} estimando una vida útil del prototipo físico de 5 años con depreciación lineal, el coste anual de amortización se modela como:
+--------------------------------------------------------------------------------
+File: 8_presupuesto.tex | Line: 89
+Matches: ['Fase de ingeniería', 'Horas\\\\dedicadas', 'Precio/Hora\\\\(\\euro)', 'Coste total\\\\(\\euro)']
+Text: \parbox[c]{4.6cm}{\vspace{0.3cm}\centering\textbf{Fase de ingeniería}\vspace{0.3cm}} & \parbox[c]{2.0cm}{\centering\vspace{0.3cm}\textbf{Horas\\dedicadas}\vspace{0.3cm}} & \parbox[c]{2.2cm}{\centering\vspace{0.3cm}\textbf{Precio/Hora\\(\euro)}\vspace{0.3cm}} & \parbox[c]{2.2cm}{\centering\vspace{0.3cm}\textbf{Coste total\\(\euro)}\vspace{0.3cm}} \\ \hline
+--------------------------------------------------------------------------------
+File: 8_presupuesto.tex | Line: 95
+Matches: ['Total Mano de Obra', '300', '7\\,500.00']
+Text: \parbox[c]{4.6cm}{\vspace{0.15cm}\textbf{Total Mano de Obra}\vspace{0.15cm}} & \textbf{300} & --    & \textbf{7\,500.00} \\ \hline
+--------------------------------------------------------------------------------
+File: 8_presupuesto.tex | Line: 110
+Matches: ['Concepto Presupuestario', 'Coste Parcial\\\\(\\euro)']
+Text: \parbox[c]{9.5cm}{\vspace{0.15cm}\textbf{Concepto Presupuestario}\vspace{0.15cm}} & \parbox[c]{3.0cm}{\centering\textbf{Coste Parcial\\(\euro)}} \\ \hline
+--------------------------------------------------------------------------------
+File: 8_presupuesto.tex | Line: 114
+Matches: ['Presupuesto de Ejecución Material (PEM)', '7\\,624.00']
+Text: \parbox[c]{9.5cm}{\vspace{0.15cm}\textbf{Presupuesto de Ejecución Material (PEM)}\vspace{0.15cm}} & \textbf{7\,624.00} \\ \hline
+--------------------------------------------------------------------------------
+File: 8_presupuesto.tex | Line: 116
+Matches: ['PRESUPUESTO TOTAL (IVA INCLUIDO)', '9\\,225.04']
+Text: \parbox[c]{9.5cm}{\vspace{0.15cm}\textbf{PRESUPUESTO TOTAL (IVA INCLUIDO)}\vspace{0.15cm}} & \textbf{9\,225.04} \\ \hline
+--------------------------------------------------------------------------------
+File: 9_planos_esquemas.tex | Line: 13
+Matches: ['Nodo 1 (Nodo Ambiente, $N_1$):']
+Text: \item \textbf{Nodo 1 (Nodo Ambiente, $N_1$):} ubicado a la derecha del escritorio sobre la pared norte de la estancia. Esta posición elevada permite realizar lecturas térmicas, acústicas y lumínicas representativas del volumen general de la estancia sin obstrucciones.
+--------------------------------------------------------------------------------
+File: 9_planos_esquemas.tex | Line: 14
+Matches: ['Nodo 2 (Nodo Escritorio, $N_2$):']
+Text: \item \textbf{Nodo 2 (Nodo Escritorio, $N_2$):} situado en el extremo derecho del escritorio de trabajo. Este nodo alberga el radar de ondas milimétricas (FMCW) HLK-LD2410C, orientado diagonalmente hacia la silla de estudio. Su cono de detección angular (de aproximadamente $120^\circ$) cubre la zona espacial de permanencia del usuario, permitiendo discriminar micromovimientos asociados a la respiración.
+--------------------------------------------------------------------------------
+File: 9_planos_esquemas.tex | Line: 15
+Matches: ['Nodo 3 (Nodo Puerta, $N_3$):']
+Text: \item \textbf{Nodo 3 (Nodo Puerta, $N_3$):} instalado directamente en la esquina inferior derecha, sobre la pared lateral derecha en el marco superior de la puerta de acceso. Gobierna el sensor de contacto de la puerta y el diodo láser emisor de la barrera óptica.
+--------------------------------------------------------------------------------
+File: 9_planos_esquemas.tex | Line: 182
+Matches: ['Red Troncal Local (WLAN Wi-Fi):']
+Text: \item \textbf{Red Troncal Local (WLAN Wi-Fi):} los tres nodos de control basados en ESP32 se asocian al punto de acceso local (router doméstico) mediante comunicación inalámbrica en la banda de $2.4\,\text{GHz}$. Para agilizar el proceso de descubrimiento e interconexión y mitigar la latencia, cada microcontrolador tiene configurada una dirección IP estática dentro del rango de subred local (\texttt{192.168.1.X}).
+--------------------------------------------------------------------------------
+File: 9_planos_esquemas.tex | Line: 183
+Matches: ['Canal de Gestión centralizada perimetral (ESPHome API):']
+Text: \item \textbf{Canal de Gestión centralizada perimetral (ESPHome API):} el servidor central (Raspberry Pi 4) está conectado físicamente al router mediante un enlace Ethernet Gigabit Cat6 para asegurar una conexión sólida y libre de colisiones. El servidor aloja los contenedores aislados mediante Docker. Home Assistant establece conexiones de sockets TCP directas (puerto 6053) con la API nativa de cada microcontrolador para la transmisión periódica de telemetría y la recepción de comandos de conmutación.
+--------------------------------------------------------------------------------
+File: 9_planos_esquemas.tex | Line: 184
+Matches: ['Canal de Telemetría Remota Segura (Tailscale VPN):']
+Text: \item \textbf{Canal de Telemetría Remota Segura (Tailscale VPN):} con el fin de habilitar el acceso remoto y el control del panel Lovelace desde el exterior de la vivienda sin vulnerar la red local (evitando la redirección de puertos entrantes en el router), se despliega un túnel de cifrado extremo a extremo basado en la VPN Tailscale (protocolo WireGuard). Tanto el servidor Raspberry Pi como los terminales autorizados de administración se integran en la misma malla segura de red privada (\textit{Tailnet}), garantizando el acceso cifrado mediante protocolo HTTPS.
+--------------------------------------------------------------------------------
+File: 9_planos_esquemas.tex | Line: 215
+Matches: ['entorno Docker']
+Text: \textbf{entorno Docker} \\
+--------------------------------------------------------------------------------
+File: ALMCACENAMIENTO_TEMPORAL.tex | Line: 50
+Matches: ['Capítulo 2. Contexto y Estado del Arte:']
+Text: \item \textbf{Capítulo 2. Contexto y Estado del Arte:} Analiza las tecnologías de conectividad y plataformas domóticas actuales.
+--------------------------------------------------------------------------------
+File: ALMCACENAMIENTO_TEMPORAL.tex | Line: 51
+Matches: ['Capítulo 3. Análisis de Requisitos:']
+Text: \item \textbf{Capítulo 3. Análisis de Requisitos:} Define las restricciones técnicas y funcionales que debe cumplir el sistema.
+--------------------------------------------------------------------------------
+File: ALMCACENAMIENTO_TEMPORAL.tex | Line: 52
+Matches: ['Capítulo 4. Diseño del Sistema:']
+Text: \item \textbf{Capítulo 4. Diseño del Sistema:} Describe la arquitectura hardware y software propuesta, incluyendo los diagramas lógicos.
+--------------------------------------------------------------------------------
+File: ALMCACENAMIENTO_TEMPORAL.tex | Line: 53
+Matches: ['Capítulo 5. Selección de Tecnologías:']
+Text: \item \textbf{Capítulo 5. Selección de Tecnologías:} Justifica las herramientas y componentes escogidos frente a otras alternativas.
+--------------------------------------------------------------------------------
+File: ALMCACENAMIENTO_TEMPORAL.tex | Line: 54
+Matches: ['Capítulo 6. Plan de Implantación:']
+Text: \item \textbf{Capítulo 6. Plan de Implantación:} Detalla las fases para el despliegue físico y configuración del sistema.
+--------------------------------------------------------------------------------
+File: ALMCACENAMIENTO_TEMPORAL.tex | Line: 55
+Matches: ['Capítulo 7. Evaluación del Sistema:']
+Text: \item \textbf{Capítulo 7. Evaluación del Sistema:} Presenta los resultados de las pruebas de rendimiento y fiabilidad.
+--------------------------------------------------------------------------------
+File: ALMCACENAMIENTO_TEMPORAL.tex | Line: 56
+Matches: ['Capítulo 8. Presupuesto:']
+Text: \item \textbf{Capítulo 8. Presupuesto:} Desglosa los costes asociados al desarrollo e implantación.
+--------------------------------------------------------------------------------
+File: ALMCACENAMIENTO_TEMPORAL.tex | Line: 57
+Matches: ['Capítulos 9 y 10:']
+Text: \item \textbf{Capítulos 9 y 10:} Recogen los planos finales, las conclusiones extraídas del trabajo y las posibles líneas de futuro.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 46
+Matches: ['Paso 1: Iniciar Portainer (Gestor visual de contenedores)']
+Text: \textbf{Paso 1: Iniciar Portainer (Gestor visual de contenedores)}
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 57
+Matches: ['Paso 2: Iniciar Home Assistant (Cerebro domótico)']
+Text: \textbf{Paso 2: Iniciar Home Assistant (Cerebro domótico)}
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 72
+Matches: ['Paso 3: Iniciar ESPHome (Programador de nodos)']
+Text: \textbf{Paso 3: Iniciar ESPHome (Programador de nodos)}
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 126
+Matches: ['Módulo de Ambiente ($N_1$):']
+Text: \item \textbf{Módulo de Ambiente ($N_1$):} Mide la temperatura, la humedad y el nivel de ruido. Debe ubicarse en una zona de la pared libre de corrientes directas. Incluye el relé que controla el enchufe general.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 127
+Matches: ['Módulo de Escritorio ($N_2$):']
+Text: \item \textbf{Módulo de Escritorio ($N_2$):} Integra el sensor de presencia por radar y el láser. Debe colocarse sobre la mesa de trabajo, a 0.5-1.5 metros del usuario.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 128
+Matches: ['Módulo de Puerta ($N_3$):']
+Text: \item \textbf{Módulo de Puerta ($N_3$):} Contiene el sensor magnético Reed. Se instala sobre el marco y la hoja de la puerta.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 136
+Matches: ['DHT11', 'GPIO 4']
+Text: \item \textbf{DHT11}: a 3.3V y datos al \textbf{GPIO 4}.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 137
+Matches: ['Fotorresistor LDR', 'GPIO 32']
+Text: \item \textbf{Fotorresistor LDR}: divisor de tensión a 3.3V y salida analógica al \textbf{GPIO 32}.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 138
+Matches: ['KY-037 (Big Sound)', 'GPIO 27']
+Text: \item \textbf{KY-037 (Big Sound)}: alimentado a 3.3V o 5V (VIN), salida digital al \textbf{GPIO 27}.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 139
+Matches: ['Módulo relé', 'GPIO 26']
+Text: \item \textbf{Módulo relé}: alimentado a 5V (VIN), control al \textbf{GPIO 26}.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 151
+Matches: ['Radar mmWave HLK-LD2410C', 'RX2 (GPIO 16)', 'TX2 (GPIO 17)']
+Text: \item \textbf{Radar mmWave HLK-LD2410C}: alimentado a 5V (VIN). TX radar a \textbf{RX2 (GPIO 16)}, RX radar a \textbf{TX2 (GPIO 17)}.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 152
+Matches: ['Láser KY-008', 'GPIO 12']
+Text: \item \textbf{Láser KY-008}: pin de control lógico directo al \textbf{GPIO 12}.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 164
+Matches: ['Sensor Magnético (Reed Switch)', 'GPIO 4']
+Text: \item \textbf{Sensor Magnético (Reed Switch)}: alimentado a 3.3V y se conecta directamente entre el \textbf{GPIO 4} y GND aprovechando la resistencia interna \textit{pull-up}.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 178
+Matches: ['+ Add Device']
+Text: \item Selecciona \textbf{+ Add Device} e introduce el nombre del nodo.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 180
+Matches: ['Conexión Física Inicial']
+Text: \item \textbf{Conexión Física Inicial}: conecta el ESP32 al puerto USB de tu ordenador.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 181
+Matches: ['Install']
+Text: \item Haz clic en \textbf{Install} y selecciona la opción para flashear mediante conexión por cable serial. Tras unos minutos, el firmware se cargará en la placa.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 191
+Matches: ['Ajustes', 'Dispositivos y Servicios']
+Text: \item Dirígete al menú lateral izquierdo y selecciona \textbf{Ajustes} $\rightarrow$ \textbf{Dispositivos y Servicios}.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 200
+Matches: ['Integraciones']
+Text: \item En la pestaña \textbf{Integraciones}, observarás que Home Assistant ha detectado automáticamente los nuevos dispositivos ESPHome bajo el apartado de ``Descubiertos''.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 209
+Matches: ['Configurar']
+Text: \item Haz clic en \textbf{Configurar} en cada uno de los nodos detectados siguiendo los pasos básicos que nos ofrece Home Assistant.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 210
+Matches: ['clave de encriptación (API Key)']
+Text: \item Confirma la adición e introduce la \textbf{clave de encriptación (API Key)} que se generó automáticamente durante la configuración del nodo en ESPHome (puedes consultarla en el archivo YAML del nodo o en el apartado de logs del nodo en ESPHome).
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 217
+Matches: ['Ajustes', 'Paneles de control']
+Text: \item Dirígete al menú lateral izquierdo y selecciona \textbf{Ajustes} $\rightarrow$ \textbf{Paneles de control}.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 218
+Matches: ['Añadir panel', 'Inteligencia Ambiental']
+Text: \item Haz clic en \textbf{Añadir panel} (esquina inferior derecha), selecciona crear un nuevo panel de control y ponle como título \textbf{Inteligencia Ambiental}.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 219
+Matches: ['Editar el panel de control', 'Añadir Tarjeta']
+Text: \item Ábrelo desde el menú lateral, haz clic en el icono del lápiz (arriba a la derecha) para \textbf{Editar el panel de control} y empieza a seleccionar \textbf{Añadir Tarjeta}.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 220
+Matches: ['Tarjetas Recomendadas']
+Text: \item \textbf{Tarjetas Recomendadas}:
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 222
+Matches: ['Entidades']
+Text: \item Utiliza la tarjeta \textbf{Entidades} para agrupar estados simples, como el estado de la puerta, la presencia del radar o el nivel de luz.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 223
+Matches: ['Botón']
+Text: \item Utiliza la tarjeta \textbf{Botón} para el actuador del relé (luces del escritorio), lo que permite un encendido rápido e intuitivo.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 224
+Matches: ['Gráfico de medidor (Gauge)']
+Text: \item Utiliza la tarjeta \textbf{Gráfico de medidor (Gauge)} para visualizar de forma atractiva la Temperatura y la Humedad proporcionadas por el DHT11.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 227
+Matches: ['Hecho']
+Text: \item Al finalizar, haz clic en \textbf{Hecho} para guardar los cambios en tu nuevo panel personalizado.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 234
+Matches: ['Navegación al editor', 'Ajustes', 'Automatizaciones y escenas']
+Text: \item \textbf{Navegación al editor}: acceda a la interfaz web de Home Assistant (puerto 8123) y diríjase en el menú lateral a \textbf{Ajustes} $\rightarrow$ \textbf{Automatizaciones y escenas}.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 235
+Matches: ['Creación de nueva regla', 'Crear automatización', 'Crear nueva automatización']
+Text: \item \textbf{Creación de nueva regla}: en la esquina inferior derecha, haga clic en el botón \textbf{Crear automatización} y, en la ventana emergente, elija la opción \textbf{Crear nueva automatización} (como se muestra en la Figura~\ref{fig:ha_crear_auto}).
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 244
+Matches: ['Conmutación al editor YAML', 'Editar en YAML']
+Text: \item \textbf{Conmutación al editor YAML}: se abrirá el editor visual estructurado por defecto. Para introducir el código YAML directamente, haga clic en el icono de los tres puntos verticales situado en la esquina superior derecha y seleccione la opción \textbf{Editar en YAML} (véase la Figura~\ref{fig:ha_editar_yaml}).
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 253
+Matches: ['Inserción del código']
+Text: \item \textbf{Inserción del código}: limpie cualquier texto que aparezca por defecto en el editor de código. Copie el bloque YAML correspondiente del manual técnico (Anexo~\ref{anexo:manual_tecnico_codigo}) y péguelo en el recuadro.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 259
+Matches: ['Guardado y activación', 'Guardar']
+Text: \item \textbf{Guardado y activación}: haga clic en el botón \textbf{Guardar} (esquina inferior derecha) y asigne un nombre descriptivo a la automatización (por ejemplo, ``Termostato Inteligente: Modo Estudio''). La regla se guardará y se activará de forma automática en el motor de ejecución local de forma inmediata.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 260
+Matches: ['Repetición']
+Text: \item \textbf{Repetición}: repita este procedimiento paso a paso para cada una de las automatizaciones de contexto y bienestar del sistema.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 266
+Matches: ['Visualizador del flujo de acciones']
+Text: \item \textbf{Visualizador del flujo de acciones}: al acceder a la vista de edición de cualquier automatización guardada, el sistema genera de forma dinámica un diagrama que ilustra de manera gráfica el flujo secuencial de condiciones y acciones asociadas a dicha regla (véase la Figura~\ref{fig:ha_flujo_acciones}). Este esquema interactivo permite validar visualmente la lógica del automatismo.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 275
+Matches: ['Herramienta de trazas (Traces)', 'Trazas']
+Text: \item \textbf{Herramienta de trazas (Traces)}: al pulsar en el botón superior etiquetado como \textbf{Trazas} (o \textit{Traces}), se accede a un panel de depuración que registra en tiempo real cada ejecución del automatismo. A través de este visualizador, es posible inspeccionar detalladamente el disparador que activó la regla, qué condiciones se cumplieron (o fallaron) paso a paso, y el itinerario exacto que siguió el motor lógico (véase la Figura~\ref{fig:ha_trazas}).
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 284
+Matches: ['Herramientas de desarrollo', 'YAML', 'Automatizaciones']
+Text: Como alternativa avanzada para administradores, también es posible concatenar directamente todos los bloques de código YAML en el archivo de texto \texttt{automations.yaml} alojado en la Raspberry Pi (\texttt{/home/usuario/homeassistant/automations.yaml}) y posteriormente forzar la lectura del mismo desde la pestaña de \textbf{Herramientas de desarrollo} $\rightarrow$ \textbf{YAML} en la interfaz web de Home Assistant, seleccionando la opción \textbf{Automatizaciones} en el menú de recarga de configuración.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 293
+Matches: ['Desde Casa (Local)']
+Text: \item \textbf{Desde Casa (Local)}: conéctate al Wi-Fi doméstico. Abre el navegador web o la App de Home Assistant e ingresa la dirección local de la Raspberry Pi en el puerto 8123 (ej. \texttt{http://192.168.1.X:8123}).
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 294
+Matches: ['Desde Fuera (Remoto)']
+Text: \item \textbf{Desde Fuera (Remoto)}: activa la aplicación Tailscale en tu teléfono móvil. Luego abre la App de Home Assistant o el navegador e ingresa la dirección Tailscale asignada a la Raspberry Pi (ej. \texttt{http://100.x.x.x:8123}).
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 308
+Matches: ['Controles de Acciones']
+Text: \item \textbf{Controles de Acciones}: activa o desactiva la alarma, el modo noche, o el enchufe inteligente directamente con un toque en la tarjeta correspondiente.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 309
+Matches: ['Monitorización del Entorno']
+Text: \item \textbf{Monitorización del Entorno}: visualiza los valores instantáneos de temperatura, humedad y el nivel de ruido captado (alto o normal).
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 310
+Matches: ['Presencia Inteligente']
+Text: \item \textbf{Presencia Inteligente}: observa si la estancia se encuentra ocupada (basado en el radar de mmWave) y el estado físico de los accesos (barrera láser y contacto magnético de puerta).
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 326
+Matches: ['Instalación de la App']
+Text: \item \textbf{Instalación de la App}: descargue la aplicación gratuita Home Assistant Companion desde la Google Play Store (para dispositivos Android) o la Apple App Store (para dispositivos iOS).
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 327
+Matches: ['Asociación del servidor']
+Text: \item \textbf{Asociación del servidor}: abra la aplicación en el dispositivo móvil estando conectado a la red Wi-Fi de la vivienda. La aplicación buscará y detectará automáticamente la instancia de Home Assistant local. Introduzca las credenciales de su cuenta de usuario para establecer la sesión. Si se encuentra fuera del hogar, asegúrese de activar previamente la conexión VPN de Tailscale y escribir la IP del servidor asignada en la red virtual (ej. \texttt{http://100.X.Y.Z:8123}).
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 328
+Matches: ['Registro de canal de notificaciones']
+Text: \item \textbf{Registro de canal de notificaciones}: una vez iniciada la sesión, la aplicación registrará de forma automática el teléfono móvil como un nuevo dispositivo compatible con notificaciones en el servidor central. Esto crea la entidad de notificación en Home Assistant.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 329
+Matches: ['Concesión de permisos']
+Text: \item \textbf{Concesión de permisos}: para garantizar la entrega instantánea de alertas de seguridad críticas y reportes de calidad de vida, conceda permisos de notificaciones push en segundo plano a la aplicación cuando el sistema operativo de su dispositivo móvil lo solicite.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 344
+Matches: ['Luz Automática de Trabajo']
+Text: \item \textbf{Luz Automática de Trabajo}: se enciende sola cuando te sientas en el escritorio, apoyada por la detección milimétrica del radar LD2410, siempre y cuando la luminosidad de la sala (medida por el LDR) sea baja.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 345
+Matches: ['Alertas Ergonómicas (Pomodoro)']
+Text: \item \textbf{Alertas Ergonómicas (Pomodoro)}: si permaneces 50 minutos continuos trabajando y sentado, la lámpara realizará un aviso visual (parpadeo) invitándote a realizar un descanso saludable.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 346
+Matches: ['Alarma Perimetral e Intrusión']
+Text: \item \textbf{Alarma Perimetral e Intrusión}: estando activa, una interrupción del láser del escritorio o la apertura forzada de la puerta (detectada por el sensor Reed) desencadenará una alerta inmediata en tu teléfono móvil.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 347
+Matches: ['Ahorro Energético Ausente']
+Text: \item \textbf{Ahorro Energético Ausente}: el sistema apagará automáticamente el relé de las luces tras 20 minutos de inactividad global absoluta en la habitación.
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 354
+Matches: ['¿Qué hago si las placas ESP32 no se conectan a la red Wi-Fi?']
+Text: \item \textbf{¿Qué hago si las placas ESP32 no se conectan a la red Wi-Fi?} \\
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 357
+Matches: ['¿Por qué la luz automática no se enciende al sentarme en el escritorio?']
+Text: \item \textbf{¿Por qué la luz automática no se enciende al sentarme en el escritorio?} \\
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 360
+Matches: ['¿Por qué no se actualizan los datos en mi teléfono móvil cuando salgo de casa?']
+Text: \item \textbf{¿Por qué no se actualizan los datos en mi teléfono móvil cuando salgo de casa?} \\
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 363
+Matches: ['¿Qué hago si un nodo aparece como "No disponible" en el panel de control?']
+Text: \item \textbf{¿Qué hago si un nodo aparece como "No disponible" en el panel de control?} \\
+--------------------------------------------------------------------------------
+File: A_manual_usuario.tex | Line: 366
+Matches: ['¿El sistema sigue funcionando si se corta la conexión a internet de la vivienda?']
+Text: \item \textbf{¿El sistema sigue funcionando si se corta la conexión a internet de la vivienda?} \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 143
+Matches: ['Palabras clave:']
+Text: \noindent \textbf{Palabras clave:} automatización proactiva, bienestar, domótica local, Edge Computing, ESPHome, fusión sensorial, Home Assistant, IoT, privacidad, radares mmWave.
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 152
+Matches: ['Keywords:']
+Text: \noindent \textbf{Keywords:} Edge Computing, ESPHome, Home Assistant, IoT, local home automation, mmWave radars, privacy, proactive automation, sensor fusion, well-being.
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 175
+Matches: ['API']
+Text: \textbf{API} & Application Programming Interface \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 176
+Matches: ['DHT']
+Text: \textbf{DHT} & Digital Humidity and Temperature \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 177
+Matches: ['ESP']
+Text: \textbf{ESP} & Espressif Systems \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 178
+Matches: ['GPIO']
+Text: \textbf{GPIO} & General Purpose Input/Output \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 179
+Matches: ['HA']
+Text: \textbf{HA} & Home Assistant \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 180
+Matches: ['I2C']
+Text: \textbf{I2C} & Inter-Integrated Circuit \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 181
+Matches: ['IDE']
+Text: \textbf{IDE} & Integrated Development Environment \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 182
+Matches: ['IoT']
+Text: \textbf{IoT} & Internet of Things (Internet de las Cosas) \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 183
+Matches: ['LDR']
+Text: \textbf{LDR} & Light Dependent Resistor (Fotorresistencia) \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 184
+Matches: ['MAC']
+Text: \textbf{MAC} & Media Access Control \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 185
+Matches: ['MQTT']
+Text: \textbf{MQTT} & Message Queuing Telemetry Transport \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 186
+Matches: ['OS']
+Text: \textbf{OS} & Operating System (Sistema Operativo) \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 187
+Matches: ['OTA']
+Text: \textbf{OTA} & Over-The-Air (Actualización Inalámbrica) \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 188
+Matches: ['PIR']
+Text: \textbf{PIR} & Passive Infrared Sensor \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 189
+Matches: ['PWM']
+Text: \textbf{PWM} & Pulse Width Modulation \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 190
+Matches: ['RAM']
+Text: \textbf{RAM} & Random Access Memory \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 191
+Matches: ['SBC']
+Text: \textbf{SBC} & Single Board Computer \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 192
+Matches: ['SSR']
+Text: \textbf{SSR} & Solid State Relay (Relé de Estado Sólido) \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 193
+Matches: ['UI']
+Text: \textbf{UI} & User Interface (Interfaz de Usuario) \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 194
+Matches: ['VPN']
+Text: \textbf{VPN} & Virtual Private Network \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 195
+Matches: ['YAML']
+Text: \textbf{YAML} & YAML Ain't Markup Language \\
+--------------------------------------------------------------------------------
+File: __memoria.tex | Line: 253
+Matches: ['APÉNDICES']
+Text: \Huge \textbf{APÉNDICES}
+--------------------------------------------------------------------------------

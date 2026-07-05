@@ -1,0 +1,132 @@
+============================================================
+RUNNING: Tailscale Service Status (echo jpmorenito | sudo -S systemctl status tailscaled)
+============================================================
+STDOUT:
+● tailscaled.service - Tailscale node agent
+     Loaded: loaded (/usr/lib/systemd/system/tailscaled.service; enabled; preset: enabled)
+     Active: active (running) since Tue 2026-06-02 00:29:02 CEST; 2 days ago
+ Invocation: 8ebaa4838ca5480db76a2ba23f866a78
+       Docs: https://tailscale.com/docs/
+   Main PID: 948 (tailscaled)
+     Status: "Needs login: https://login.tailscale.com/a/11883f1536309a"
+      Tasks: 11 (limit: 499)
+        CPU: 3min 31.434s
+     CGroup: /system.slice/tailscaled.service
+             └─948 /usr/sbin/tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/run/tailscale/tailscaled.sock --port=41641
+
+Jun 04 15:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 15:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+Jun 04 16:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 16:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+Jun 04 17:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 17:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+Jun 04 18:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 18:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+Jun 04 19:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 19:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+
+
+
+============================================================
+RUNNING: Tailscale Client Status (echo jpmorenito | sudo -S tailscale status)
+============================================================
+STDOUT:
+Logged out.
+Log in at: https://login.tailscale.com/a/11883f1536309a
+
+
+
+============================================================
+RUNNING: Tailscale Network Diagnostic (echo jpmorenito | sudo -S tailscale netcheck)
+============================================================
+STDOUT:
+
+Report:
+	* Time: 2026-06-04T18:16:19.203306574Z
+	* UDP: true
+	* IPv4: yes, 78.30.12.41:30424
+	* IPv6: no, but OS has support
+	* MappingVariesByDestIP: false
+	* PortMapping: UPnP
+	* Nearest DERP: Madrid
+	* DERP latency:
+		- mad: 22.6ms  (Madrid)
+		- par: 39.5ms  (Paris)
+		- lhr: 45.7ms  (London)
+		- ams: 47.4ms  (Amsterdam)
+		- fra: 47.9ms  (Frankfurt)
+		- nue: 57.9ms  (Nuremberg)
+		- waw: 67.2ms  (Warsaw)
+		- hel: 68.7ms  (Helsinki)
+		- iad: 100.1ms (Ashburn)
+		- nyc: 108.4ms (New York City)
+		- tor: 114.9ms (Toronto)
+		- ord: 121.5ms (Chicago)
+		- dbi: 124.8ms (Dubai)
+		- mia: 125.5ms (Miami)
+		- dfw: 137ms   (Dallas)
+		- den: 141ms   (Denver)
+		- lax: 159.1ms (Los Angeles)
+		- sfo: 170.9ms (San Francisco)
+		- sea: 172ms   (Seattle)
+		- blr: 184.6ms (Bengaluru)
+		- jnb: 206.4ms (Johannesburg)
+		- hnl: 212.6ms (Honolulu)
+		- nai: 226ms   (Nairobi)
+		- sin: 258.4ms (Singapore)
+		- syd:         (Sydney)
+		- tok:         (Tokyo)
+		- sao:         (São Paulo)
+		- hkg:         (Hong Kong)
+
+STDERR:
+2026/06/04 20:16:18 No DERP map from tailscaled; using default.
+2026/06/04 20:16:18 attempting to fetch a DERPMap from https://controlplane.tailscale.com
+2026/06/04 20:16:18 portmap: monitor: gateway and self IP changed: gw=192.168.1.1 self=192.168.1.200
+2026/06/04 20:16:18 portmap: UPnP discovery response from non-UPnP port 49939
+2026/06/04 20:16:18 portmap: [v1] UPnP reply {Location:http://192.168.1.1:52869/gatedesc.xml Server:Linux, UPnP/1.0, Portable SDK for UPnP devices/2.0 USN:uuid:20809696-105a-3721-e8b8-3891481a479b::urn:schemas-upnp-org:device:InternetGatewayDevice:1}, "HTTP/1.1 200 OK\r\nCACHE-CONTROL: max-age=1800\r\nDATE: Thu, 04 Jun 2026 18:16:17 GMT\r\nEXT:\r\nLOCATION: http://192.168.1.1:52869/gatedesc.xml\r\nOPT: \"http://schemas.upnp.org/upnp/1/0/\"; ns=01\r\n01-NLS: 3db5e51a-1dd2-11b2-b32a-815d7dae5e27\r\nSERVER: Linux, UPnP/1.0, Portable SDK for UPnP devices/2.0\r\nX-User-Agent: redsonic\r\nST: urn:schemas-upnp-org:device:InternetGatewayDevice:1\r\nUSN: uuid:20809696-105a-3721-e8b8-3891481a479b::urn:schemas-upnp-org:device:InternetGatewayDevice:1\r\n\r\n"
+2026/06/04 20:16:18 portmap: UPnP discovery response from non-UPnP port 41657
+2026/06/04 20:16:18 portmap: [v1] UPnP reply {Location:http://192.168.1.1:52869/gatedesc.xml Server:Linux, UPnP/1.0, Portable SDK for UPnP devices/2.0 USN:uuid:20809696-105a-3721-e8b8-3891481a479b::urn:schemas-upnp-org:device:InternetGatewayDevice:1}, "HTTP/1.1 200 OK\r\nCACHE-CONTROL: max-age=1800\r\nDATE: Thu, 04 Jun 2026 18:16:17 GMT\r\nEXT:\r\nLOCATION: http://192.168.1.1:52869/gatedesc.xml\r\nOPT: \"http://schemas.upnp.org/upnp/1/0/\"; ns=01\r\n01-NLS: 3db5e51a-1dd2-11b2-b32a-815d7dae5e27\r\nSERVER: Linux, UPnP/1.0, Portable SDK for UPnP devices/2.0\r\nX-User-Agent: redsonic\r\nST: urn:schemas-upnp-org:device:InternetGatewayDevice:1\r\nUSN: uuid:20809696-105a-3721-e8b8-3891481a479b::urn:schemas-upnp-org:device:InternetGatewayDevice:1\r\n\r\n"
+2026/06/04 20:16:18 portmap: UPnP discovery response from non-UPnP port 46986
+2026/06/04 20:16:18 portmap: [v1] UPnP reply {Location:http://192.168.1.1:52869/gatedesc.xml Server:Linux, UPnP/1.0, Portable SDK for UPnP devices/2.0 USN:uuid:20809696-105a-3721-e8b8-3891481a479b::urn:schemas-upnp-org:device:InternetGatewayDevice:1}, "HTTP/1.1 200 OK\r\nCACHE-CONTROL: max-age=1800\r\nDATE: Thu, 04 Jun 2026 18:16:17 GMT\r\nEXT:\r\nLOCATION: http://192.168.1.1:52869/gatedesc.xml\r\nOPT: \"http://schemas.upnp.org/upnp/1/0/\"; ns=01\r\n01-NLS: 3db5e51a-1dd2-11b2-b32a-815d7dae5e27\r\nSERVER: Linux, UPnP/1.0, Portable SDK for UPnP devices/2.0\r\nX-User-Agent: redsonic\r\nST: urn:schemas-upnp-org:device:InternetGatewayDevice:1\r\nUSN: uuid:20809696-105a-3721-e8b8-3891481a479b::urn:schemas-upnp-org:device:InternetGatewayDevice:1\r\n\r\n"
+2026/06/04 20:16:19 portmap: UPnP meta changed: [{Location:http://192.168.1.1:52869/gatedesc.xml Server:Linux, UPnP/1.0, Portable SDK for UPnP devices/2.0 USN:uuid:20809696-105a-3721-e8b8-3891481a479b::urn:schemas-upnp-org:device:InternetGatewayDevice:1}]
+
+
+
+============================================================
+RUNNING: Tailscale Daemon Logs (echo jpmorenito | sudo -S journalctl -u tailscaled -n 30)
+============================================================
+STDOUT:
+Jun 04 05:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 05:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+Jun 04 06:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 06:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+Jun 04 07:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 07:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+Jun 04 08:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 08:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+Jun 04 09:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 09:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+Jun 04 10:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 10:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+Jun 04 11:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 11:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+Jun 04 12:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 12:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+Jun 04 13:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 13:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+Jun 04 14:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 14:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+Jun 04 15:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 15:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+Jun 04 16:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 16:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+Jun 04 17:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 17:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+Jun 04 18:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 18:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+Jun 04 19:34:29 jacob-pi tailscaled[948]: offline auto-update: running "systemd-run --wait --pipe --collect /usr/bin/tailscale update --yes"
+Jun 04 19:34:29 jacob-pi tailscaled[948]: offline auto-update: update attempt complete
+
+
+

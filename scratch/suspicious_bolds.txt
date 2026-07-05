@@ -1,0 +1,134 @@
+Found 33 suspicious bold occurrences:
+
+File: 4_diseno_sistema.tex | Line: 454
+Matches: ['Mecanismo de consistencia y control de flujo:']
+Text: \textbf{Mecanismo de consistencia y control de flujo:}
+============================================================
+File: 6_plan_implantacion.tex | Line: 160
+Matches: ['Nota sobre los parámetros temporales de prueba:']
+Text: \textbf{Nota sobre los parámetros temporales de prueba:} Con el propósito de verificar esta automatización de inactividad de forma ágil durante los ensayos en el laboratorio de pruebas y la posterior demostración ante el tribunal de evaluación académica, el retardo temporal de ausencia se redujo temporalmente en el archivo de automatizaciones de Home Assistant (\texttt{automations.yaml}) de los 20 minutos teóricos de producción a un valor de prueba de 10 segundos (\texttt{for: 00:00:10}), restaurando la lógica al retardo completo tras verificar su resiliencia.
+============================================================
+File: 9_planos_esquemas.tex | Line: 215
+Matches: ['entorno Docker']
+Text: \textbf{entorno Docker} \\
+============================================================
+File: A_manual_usuario.tex | Line: 46
+Matches: ['Paso 1: Iniciar Portainer (Gestor visual de contenedores)']
+Text: \textbf{Paso 1: Iniciar Portainer (Gestor visual de contenedores)}
+============================================================
+File: A_manual_usuario.tex | Line: 57
+Matches: ['Paso 2: Iniciar Home Assistant (Cerebro domótico)']
+Text: \textbf{Paso 2: Iniciar Home Assistant (Cerebro domótico)}
+============================================================
+File: A_manual_usuario.tex | Line: 72
+Matches: ['Paso 3: Iniciar ESPHome (Programador de nodos)']
+Text: \textbf{Paso 3: Iniciar ESPHome (Programador de nodos)}
+============================================================
+File: A_manual_usuario.tex | Line: 136
+Matches: ['DHT11', 'GPIO 4']
+Text: \item \textbf{DHT11}: a 3.3V y datos al \textbf{GPIO 4}.
+============================================================
+File: A_manual_usuario.tex | Line: 137
+Matches: ['Fotorresistor LDR', 'GPIO 32']
+Text: \item \textbf{Fotorresistor LDR}: divisor de tensión a 3.3V y salida analógica al \textbf{GPIO 32}.
+============================================================
+File: A_manual_usuario.tex | Line: 138
+Matches: ['KY-037 (Big Sound)', 'GPIO 27']
+Text: \item \textbf{KY-037 (Big Sound)}: alimentado a 3.3V o 5V (VIN), salida digital al \textbf{GPIO 27}.
+============================================================
+File: A_manual_usuario.tex | Line: 139
+Matches: ['Módulo relé', 'GPIO 26']
+Text: \item \textbf{Módulo relé}: alimentado a 5V (VIN), control al \textbf{GPIO 26}.
+============================================================
+File: A_manual_usuario.tex | Line: 151
+Matches: ['Radar mmWave HLK-LD2410C', 'RX2 (GPIO 16)', 'TX2 (GPIO 17)']
+Text: \item \textbf{Radar mmWave HLK-LD2410C}: alimentado a 5V (VIN). TX radar a \textbf{RX2 (GPIO 16)}, RX radar a \textbf{TX2 (GPIO 17)}.
+============================================================
+File: A_manual_usuario.tex | Line: 152
+Matches: ['Láser KY-008', 'GPIO 12']
+Text: \item \textbf{Láser KY-008}: pin de control lógico directo al \textbf{GPIO 12}.
+============================================================
+File: A_manual_usuario.tex | Line: 164
+Matches: ['Sensor Magnético (Reed Switch)', 'GPIO 4']
+Text: \item \textbf{Sensor Magnético (Reed Switch)}: alimentado a 3.3V y se conecta directamente entre el \textbf{GPIO 4} y GND aprovechando la resistencia interna \textit{pull-up}.
+============================================================
+File: A_manual_usuario.tex | Line: 178
+Matches: ['+ Add Device']
+Text: \item Selecciona \textbf{+ Add Device} e introduce el nombre del nodo.
+============================================================
+File: A_manual_usuario.tex | Line: 181
+Matches: ['Install']
+Text: \item Haz clic en \textbf{Install} y selecciona la opción para flashear mediante conexión por cable serial. Tras unos minutos, el firmware se cargará en la placa.
+============================================================
+File: A_manual_usuario.tex | Line: 191
+Matches: ['Ajustes', 'Dispositivos y Servicios']
+Text: \item Dirígete al menú lateral izquierdo y selecciona \textbf{Ajustes} $\rightarrow$ \textbf{Dispositivos y Servicios}.
+============================================================
+File: A_manual_usuario.tex | Line: 200
+Matches: ['Integraciones']
+Text: \item En la pestaña \textbf{Integraciones}, observarás que Home Assistant ha detectado automáticamente los nuevos dispositivos ESPHome bajo el apartado de ``Descubiertos''.
+============================================================
+File: A_manual_usuario.tex | Line: 209
+Matches: ['Configurar']
+Text: \item Haz clic en \textbf{Configurar} en cada uno de los nodos detectados siguiendo los pasos básicos que nos ofrece Home Assistant.
+============================================================
+File: A_manual_usuario.tex | Line: 210
+Matches: ['clave de encriptación (API Key)']
+Text: \item Confirma la adición e introduce la \textbf{clave de encriptación (API Key)} que se generó automáticamente durante la configuración del nodo en ESPHome (puedes consultarla en el archivo YAML del nodo o en el apartado de logs del nodo en ESPHome).
+============================================================
+File: A_manual_usuario.tex | Line: 217
+Matches: ['Ajustes', 'Paneles de control']
+Text: \item Dirígete al menú lateral izquierdo y selecciona \textbf{Ajustes} $\rightarrow$ \textbf{Paneles de control}.
+============================================================
+File: A_manual_usuario.tex | Line: 218
+Matches: ['Añadir panel', 'Inteligencia Ambiental']
+Text: \item Haz clic en \textbf{Añadir panel} (esquina inferior derecha), selecciona crear un nuevo panel de control y ponle como título \textbf{Inteligencia Ambiental}.
+============================================================
+File: A_manual_usuario.tex | Line: 219
+Matches: ['Editar el panel de control', 'Añadir Tarjeta']
+Text: \item Ábrelo desde el menú lateral, haz clic en el icono del lápiz (arriba a la derecha) para \textbf{Editar el panel de control} y empieza a seleccionar \textbf{Añadir Tarjeta}.
+============================================================
+File: A_manual_usuario.tex | Line: 222
+Matches: ['Entidades']
+Text: \item Utiliza la tarjeta \textbf{Entidades} para agrupar estados simples, como el estado de la puerta, la presencia del radar o el nivel de luz.
+============================================================
+File: A_manual_usuario.tex | Line: 223
+Matches: ['Botón']
+Text: \item Utiliza la tarjeta \textbf{Botón} para el actuador del relé (luces del escritorio), lo que permite un encendido rápido e intuitivo.
+============================================================
+File: A_manual_usuario.tex | Line: 224
+Matches: ['Gráfico de medidor (Gauge)']
+Text: \item Utiliza la tarjeta \textbf{Gráfico de medidor (Gauge)} para visualizar de forma atractiva la Temperatura y la Humedad proporcionadas por el DHT11.
+============================================================
+File: A_manual_usuario.tex | Line: 227
+Matches: ['Hecho']
+Text: \item Al finalizar, haz clic en \textbf{Hecho} para guardar los cambios en tu nuevo panel personalizado.
+============================================================
+File: A_manual_usuario.tex | Line: 234
+Matches: ['Navegación al editor', 'Ajustes', 'Automatizaciones y escenas']
+Text: \item \textbf{Navegación al editor}: acceda a la interfaz web de Home Assistant (puerto 8123) y diríjase en el menú lateral a \textbf{Ajustes} $\rightarrow$ \textbf{Automatizaciones y escenas}.
+============================================================
+File: A_manual_usuario.tex | Line: 235
+Matches: ['Creación de nueva regla', 'Crear automatización', 'Crear nueva automatización']
+Text: \item \textbf{Creación de nueva regla}: en la esquina inferior derecha, haga clic en el botón \textbf{Crear automatización} y, en la ventana emergente, elija la opción \textbf{Crear nueva automatización} (como se muestra en la Figura~\ref{fig:ha_crear_auto}).
+============================================================
+File: A_manual_usuario.tex | Line: 244
+Matches: ['Conmutación al editor YAML', 'Editar en YAML']
+Text: \item \textbf{Conmutación al editor YAML}: se abrirá el editor visual estructurado por defecto. Para introducir el código YAML directamente, haga clic en el icono de los tres puntos verticales situado en la esquina superior derecha y seleccione la opción \textbf{Editar en YAML} (véase la Figura~\ref{fig:ha_editar_yaml}).
+============================================================
+File: A_manual_usuario.tex | Line: 259
+Matches: ['Guardado y activación', 'Guardar']
+Text: \item \textbf{Guardado y activación}: haga clic en el botón \textbf{Guardar} (esquina inferior derecha) y asigne un nombre descriptivo a la automatización (por ejemplo, ``Termostato Inteligente: Modo Estudio''). La regla se guardará y se activará de forma automática en el motor de ejecución local de forma inmediata.
+============================================================
+File: A_manual_usuario.tex | Line: 275
+Matches: ['Herramienta de trazas (Traces)', 'Trazas']
+Text: \item \textbf{Herramienta de trazas (Traces)}: al pulsar en el botón superior etiquetado como \textbf{Trazas} (o \textit{Traces}), se accede a un panel de depuración que registra en tiempo real cada ejecución del automatismo. A través de este visualizador, es posible inspeccionar detalladamente el disparador que activó la regla, qué condiciones se cumplieron (o fallaron) paso a paso, y el itinerario exacto que siguió el motor lógico (véase la Figura~\ref{fig:ha_trazas}).
+============================================================
+File: A_manual_usuario.tex | Line: 284
+Matches: ['Herramientas de desarrollo', 'YAML', 'Automatizaciones']
+Text: Como alternativa avanzada para administradores, también es posible concatenar directamente todos los bloques de código YAML en el archivo de texto \texttt{automations.yaml} alojado en la Raspberry Pi (\texttt{/home/usuario/homeassistant/automations.yaml}) y posteriormente forzar la lectura del mismo desde la pestaña de \textbf{Herramientas de desarrollo} $\rightarrow$ \textbf{YAML} en la interfaz web de Home Assistant, seleccionando la opción \textbf{Automatizaciones} en el menú de recarga de configuración.
+============================================================
+File: __memoria.tex | Line: 253
+Matches: ['APÉNDICES']
+Text: \Huge \textbf{APÉNDICES}
+============================================================

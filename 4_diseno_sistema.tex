@@ -52,7 +52,7 @@ Para garantizar la modularidad, la mantenibilidad y el aislamiento perimetral ex
 
 \subsection{Modelado lógico del sistema}
 \label{sec:modelado_logico}
-La interacción entre los actores identificados y las funciones principales de la infraestructura se formaliza mediante la definición de los casos de uso esenciales del sistema, detallados a continuación:
+La interacción entre los actores identificados y las funciones principales de la infraestructura se formaliza mediante la definición de los casos de uso esenciales del sistema, detallados a continuación.
 
 \subsubsection{Caso de uso 1: inferencia dinámica de presencia y ocupación}
 \begin{itemize}
@@ -152,12 +152,11 @@ Las Tablas \ref{tab:mod_nodo_ambiente}, \ref{tab:mod_nodo_escritorio}, \ref{tab:
 
 \begin{table}[H]
     \centering
-    \caption{Módulo \texttt{esp32-nodo-ambiente} (Control ambiental de la estancia)}
-    \label{tab:mod_nodo_ambiente}
+    \makebox[\textwidth][c]{
     \begin{tabular}{|l|l|l|}
         \hline
         \rowcolor[gray]{0.9} 
-        \textbf{Nombre} & \textbf{Tipo de dato} & \textbf{Descripción} \\ \hline
+        \multicolumn{1}{|c|}{\textbf{Nombre}} & \multicolumn{1}{c|}{\textbf{Tipo de dato}} & \multicolumn{1}{c|}{\textbf{Descripción}} \\ \hline
         \multicolumn{3}{|c|}{\textbf{Tabla de variables / Atributos}} \\ \hline
         \texttt{temperatura} & \texttt{float} & \parbox[c]{7.5cm}{\vspace{0.15cm}Variable climática de temperatura ambiente (DHT11).\vspace{0.15cm}} \\ \hline
         \texttt{humedad} & \texttt{float} & \parbox[c]{7.5cm}{\vspace{0.15cm}Variable climática de humedad relativa (DHT11).\vspace{0.15cm}} \\ \hline
@@ -165,21 +164,24 @@ Las Tablas \ref{tab:mod_nodo_ambiente}, \ref{tab:mod_nodo_escritorio}, \ref{tab:
         \texttt{rele\_principal} & \texttt{bool} & \parbox[c]{7.5cm}{\vspace{0.15cm}Estado lógico de conmutación del actuador del relé.\vspace{0.15cm}} \\ \hline
         \texttt{detector\_sonido} & \texttt{bool} & \parbox[c]{7.5cm}{\vspace{0.15cm}Sensor digital de ruido con retraso antirebotes.\vspace{0.15cm}} \\ \hline
         \multicolumn{3}{|c|}{\textbf{Tabla de métodos / Funciones}} \\ \hline
-        \textbf{Nombre} & \textbf{Dato(s) de entrada} & \textbf{Dato(s) de salida / Acción} \\ \hline
+        \multicolumn{1}{|c|}{\textbf{Nombre}} & \multicolumn{1}{c|}{\textbf{Dato(s) de entrada}} & \multicolumn{1}{c|}{\textbf{Dato(s) de salida / Acción}} \\ \hline
         \texttt{read\_dht11()} & Ninguno & \parbox[c]{7.5cm}{\vspace{0.15cm}Publica temperatura y humedad de forma periódica.\vspace{0.15cm}} \\ \hline
         \texttt{read\_ldr()} & Ninguno & \parbox[c]{7.5cm}{\vspace{0.15cm}Muestrea el ADC de 12 bits y publica tensión de la LDR.\vspace{0.15cm}} \\ \hline
         \texttt{set\_rele(state)} & \texttt{bool state} & \parbox[c]{7.5cm}{\vspace{0.15cm}Conmuta el pin digital GPIO para excitar la bobina del relé.\vspace{0.15cm}} \\ \hline
     \end{tabular}
+    }
+    \caption{Módulo \texttt{esp32-nodo-ambiente} (Control ambiental de la estancia)}
+    \label{tab:mod_nodo_ambiente}
+
 \end{table}
 
 \begin{table}[H]
     \centering
-    \caption{Módulo \texttt{esp32-zona-escritorio} (Adquisición espacial y señalización)}
-    \label{tab:mod_nodo_escritorio}
+    \makebox[\textwidth][c]{
     \begin{tabular}{|l|l|l|}
         \hline
         \rowcolor[gray]{0.9} 
-        \textbf{Nombre} & \textbf{Tipo de dato} & \textbf{Descripción} \\ \hline
+        \multicolumn{1}{|c|}{\textbf{Nombre}} & \multicolumn{1}{c|}{\textbf{Tipo de dato}} & \multicolumn{1}{c|}{\textbf{Descripción}} \\ \hline
         \multicolumn{3}{|c|}{\textbf{Tabla de variables / Atributos}} \\ \hline
         \texttt{ocupacion} & \texttt{bool} & \parbox[c]{7.5cm}{\vspace{0.15cm}Presencia binaria general reportada por el radar.\vspace{0.15cm}} \\ \hline
         \texttt{movimiento} & \texttt{bool} & \parbox[c]{7.5cm}{\vspace{0.15cm}Presencia de objetivos dinámicos por el radar.\vspace{0.15cm}} \\ \hline
@@ -188,50 +190,60 @@ Las Tablas \ref{tab:mod_nodo_ambiente}, \ref{tab:mod_nodo_escritorio}, \ref{tab:
         \texttt{dist\_estatico} & \texttt{float} & \parbox[c]{7.5cm}{\vspace{0.15cm}Distancia cuantitativa a objetivo inmóvil.\vspace{0.15cm}} \\ \hline
         \texttt{laser\_escritorio} & \texttt{bool} & \parbox[c]{7.5cm}{\vspace{0.15cm}Estado lógico del diodo láser de señalización.\vspace{0.15cm}} \\ \hline
         \multicolumn{3}{|c|}{\textbf{Tabla de métodos / Funciones}} \\ \hline
-        \textbf{Nombre} & \textbf{Dato(s) de entrada} & \textbf{Dato(s) de salida / Acción} \\ \hline
+        \multicolumn{1}{|c|}{\textbf{Nombre}} & \multicolumn{1}{c|}{\textbf{Dato(s) de entrada}} & \multicolumn{1}{c|}{\textbf{Dato(s) de salida / Acción}} \\ \hline
         \texttt{read\_ld2410()} & Ninguno & \parbox[c]{7.5cm}{\vspace{0.15cm}Procesa la trama UART y publica métricas de distancia.\vspace{0.15cm}} \\ \hline
         \texttt{set\_laser(state)} & \texttt{bool state} & \parbox[c]{7.5cm}{\vspace{0.15cm}Enciende o apaga la salida digital del diodo láser.\vspace{0.15cm}} \\ \hline
     \end{tabular}
+    }
+    \caption{Módulo \texttt{esp32-zona-escritorio} (Adquisición espacial y señalización)}
+    \label{tab:mod_nodo_escritorio}
+
 \end{table}
 
 \begin{table}[H]
     \centering
-    \caption{Módulo \texttt{esp32-zona-puerta} (Seguridad y monitorización de acceso)}
-    \label{tab:mod_nodo_puerta}
+    \makebox[\textwidth][c]{
     \begin{tabular}{|l|l|l|}
         \hline
         \rowcolor[gray]{0.9} 
-        \textbf{Nombre} & \textbf{Tipo de dato} & \textbf{Descripción} \\ \hline
+        \multicolumn{1}{|c|}{\textbf{Nombre}} & \multicolumn{1}{c|}{\textbf{Tipo de dato}} & \multicolumn{1}{c|}{\textbf{Descripción}} \\ \hline
         \multicolumn{3}{|c|}{\textbf{Tabla de variables / Atributos}} \\ \hline
         \texttt{sensor\_puerta} & \texttt{bool} & \parbox[c]{7.5cm}{\vspace{0.15cm}Estado binario del interruptor magnético Reed (puerta abierta/cerrada).\vspace{0.15cm}} \\ \hline
         \multicolumn{3}{|c|}{\textbf{Tabla de métodos / Funciones}} \\ \hline
-        \textbf{Nombre} & \textbf{Dato(s) de entrada} & \textbf{Dato(s) de salida / Acción} \\ \hline
+        \multicolumn{1}{|c|}{\textbf{Nombre}} & \multicolumn{1}{c|}{\textbf{Dato(s) de entrada}} & \multicolumn{1}{c|}{\textbf{Dato(s) de salida / Acción}} \\ \hline
         \texttt{read\_door()} & Ninguno & \parbox[c]{7.5cm}{\vspace{0.15cm}Muestrea la entrada digital aplicando filtros antirebotes.\vspace{0.15cm}} \\ \hline
     \end{tabular}
+    }
+    \caption{Módulo \texttt{esp32-zona-puerta} (Seguridad y monitorización de acceso)}
+    \label{tab:mod_nodo_puerta}
+
 \end{table}
 
 \begin{table}[H]
     \centering
-    \caption{Módulo \texttt{MotorContexto} (Orquestación lógica central en servidor)}
-    \label{tab:mod_motor_contexto}
+    \makebox[\textwidth][c]{
     \begin{tabular}{|l|l|l|}
         \hline
         \rowcolor[gray]{0.9} 
-        \textbf{Nombre} & \textbf{Tipo de dato} & \textbf{Descripción} \\ \hline
+        \multicolumn{1}{|c|}{\textbf{Nombre}} & \multicolumn{1}{c|}{\textbf{Tipo de dato}} & \multicolumn{1}{c|}{\textbf{Descripción}} \\ \hline
         \multicolumn{3}{|c|}{\textbf{Tabla de variables / Atributos}} \\ \hline
         \texttt{estado\_actual} & \texttt{String} & \parbox[c]{7.5cm}{\vspace{0.15cm}Estado FSM (Ausente, Ocio, Estudio, Durmiendo).\vspace{0.15cm}} \\ \hline
         \texttt{tiempo\_estudio} & \texttt{int} & \parbox[c]{7.5cm}{\vspace{0.15cm}Contador acumulado de estudio activo (Pomodoro).\vspace{0.15cm}} \\ \hline
         \texttt{tiempo\_sueno} & \texttt{int} & \parbox[c]{7.5cm}{\vspace{0.15cm}Horas de descanso nocturno acumuladas.\vspace{0.15cm}} \\ \hline
         \multicolumn{3}{|c|}{\textbf{Tabla de métodos / Funciones}} \\ \hline
-        \textbf{Nombre} & \textbf{Dato(s) de entrada} & \textbf{Dato(s) de salida / Acción} \\ \hline
+        \multicolumn{1}{|c|}{\textbf{Nombre}} & \multicolumn{1}{c|}{\textbf{Dato(s) de entrada}} & \multicolumn{1}{c|}{\textbf{Dato(s) de salida / Acción}} \\ \hline
         \texttt{procesar\_evento()} & \texttt{String id, float val} & \parbox[c]{7.5cm}{\vspace{0.15cm}Procesa actualizaciones provenientes del bus de comunicaciones.\vspace{0.15cm}} \\ \hline
         \texttt{evaluar\_fsm()} & Ninguno & \parbox[c]{7.5cm}{\vspace{0.15cm}Evalúa condicionales y transiciona el estado general de la FSM.\vspace{0.15cm}} \\ \hline
         \texttt{ejecutar\_act()} & \texttt{String id, String cmd} & \parbox[c]{7.5cm}{\vspace{0.15cm}Envía tramas de control de red hacia los actuadores.\vspace{0.15cm}} \\ \hline
     \end{tabular}
+    }
+    \caption{Módulo \texttt{MotorContexto} (Orquestación lógica central en servidor)}
+    \label{tab:mod_motor_contexto}
+
 \end{table}
 
 \subsection{Diseño del algoritmo de fusión de sensores (motor de contexto)}
-El comportamiento adaptativo del sistema se gobierna mediante una máquina de estados finitos (FSM, por sus siglas en inglés) que ejecuta la fusión de datos en el extremo (\textit{edge}). El sistema abstrae la situación del entorno en cuatro estados discretos estables: \textbf{ausente}, \textbf{ocio}, \textbf{estudio} y \textbf{durmiendo}.
+El comportamiento adaptativo del sistema se gobierna mediante una máquina de estados finitos (FSM, por sus siglas en inglés) que ejecuta la fusión de datos en el extremo (\textit{edge}). El sistema abstrae la situación del entorno en cuatro estados discretos estables: \textit{ausente}, \textit{ocio}, \textit{estudio} y \textit{durmiendo}.
 
 La transición entre estados no depende de un único sensor aislado, sino del procesamiento condicional cruzado de la telemetría entrante, aplicando redundancia lógica para garantizar la tolerancia a fallos. El modelo matemático de transiciones se rige por las siguientes reglas de inferencia:
 
@@ -241,7 +253,7 @@ La transición entre estados no depende de un único sensor aislado, sino del pr
 
 Donde $P_{\text{mmWave}}$ representa la presencia detectada por el radar, $D_{\text{objetivo}}$ es la distancia cuantitativa registrada y $R_{\text{escritorio}}$ delimita el radio físico del área de trabajo. Un temporizador de seguridad ($t_{\text{filtro}}$) evita falsas transiciones por cruces esporádicos.
 
-Para solventar contingencias críticas de hardware (como la degradación o fallo de lectura de un sensor individual), el algoritmo incorpora bucles de redundancia y reseteo activo. Si el sistema se encuentra en estado \textbf{durmiendo} debido a una lectura baja fija del LDR provocada por un fallo eléctrico, pero el canal analógico del radar computa una ausencia prolongada ($P_{\text{mmWave}} = 0$) durante un tiempo continuo $t_{\text{ausencia}} \ge 20 \text{ minutos}$, el motor de contexto anula de forma proactiva la prioridad del sensor lumínico, forzando la transición segura al estado \textbf{ausente} y mitigando el congelamiento lógico de la infraestructura.
+Para solventar contingencias críticas de hardware (como la degradación o fallo de lectura de un sensor individual), el algoritmo incorpora bucles de redundancia y reseteo activo. Si el sistema se encuentra en estado \textit{durmiendo} debido a una lectura baja fija del LDR provocada por un fallo eléctrico, pero el canal analógico del radar computa una ausencia prolongada ($P_{\text{mmWave}} = 0$) durante un tiempo continuo $t_{\text{ausencia}} \ge 20 \text{ minutos}$, el motor de contexto anula de forma proactiva la prioridad del sensor lumínico, forzando la transición segura al estado \textit{ausente} y mitigando el congelamiento lógico de la infraestructura.
 
 \begin{figure}[H]
     \centering
@@ -322,13 +334,13 @@ El servidor central central captura las actualizaciones de estado de manera inme
         }
     ]
         % Nodes
-        \node[block, fill=Naranja!10, draw=Naranja!80] (sensores) at (-4.0, 1.5) {Nodos de Control\\(ESP32)};
+        \node[block, fill=Naranja!10, draw=Naranja!80] (sensores) at (-4.0, 1.5) {Nodos de control\\(ESP32)};
         \node[block, fill=Azul!10, draw=Azul!80] (ha) at (4.0, 1.5) {Servidor central\\(Home Assistant)};
-        \node[block, fill=Morado!10, draw=Morado!80] (db) at (4.0, -1.8) {Persistencia\\(Base de Datos)};
-        \node[block, fill=Rojo!10, draw=Rojo!80] (rele) at (-4.0, -1.8) {Actuador\\(Módulo Relé)};
+        \node[block, fill=Morado!10, draw=Morado!80] (db) at (4.0, -1.8) {Persistencia\\(base de datos)};
+        \node[block, fill=Rojo!10, draw=Rojo!80] (rele) at (-4.0, -1.8) {Actuador\\(módulo relé)};
 
         % Paths
-        \draw[arrow] (sensores) to[bend left=20] node[above, txt] {1. Actualiza estado\\(Socket TCP / ProtoBuf)} (ha);
+        \draw[arrow] (sensores) to[bend left=20] node[above, txt] {1. Actualiza estado\\(socket TCP / ProtoBuf)} (ha);
         \draw[arrow] (ha) to[bend left=20] node[below, txt] {2. Ordena conmutación\\(API nativa ESPHome)} (sensores);
         \draw[arrow] (ha) -- node[right, txt] {3. Registra\\series\\temporales} (db);
         \draw[arrow] (sensores) -- node[left, txt] {4. Conmutación\\física (GPIO)} (rele);
@@ -352,9 +364,9 @@ La Figura \ref{fig:diagrama_er} representa el diagrama E-R lógico. La estructur
 El diseño ha sido normalizado hasta la Tercera Forma Normal (3NF) para evitar redundancias de almacenamiento, anomalías de actualización y garantizar la integridad referencial. A continuación, se presenta la especificación formal de las tablas resultantes del proceso de normalización:
 
 \begin{enumerate}
-    \item \textbf{Tabla \texttt{Nodo} (Primera Forma Normal - 1NF):} todos los atributos son atómicos (no repetitivos) y se identifican mediante una clave primaria única (\texttt{id\_nodo}).
-    \item \textbf{Tabla \texttt{Sensor} (Segunda Forma Normal - 2NF):} cumple 1NF y no existen dependencias funcionales parciales; los atributos describen de forma exclusiva a la entidad sensor ligada por clave foránea a un nodo (\texttt{id\_nodo}).
-    \item \textbf{Tabla \texttt{Lectura} y \texttt{EstadoContexto} (Tercera Forma Normal - 3NF):} cumple 2NF y se eliminan dependencias transitivas. El valor de la lectura de un sensor o el cambio de estado depende únicamente de la clave primaria, y no existe ningún atributo no primario dependiente de otro atributo no primario.
+    \item \textbf{Tabla \texttt{Nodo} (Primera Forma Normal o 1NF):} todos los atributos son atómicos (no repetitivos) y se identifican mediante una clave primaria única (\texttt{id\_nodo}).
+    \item \textbf{Tabla \texttt{Sensor} (Segunda Forma Normal o 2NF):} cumple 1NF y no existen dependencias funcionales parciales; los atributos describen de forma exclusiva a la entidad sensor ligada por clave foránea a un nodo (\texttt{id\_nodo}).
+    \item \textbf{Tabla \texttt{Lectura} y \texttt{EstadoContexto} (Tercera Forma Normal o 3NF):} cumple 2NF y se eliminan dependencias transitivas. El valor de la lectura de un sensor o el cambio de estado depende únicamente de la clave primaria, y no existe ningún atributo no primario dependiente de otro atributo no primario.
 \end{enumerate}
 
 La Tabla \ref{tab:esquema_relacional_1} detalla el diccionario de datos físico y el esquema relacional formalizado para las primeras tres tablas lógicas en 3NF (Nodos, Sensores y Lecturas), mientras que la Tabla \ref{tab:esquema_relacional_2} detalla las tablas de control y actuación (Actuadores, Estados y Acciones).
@@ -362,13 +374,11 @@ La Tabla \ref{tab:esquema_relacional_1} detalla el diccionario de datos físico 
 \newpage
 \begin{table}[H]
     \centering
-    \caption{Esquema relacional y diccionario de datos (Parte I: Nodos, Sensores y Lecturas)}
-    \label{tab:esquema_relacional_1}
     \makebox[\textwidth][c]{
     \begin{tabular}{|l|l|l|l|}
         \hline
         \rowcolor[gray]{0.9} 
-        \textbf{Tabla / Atributo} & \textbf{Tipo de dato} & \textbf{Restricción} & \textbf{Descripción} \\ \hline
+        \multicolumn{1}{|c|}{\textbf{Tabla / Atributo}} & \multicolumn{1}{c|}{\textbf{Tipo de dato}} & \multicolumn{1}{c|}{\textbf{Restricción}} & \multicolumn{1}{c|}{\textbf{Descripción}} \\ \hline
         \multicolumn{4}{|c|}{\textbf{Tabla: Nodo}} \\ \hline
         \texttt{id\_nodo} & \texttt{INTEGER} & \texttt{PRIMARY KEY} & \parbox[c]{5.6cm}{\vspace{0.15cm}Identificador correlativo del nodo.\vspace{0.15cm}} \\ \hline
         \texttt{nombre} & \texttt{VARCHAR(50)} & \texttt{NOT NULL} & \parbox[c]{5.6cm}{\vspace{0.15cm}Nombre lógico (ambiente, escritorio, puerta).\vspace{0.15cm}} \\ \hline
@@ -388,18 +398,19 @@ La Tabla \ref{tab:esquema_relacional_1} detalla el diccionario de datos físico 
         \texttt{id\_sensor} & \texttt{INTEGER} & \texttt{FOREIGN KEY} & \parbox[c]{5.6cm}{\vspace{0.15cm}Sensor de origen.\vspace{0.15cm}} \\ \hline
     \end{tabular}
     }
+    \caption{Esquema relacional y diccionario de datos (Parte I: Nodos, Sensores y Lecturas)}
+    \label{tab:esquema_relacional_1}
+
 \end{table}
 
 \newpage
 \begin{table}[H]
     \centering
-    \caption{Esquema relacional y diccionario de datos (Parte II: Actuadores, Estados y Acciones)}
-    \label{tab:esquema_relacional_2}
     \makebox[\textwidth][c]{
     \begin{tabular}{|l|l|l|l|}
         \hline
         \rowcolor[gray]{0.9} 
-        \textbf{Tabla / Atributo} & \textbf{Tipo de dato} & \textbf{Restricción} & \textbf{Descripción} \\ \hline
+        \multicolumn{1}{|c|}{\textbf{Tabla / Atributo}} & \multicolumn{1}{c|}{\textbf{Tipo de dato}} & \multicolumn{1}{c|}{\textbf{Restricción}} & \multicolumn{1}{c|}{\textbf{Descripción}} \\ \hline
         \multicolumn{4}{|c|}{\textbf{Tabla: Actuador}} \\ \hline
         \texttt{id\_actuador} & \texttt{INTEGER} & \texttt{PRIMARY KEY} & \parbox[c]{5.6cm}{\vspace{0.15cm}Identificador único del actuador.\vspace{0.15cm}} \\ \hline
         \texttt{nombre} & \texttt{VARCHAR(50)} & \texttt{NOT NULL} & \parbox[c]{5.6cm}{\vspace{0.15cm}Nombre descriptivo (Relé principal, Láser).\vspace{0.15cm}} \\ \hline
@@ -420,6 +431,9 @@ La Tabla \ref{tab:esquema_relacional_1} detalla el diccionario de datos físico 
         \texttt{id\_estado} & \texttt{INTEGER} & \texttt{FOREIGN KEY} & \parbox[c]{5.6cm}{\vspace{0.15cm}Referencia al estado que causó la proactividad.\vspace{0.15cm}} \\ \hline
     \end{tabular}
     }
+    \caption{Esquema relacional y diccionario de datos (Parte II: Actuadores, Estados y Acciones)}
+    \label{tab:esquema_relacional_2}
+
 \end{table}
 
 \subsection{Análisis de frecuencias y coexistencia (banda ISM)}
@@ -452,7 +466,7 @@ El flujo de información atraviesa dos pilas de protocolos distintas. Las placas
 \end{table}
 
 \textbf{Mecanismo de consistencia y control de flujo:}
-Al operar sobre la API nativa de ESPHome, se prescinde de la capa de sobrecarga de QoS de MQTT. En su lugar, el protocolo de ESPHome emplea sockets TCP persistentes orientados a conexión que garantizan la entrega en orden de todas las tramas de datos. La API implementa un mecanismo de latido activo (\textit{keepalive}) para detectar desconexiones en un plazo inferior a 5 segundos, y un sistema de cola en memoria local para registrar eventos transitorios y retransmitirlos automáticamente al restablecer el enlace con el servidor central.
+al operar sobre la API nativa de ESPHome, se prescinde de la capa de sobrecarga de QoS de MQTT. En su lugar, el protocolo de ESPHome emplea sockets TCP persistentes orientados a conexión que garantizan la entrega en orden de todas las tramas de datos. La API implementa un mecanismo de latido activo (\textit{keepalive}) para detectar desconexiones en un plazo inferior a 5 segundos, y un sistema de cola en memoria local para registrar eventos transitorios y retransmitirlos automáticamente al restablecer el enlace con el servidor central.
 
 \subsection{Modelado procedimental (diagramas de flujo)}
 Para representar formalmente la ejecución dinámica del sistema en tiempo de ejecución, se ha desarrollado un modelo procedimental basado en diagramas de flujo aninados. Estos diagramas segmentan el comportamiento de control en un flujo general del nodo periférico y un sub-diagrama específico para la lógica condicional del motor de contexto.
@@ -476,14 +490,14 @@ Por otro lado, la toma de decisiones complejas reside en el servidor central (mo
     \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=0.98\textwidth]{Img/Diagramas/diagrama_flujo_fsm_parte1.png}
-        \caption{Lógica condicional de la FSM - Parte I.}
+        \caption{Lógica condicional de la FSM (Parte I).}
         \label{fig:diagrama_flujo_fsm_parte1}
     \end{subfigure}
     \vspace{0.4cm}
     \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=0.98\textwidth]{Img/Diagramas/diagrama_flujo_fsm_parte2.png}
-        \caption{Lógica condicional de la FSM - Parte II.}
+        \caption{Lógica condicional de la FSM (Parte II).}
         \label{fig:diagrama_flujo_fsm_parte2}
     \end{subfigure}
     \caption{Diagrama de flujo de bajo nivel para la toma de decisiones y fusión en la FSM del Servidor Central.}

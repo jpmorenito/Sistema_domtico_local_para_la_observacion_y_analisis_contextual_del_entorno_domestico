@@ -1,0 +1,296 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[utf8]{inputenc}
+\makeatletter
+\providecommand\IfFormatAtLeastT[2]{}
+\providecommand\IfDocumentMetadataT[1]{}
+\def\H@refstepcounter#1{%
+  \stepcounter{#1}%
+  \protected@edef\@currentlabel{\csname p@#1\endcsname\csname the#1\endcsname}%
+}
+\makeatother
+\usepackage[left = 35mm, right = 25mm, top = 25mm, height = 206mm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{lipsum}
+\usepackage[square,numbers]{natbib}
+\usepackage[skip=12pt,font=small]{caption}  %Tamaño de la leyenda
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{afterpage}
+\usepackage{titlesec}
+\usepackage{array}
+\usepackage[table]{xcolor}
+\usepackage{listings}
+\lstset{
+  aboveskip=18pt,
+  belowskip=18pt,
+  abovecaptionskip=10pt,
+  belowcaptionskip=10pt,
+  captionpos=t
+}
+\usepackage{float}
+\usepackage{eurosym}
+\usepackage{enumitem}
+\usepackage{amssymb}
+\usepackage{wrapfig}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{hhline}
+\usepackage{url}
+\usepackage{eurosym}
+\usepackage[titletoc,title]{appendix}
+\renewcommand{\appendixtocname}{Apéndices}
+\renewcommand{\appendixpagename}{Apéndices}
+\usepackage{pdfpages}
+\usepackage{pdflscape} %poner pdf horizontal
+\usepackage[hidelinks]{hyperref}%para el hiperlink de las secciones
+\usepackage[newfloat]{minted}
+\usepackage[nottoc]{tocbibind}
+\usepackage{glossaries}
+\usepackage{diagbox} % Para la línea diagonal en la primera celda de la tabla
+
+\usepackage{tikz} % Diagramas de flujo
+\usetikzlibrary{shapes.geometric, arrows, positioning, babel} %Libería de flechas y posicionamiento
+
+\usepackage{datetime}
+\newdateformat{monthyeardate}{\monthname, \THEYEAR}
+
+
+\graphicspath{ {Imagenes/} }
+
+
+\input{Configuracion/confg_colores}
+%----------------------------------------------------------------------------------------
+%	ENCABEZADOS Y PIE DE PAGINA
+%----------------------------------------------------------------------------------------
+
+\pagestyle{fancy}
+	\fancypagestyle{cuerpo}{
+      \fancyfoot{}
+      \fancyfoot[L]{Trabajo Final de Grado} %Autor
+      \fancyfoot[C]{}
+      \fancyfoot[R]{- \thepage \ -}
+      \fancyhead{}
+      \fancyhead[L]{Trabajo Final de Grado} %Nombre del documento
+      \fancyhead[R]{\includegraphics[height=1.8cm]{Portada/Img/uco_escudo.png}} %Logo Universidad
+      \renewcommand{\headrulewidth}{0.4pt}
+      \renewcommand{\footrulewidth}{0.4pt}
+      \setlength{\headheight}{65pt}
+    }
+    \fancypagestyle{indice}{
+      \fancyfoot{}
+      \fancyfoot[L]{\AutorTFG} %Autor
+      \fancyfoot[R]{- \thepage \ -} %Asignatura
+      \fancyhead{}
+      \fancyhead[L]{\leftmark} %Nombre del documento
+      \fancyhead[R]{\includegraphics[height=1.8cm]{Portada/Img/uco_escudo.png}} %Logo
+      \renewcommand{\headrulewidth}{0.4pt}
+      \renewcommand{\footrulewidth}{0.4pt}
+      \setlength{\headheight}{65pt}
+      }
+      
+    \fancypagestyle{plain}{% % <-- this is new
+     \fancyfoot{}
+      \fancyfoot[L]{Trabajo Final de Grado} %Autor
+      \fancyfoot[C]{} %ecc
+      \fancyfoot[R]{- \thepage \ -}
+      \fancyhead{}
+      \fancyhead[L]{\leftmark} %Nombre del documento
+      \fancyhead[R]{\includegraphics[height=1.8cm]{Portada/Img/uco_escudo.png}} %Logo Universidad
+      \renewcommand{\headrulewidth}{0.4pt}
+      \renewcommand{\footrulewidth}{0.4pt}
+      \setlength{\headheight}{65pt}
+    }
+  
+\setcounter{secnumdepth}{4}
+
+% \pagenumbering{empty}
+
+\raggedbottom  % Quita huecos grandes en blanco
+
+\makeatletter
+\def\H@refstepcounter#1{%
+  \stepcounter{#1}%
+  \protected@edef\@currentlabel{\csname p@#1\endcsname\csname the#1\endcsname}%
+}
+\makeatother
+
+\begin{document}
+\setlength{\parskip}{5mm} %Espacio entre párrafos
+
+%%%%%%%%%%%
+% PORTADA %
+%%%%%%%%%%%
+\input{Portada/cover}
+\clearpage
+
+% --- PÁGINA DE FIRMA ---
+\thispagestyle{empty}
+\vspace*{5cm}
+\noindent Jacob Pino Moreno, con DNI 51212924H, firmo el presente Trabajo Final de Grado a x de x de 2026.
+
+\vspace{2cm}
+\noindent Firma:
+\clearpage
+
+% --- RESUMEN ---
+\thispagestyle{empty}
+\section*{Resumen}
+El presente Trabajo Final de Grado (TFG) aborda el diseño, desarrollo e implementación de un sistema domótico local avanzado para la observación y análisis contextual del entorno doméstico. A diferencia de las soluciones comerciales convencionales, que dependen fuertemente de servicios en la nube y comprometen la privacidad, este proyecto propone una arquitectura descentralizada y procesada en el borde (\textit{Edge Computing}) mediante Home Assistant y ESPHome. El sistema integra múltiples sensores (radar de ondas milimétricas, sensores de presencia infrarrojos, temperatura, humedad y luminosidad) distribuidos en nodos estratégicos. Mediante algoritmos de fusión sensorial, la plataforma es capaz de inferir el estado del usuario (estudio, descanso o ausencia) y ejecutar automatizaciones proactivas enfocadas en la mejora del bienestar, la ergonomía y la eficiencia energética, todo ello operando de forma cien por cien local, segura y sin latencia externa.
+
+\vspace{1cm}
+\noindent \textbf{Palabras clave:} automatización proactiva, bienestar, domótica local, Edge Computing, ESPHome, fusión sensorial, Home Assistant, IoT, privacidad, radares mmWave.
+\clearpage
+
+% --- ABSTRACT ---
+\thispagestyle{empty}
+\section*{Abstract}
+This Undergraduate dissertation presents the design, development, and implementation of an advanced local home automation system for contextual observation and analysis of the domestic environment. Unlike conventional commercial solutions that rely heavily on cloud services and compromise user privacy, this project proposes a decentralized architecture based on Edge Computing using Home Assistant and ESPHome. The system integrates multiple sensors (millimeter-wave radar, infrared presence sensors, temperature, humidity, and light sensors) distributed across strategic nodes. Through sensor fusion algorithms, the platform can infer the user's state (studying, resting, or absent) and execute proactive automations aimed at improving well-being, ergonomics, and energy efficiency, all operating 100\% locally, securely, and with zero external latency.
+
+\vspace{1cm}
+\noindent \textbf{Keywords:} Edge Computing, ESPHome, Home Assistant, IoT, local home automation, mmWave radars, privacy, proactive automation, sensor fusion, well-being.
+\clearpage
+
+%%%%%%%%%%%%%%%%%%
+% INDICE GENERAL %
+%%%%%%%%%%%%%%%%%%
+\pagenumbering{Roman} % para comenzar la numeracion de paginas en numeros romanos
+\pagestyle{indice}
+\thispagestyle{indice}
+\tableofcontents
+
+\newpage
+\renewcommand{\listfigurename}{Índice de ilustraciones}
+\listoffigures
+
+\newpage
+\section*{Glosario de abreviaturas}
+\addcontentsline{toc}{section}{Glosario de abreviaturas}
+
+\noindent
+\message{DEBUG: leftmargin=\the\leftmargin, leftskip=\the\leftskip, linewidth=\the\linewidth, textwidth=\the\textwidth, parindent=\the\parindent, oddsidemargin=\the\oddsidemargin}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{@{}p{1.8cm} X@{}}
+    \textbf{ADC} & Conversor analógico a digital (\textit{Analog-to-Digital Converter}) \\
+    \textbf{API} & Interfaz de programación de aplicaciones (\textit{Application Programming Interface}) \\
+    \textbf{BLE} & Bluetooth de bajo consumo (\textit{Bluetooth Low Energy}) \\
+    \textbf{CPU} & Unidad central de procesamiento (\textit{Central Processing Unit}) \\
+    \textbf{DHT} & Sensor digital de humedad y temperatura (\textit{Digital Humidity and Temperature}) \\
+    \textbf{DNS} & Sistema de nombres de dominio (\textit{Domain Name System}) \\
+    \textbf{DSP} & Procesador de señal digital (\textit{Digital Signal Processor}) \\
+    \textbf{ESP} & Espressif Systems (Familia de microcontroladores IoT) \\
+    \textbf{FMCW} & Onda continua modulada en frecuencia (\textit{Frequency Modulated Continuous Wave}) \\
+    \textbf{FSM} & Máquina de estados finitos (\textit{Finite State Machine}) \\
+    \textbf{GPIO} & Entrada/salida de propósito general (\textit{General Purpose Input/Output}) \\
+    \textbf{HA} & Home Assistant (Plataforma domótica de procesamiento local) \\
+    \textbf{HTTP} & Protocolo de transferencia de hipertexto (\textit{Hypertext Transfer Protocol}) \\
+    \textbf{I2C} & Bus de comunicación serie síncrono (\textit{Inter-Integrated Circuit}) \\
+    \textbf{IDE} & Entorno de desarrollo integrado (\textit{Integrated Development Environment}) \\
+    \textbf{IoT} & Internet de las cosas (\textit{Internet of Things}) \\
+    \textbf{IP} & Protocolo de internet (\textit{Internet Protocol}) \\
+    \textbf{ISM} & Banda de radio industrial, científica y médica (\textit{Industrial, Scientific and Medical}) \\
+    \textbf{JSON} & Formato de intercambio de datos (\textit{JavaScript Object Notation}) \\
+    \textbf{LAN} & Red de área local (\textit{Local Area Network}) \\
+    \textbf{LDR} & Fotorresistencia (\textit{Light Dependent Resistor}) \\
+    \textbf{LED} & Diodo emisor de luz (\textit{Light Emitting Diode}) \\
+    \textbf{LPWAN} & Red de área amplia y bajo consumo (\textit{Low-Power Wide-Area Network}) \\
+\end{tabularx}
+
+\newpage
+
+\noindent
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{@{}p{1.8cm} X@{}}
+    \textbf{MAC} & Dirección de control de acceso al medio (\textit{Media Access Control}) \\
+    \textbf{MQTT} & Protocolo de transporte de telemetría por cola de mensajes (\textit{Message Queuing Telemetry Transport}) \\
+    \textbf{NAS} & Almacenamiento conectado en red (\textit{Network Attached Storage}) \\
+    \textbf{NAT} & Traducción de direcciones de red (\textit{Network Address Translation}) \\
+    \textbf{NPU} & Unidad de procesamiento neuronal (\textit{Neural Processing Unit}) \\
+    \textbf{OFDMA} & Acceso múltiple por división de frecuencias ortogonales (\textit{Orthogonal Frequency-Division Multiple Access}) \\
+    \textbf{OS} & Sistema operativo (\textit{Operating System}) \\
+    \textbf{OSI} & Modelo de interconexión de sistemas abiertos (\textit{Open Systems Interconnection}) \\
+    \textbf{OTA} & Actualización inalámbrica de firmware (\textit{Over-The-Air}) \\
+    \textbf{PIR} & Sensor infrarrojo pasivo (\textit{Passive Infrared Sensor}) \\
+    \textbf{PWM} & Modulación por ancho de pulsos (\textit{Pulse Width Modulation}) \\
+    \textbf{QR} & Código de respuesta rápida (\textit{Quick Response}) \\
+    \textbf{RAM} & Memoria de acceso aleatorio (\textit{Random Access Memory}) \\
+    \textbf{RSSI} & Indicador de fuerza de la señal recibida (\textit{Received Signal Strength Indicator}) \\
+    \textbf{SBC} & Computador de placa única (\textit{Single Board Computer}) \\
+    \textbf{SSD} & Unidad de almacenamiento de estado sólido (\textit{Solid State Drive}) \\
+    \textbf{SSH} & Protocolo de acceso remoto seguro (\textit{Secure Shell}) \\
+    \textbf{SSL} & Capa de sockets seguros (\textit{Secure Sockets Layer}) \\
+    \textbf{SSR} & Relé de estado sólido (\textit{Solid State Relay}) \\
+    \textbf{TCP} & Protocolo de control de transmisión (\textit{Transmission Control Protocol}) \\
+    \textbf{TLS} & Seguridad de la capa de transporte (\textit{Transport Layer Security}) \\
+    \textbf{UI} & Interfaz de usuario (\textit{User Interface}) \\
+    \textbf{UML} & Lenguaje unificado de modelado (\textit{Unified Modeling Language}) \\
+    \textbf{VPN} & Red privada virtual (\textit{Virtual Private Network}) \\
+    \textbf{WAN} & Red de área amplia (\textit{Wide Area Network}) \\
+    \textbf{WLAN} & Red local inalámbrica (\textit{Wireless Local Area Network}) \\
+    \textbf{WPAN} & Red de área personal inalámbrica (\textit{Wireless Personal Area Network}) \\
+    \textbf{YAML} & Formato de serialización declarativo (\textit{YAML Ain't Markup Language}) \\
+\end{tabularx}
+
+%---------------------%
+%	CUERPO DE TEXTO   %
+%---------------------%
+
+\newpage
+\newpage
+
+\pagestyle{cuerpo}
+\thispagestyle{cuerpo}
+
+\pagenumbering{arabic}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                         ESTRUCTURA CONTENIDO                      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%------------------%
+%   CAPÍTULOS      %
+%------------------%
+
+\input{1_introduccion}
+\input{2_contexto_estado_arte}
+\input{3_analisis_requisitos}
+\input{4_diseno_sistema}
+\input{5_seleccion_tecnologias}
+\input{6_plan_implantacion}
+\input{7_evaluacion_sistema}
+\input{8_presupuesto}
+\input{9_planos_esquemas}
+\input{10_conclusiones}
+
+% Comentar en la versión final
+
+
+
+%------------------%
+% BIBLIOGRAFIA     %
+%------------------%
+
+% Estilo de la bibliografía (formato numérico estándar IEEE/Ingeniería)
+\newpage
+\bibliographystyle{ieeetr} 
+
+% Invocación del archivo .bib (debe existir un archivo llamado bibliografia.bib en la misma carpeta)
+\bibliography{referencias}
+
+%------------------%
+%   ANEXOS         %
+%------------------%
+\appendix
+\clearpage
+\addappheadtotoc
+\vspace*{\fill}
+\begin{center}
+    \Huge \textbf{APÉNDICES}
+\end{center}
+\vspace*{\fill}
+\clearpage
+\input{A_manual_usuario}
+\input{B_manual_tecnico_codigo}
+
+\end{document}

@@ -1,0 +1,37 @@
+
+--- Absolute Page 77 (printed 61) ---
+Trabajo Final de Grado
+6.4.
+Integraci´on entre sistemas heterog´eneos
+La cohesi´on de la arquitectura se logra mediante la estandarizaci´on de las in-
+terfaces de intercambio de datos. Los nodos ESP32 digitalizan los transductores
+anal´ogicos e interact´uan de forma nativa con los sensores digitales empleando buses
+serie locales (UART, unifilar). Posteriormente, ESPHome traduce esta telemetr´ıa
+f´ısica en variables de estado que son expuestas y actualizadas s´ıncronamente hacia
+el servidor a trav´es del socket binario de la API.
+Esta comunicaci´on directa prescinde de brokers de mensajer´ıa intermedios (como
+Eclipse Mosquitto), reduciendo sustancialmente la sobrecarga computacional de la
+Raspberry Pi 4 de 1 GB. Home Assistant absorbe de forma concurrente los eventos
+de la API y los mapea inmediatamente a su bus l´ogico interno de entidades. Esta
+cadena de integraci´on elimina la necesidad de configurar manualmente t´opicos o
+parsear tramas de datos complejas en el servidor central, permitiendo que el motor de
+inferencia eval´ue de manera uniforme variables f´ısicas tan diversas como la distancia
+del radar, la ca´ıda de tensi´on del LDR o el estado del interruptor magn´etico de la
+puerta, consolidando una infraestructura de computaci´on sensible al contexto s´olida,
+segura y completamente independiente de conectividad externa.
+El resultado final del montaje y el encapsulado f´ısico de los tres nodos prototipa-
+dos en sus respectivas ubicaciones de la estancia se ilustra en las Figuras 34, 35 y 36.
+Trabajo Final de Grado
+- 61 -
+
+--- Absolute Page 78 (printed 62) ---
+Trabajo Final de Grado
+Figura 34: Prototipo f´ısico y ensamblado final del Nodo 1 (Nodo Ambiente).
+Trabajo Final de Grado
+- 62 -
+
+--- Absolute Page 79 (printed 63) ---
+Trabajo Final de Grado
+Figura 35: Prototipo f´ısico y ensamblado final del Nodo 2 (Nodo Escritorio).
+Trabajo Final de Grado
+- 63 -

@@ -1,0 +1,56 @@
+esphome:
+  name: esp32-nodo-ambiente
+  friendly_name: esp32-nodo-ambiente
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+logger:
+
+wifi:
+  ssid: 'Livebox6s-4ADB_EXT'
+  password: 'PjEM5okD45N4'
+
+api:
+
+ota:
+  - platform: esphome
+
+# 1. SENSOR DE TEMPERATURA Y HUMEDAD
+sensor:
+  - platform: dht
+    pin: 4
+    # ATENCION: Si tu sensor es el azul pon DHT11, si es el blanco pon DHT22.
+    model: DHT11 
+    temperature:
+      name: 'Temperatura Habitacion'
+    humidity:
+      name: 'Humedad Habitacion'
+    update_interval: 30s
+
+# 2. SENSOR DE LUMINOSIDAD (FOTORESISTOR LDR)
+  - platform: adc
+    pin: 32
+    name: 'Nivel de Luz'
+    update_interval: 10s
+    attenuation: auto
+
+# 3. ACTUADOR: RELE
+switch:
+  - platform: gpio
+    pin: 26
+    name: 'Rele Principal'
+    id: rele_1
+    restore_mode: ALWAYS_OFF
+
+# 4. SENSOR DE RUIDO (BIG SOUND)
+binary_sensor:
+  - platform: gpio
+    pin: 27
+    name: 'Detector de Sonido'
+    device_class: sound
+    filters:
+      # Pequeno filtro para que no mande 50 avisos por segundo al dar una palmada
+      - delayed_off: 500ms

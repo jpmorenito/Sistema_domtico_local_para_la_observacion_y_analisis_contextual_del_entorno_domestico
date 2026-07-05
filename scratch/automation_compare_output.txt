@@ -1,0 +1,513 @@
+=== SEMANTIC COMPARISON OF HA AUTOMATIONS ===
+
+Checking: Termostato Inteligente: Modo Estudio (lst:auto_climatizacion)
+DIFFERENCE DETECTED!
+--- LaTeX Document (Normalized)
++++ Backup (Normalized)
+@@ -1,16 +1,16 @@
+-- id: climatizacion_estudio_001
++- id: - id: climatizacion_estudio_001
+ alias: "Termostato Inteligente: Modo Estudio"
+ trigger: 
+-- platform: "state"
+-entity_id: "sensor.contexto_de_la_habitacion"
+-to: "Actividad / Estudiando"
++- platform: state
++entity_id: sensor.contexto_de_la_habitacion
++to: Actividad / Estudiando
+ for: 
+ minutes: 5
+ condition: 
+-- condition: "numeric_state"
+-entity_id: "sensor.esp32_nodo_ambiente_temperatura_habitacion"
++- condition: numeric_state
++entity_id: sensor.esp32_nodo_ambiente_temperatura_habitacion
+ below: 19.5
+ action: 
+-- service: "switch.turn_on"
++- service: switch.turn_on
+ target: 
+-entity_id: "switch.bluetooth_proxy_ea49ac_actuador_dormitorio"
++entity_id: switch.bluetooth_proxy_ea49ac_actuador_dormitorio
+
+Checking: Analista Local: Resumen Diario de Bienestar (lst:auto_bienestar_resumen)
+DIFFERENCE DETECTED!
+--- LaTeX Document (Normalized)
++++ Backup (Normalized)
+@@ -1,18 +1,17 @@
+ - id: informe_diario_qol
+ alias: "Analista Local: Resumen Diario de Bienestar"
+-description: "Genera un reporte diario analizando las horas de estudio y sueno del nuevo motor de contexto."
++description: Genera un reporte diario analizando las horas de estudio y sueno del
++nuevo motor de contexto.
+ triggers: 
+ - at: "22: 00: 00"
+-trigger: "time"
++trigger: time
+ actions: 
+ - data: 
+-title: "Informe de Inteligencia Ambiental"
+-message: |
+-Resumen de tu jornada: - Tiempo efectivo de estudio: {{ states(""sensor.tiempo_de_estudio"") }} horas. - Tiempo de descanso (anoche): {{ states(""sensor.tiempo_de_sueno"") }} horas.
+-{% if states(""sensor.tiempo_de_estudio"") | float > 4.0 %}
+-Gran rendimiento hoy. El sistema ha mantenido un confort termico constante.
+-{% else %}
+-Jornada ligera. Sistemas en modo ahorro energetico.
+-{% endif %}
+-action: "notify.notify"
+-mode: "single"
++title: Informe de Inteligencia Ambiental
++message: "Resumen de tu jornada: - Tiempo efectivo de estudio: {{ states("sensor.tiempo_de_estudio")
++}} horas. - Tiempo de descanso (anoche): {{ states("sensor.tiempo_de_sueno")
++}} horas.\n{% if states("sensor.tiempo_de_estudio") | float > 4.0 %}\n  Gran
++rendimiento hoy. El sistema ha mantenido un confort termico constante.\n{%
++else %}\n  Jornada ligera. Sistemas en modo ahorro energetico.\n{% endif %}\n"
++action: notify.notify
++mode: single
+
+Checking: Contexto: Detección de Estudio (Radar Espacial) (lst:auto_detect_estudio)
+DIFFERENCE DETECTED!
+--- LaTeX Document (Normalized)
++++ Backup (Normalized)
+@@ -1,43 +1,43 @@
+ - id: 1779303721704
+ alias: "Contexto: Deteccion de Estudio (Radar Espacial)"
+-description: "Infiere si estas estudiando basandose en tu distancia al radar LD2410."
++description: Infiere si estas estudiando basandose en tu distancia al radar LD2410.
+ triggers: 
+-- entity_id: "sensor.esp32_zona_escritorio_distancia_del_estatico"
++- entity_id: sensor.esp32_zona_escritorio_distancia_del_estatico
+ below: 120
+ for: 
+ minutes: 2
+-id: "en_escritorio"
+-trigger: "numeric_state"
+-- entity_id: "sensor.esp32_zona_escritorio_distancia_del_estatico"
++id: en_escritorio
++trigger: numeric_state
++- entity_id: sensor.esp32_zona_escritorio_distancia_del_estatico
+ above: 120
+ for: 
+ minutes: 2
+-id: "fuera_de_escritorio"
+-trigger: "numeric_state"
++id: fuera_de_escritorio
++trigger: numeric_state
+ conditions: 
+-- condition: "state"
+-entity_id: "input_select.estado_habitacion"
++- condition: state
++entity_id: input_select.estado_habitacion
+ state: 
+-- "Ocio"
+-- "Estudio"
++- Ocio
++- Estudio
+ actions: 
+ - choose: 
+ - conditions: 
+-- condition: "trigger"
+-id: "en_escritorio"
++- condition: trigger
++id: en_escritorio
+ sequence: 
+ - target: 
+-entity_id: "input_select.estado_habitacion"
++entity_id: input_select.estado_habitacion
+ data: 
+-option: "Estudio"
+-action: "input_select.select_option"
++option: Estudio
++action: input_select.select_option
+ - conditions: 
+-- condition: "trigger"
+-id: "fuera_de_escritorio"
++- condition: trigger
++id: fuera_de_escritorio
+ sequence: 
+ - target: 
+-entity_id: "input_select.estado_habitacion"
++entity_id: input_select.estado_habitacion
+ data: 
+-option: "Ocio"
+-action: "input_select.select_option"
+-mode: "single"
++option: Ocio
++action: input_select.select_option
++mode: single
+
+Checking: Contexto: Detección de Sueño (Fusión Radar + LDR) (lst:auto_detect_sueno)
+DIFFERENCE DETECTED!
+--- LaTeX Document (Normalized)
++++ Backup (Normalized)
+@@ -1,54 +1,55 @@
+ - id: 1779306431260
+ alias: "Contexto: Deteccion de Sueno (Fusion Radar + LDR)"
+-description: "Infiere si estas durmiendo o si te has despertado cruzando la luz y el movimiento."
++description: Infiere si estas durmiendo o si te has despertado cruzando la luz y
++el movimiento.
+ triggers: 
+-- entity_id: "sensor.esp32_nodo_ambiente_nivel_de_luz"
++- entity_id: sensor.esp32_nodo_ambiente_nivel_de_luz
+ below: 0.5
+ for: 
+ minutes: 10
+-id: "se_duerme"
+-trigger: "numeric_state"
+-- entity_id: "binary_sensor.esp32_zona_escritorio_detectado_movimiento"
++id: se_duerme
++trigger: numeric_state
++- entity_id: binary_sensor.esp32_zona_escritorio_detectado_movimiento
+ to: "on"
+ for: 
+ minutes: 2
+-id: "se_despierta_movimiento"
+-trigger: "state"
+-- entity_id: "sensor.esp32_nodo_ambiente_nivel_de_luz"
++id: se_despierta_movimiento
++trigger: state
++- entity_id: sensor.esp32_nodo_ambiente_nivel_de_luz
+ above: 1
+ for: 
+ minutes: 2
+-id: "se_despierta_luz"
+-trigger: "numeric_state"
++id: se_despierta_luz
++trigger: numeric_state
+ conditions: []
+ actions: 
+ - choose: 
+ - conditions: 
+-- condition: "trigger"
+-id: "se_duerme"
+-- condition: "state"
+-entity_id: "input_select.estado_habitacion"
+-state: "Ocio"
++- condition: trigger
++id: se_duerme
++- condition: state
++entity_id: input_select.estado_habitacion
++state: Ocio
+ sequence: 
+ - target: 
+-entity_id: "input_select.estado_habitacion"
++entity_id: input_select.estado_habitacion
+ data: 
+-option: "Durmiendo"
+-action: "input_select.select_option"
++option: Durmiendo
++action: input_select.select_option
+ - conditions: 
+-- condition: "or"
++- condition: or
+ conditions: 
+-- condition: "trigger"
+-id: "se_despierta_movimiento"
+-- condition: "trigger"
+-id: "se_despierta_luz"
+-- condition: "state"
+-entity_id: "input_select.estado_habitacion"
+-state: "Durmiendo"
++- condition: trigger
++id: se_despierta_movimiento
++- condition: trigger
++id: se_despierta_luz
++- condition: state
++entity_id: input_select.estado_habitacion
++state: Durmiendo
+ sequence: 
+ - target: 
+-entity_id: "input_select.estado_habitacion"
++entity_id: input_select.estado_habitacion
+ data: 
+-option: "Ocio"
+-action: "input_select.select_option"
+-mode: "single"
++option: Ocio
++action: input_select.select_option
++mode: single
+
+Checking: Seguridad: Alarma por Radar (Modo Manual) (lst:auto_seguridad_alarma)
+DIFFERENCE DETECTED!
+--- LaTeX Document (Normalized)
++++ Backup (Normalized)
+@@ -1,20 +1,22 @@
+ - id: 1779308813969
+ alias: "Seguridad: Alarma por Radar (Modo Manual)"
+-description: "Dispara la alarma si el radar detecta presencia mientras el laser esta encendido."
++description: Dispara la alarma si el radar detecta presencia mientras el laser esta
++encendido.
+ triggers: 
+-- entity_id: "binary_sensor.esp32_zona_escritorio_ocupacion_general"
++- entity_id: binary_sensor.esp32_zona_escritorio_ocupacion_general
+ to: "on"
+-trigger: "state"
++trigger: state
+ conditions: 
+-- condition: "state"
+-entity_id: "switch.esp32_zona_escritorio_laser_escritorio"
++- condition: state
++entity_id: switch.esp32_zona_escritorio_laser_escritorio
+ state: "on"
+ actions: 
+ - data: 
+-title: "ALERTA DE INTRUSION"
+-message: "Se ha detectado movimiento en tu habitacion mientras la alarma estaba armada."
+-action: "notify.notify"
++title: "\U0001F6A8 ALERTA DE INTRUSION"
++message: Se ha detectado movimiento en tu habitacion mientras la alarma estaba
++armada.
++action: notify.notify
+ - target: 
+-entity_id: "switch.esp32_nodo_ambiente_rele_principal"
+-action: "switch.turn_on"
+-mode: "single"
++entity_id: switch.esp32_nodo_ambiente_rele_principal
++action: switch.turn_on
++mode: single
+
+Checking: Bienestar: Alerta Anti-Procrastinación de Sueño (lst:auto_procrastinacion_sueno)
+DIFFERENCE DETECTED!
+--- LaTeX Document (Normalized)
++++ Backup (Normalized)
+@@ -1,31 +1,32 @@
+ - id: 1779386894074
+ alias: "Bienestar: Alerta Anti-Procrastinacion de Sueno"
+-description: "Enciende la luz a la hora de dormir y obliga a apagarla desde la app, repitiendo el proceso durante una hora."
++description: Enciende la luz a la hora de dormir y obliga a apagarla desde la app,
++repitiendo el proceso durante una hora.
+ triggers: 
+ - at: "23: 00: 00"
+-trigger: "time"
++trigger: time
+ conditions: 
+-- condition: "state"
+-entity_id: "input_select.estado_habitacion"
++- condition: state
++entity_id: input_select.estado_habitacion
+ state: 
+-- "Ocio"
+-- "Estudio"
++- Ocio
++- Estudio
+ actions: 
+ - repeat: 
+ count: 4
+ sequence: 
+-- condition: "not"
++- condition: not
+ conditions: 
+-- condition: "state"
+-entity_id: "input_select.estado_habitacion"
+-state: "Durmiendo"
++- condition: state
++entity_id: input_select.estado_habitacion
++state: Durmiendo
+ - target: 
+-entity_id: "switch.esp32_nodo_ambiente_rele_principal"
+-action: "switch.turn_on"
++entity_id: switch.esp32_nodo_ambiente_rele_principal
++action: switch.turn_on
+ - wait_for_trigger: 
+-- entity_id: "switch.esp32_nodo_ambiente_rele_principal"
++- entity_id: switch.esp32_nodo_ambiente_rele_principal
+ to: "off"
+-trigger: "state"
+-timeout: "00: 15: 00"
+-- delay: "00: 15: 00"
+-mode: "single"
++trigger: state
++timeout: 00: 15: 00
++- delay: 00: 15: 00
++mode: single
+
+Checking: Bienestar: Iluminación Ergonomía Activa (lst:auto_ergonomia_iluminacion)
+DIFFERENCE DETECTED!
+--- LaTeX Document (Normalized)
++++ Backup (Normalized)
+@@ -1,57 +1,58 @@
+ - id: 1779387255691
+ alias: "Bienestar: Iluminacion Ergonomia Activa"
+-description: "Controla el rele de iluminacion por necesidad real de luz unicamente en estado de Estudio."
++description: Controla el rele de iluminacion por necesidad real de luz unicamente
++en estado de Estudio.
+ triggers: 
+-- entity_id: "sensor.esp32_nodo_ambiente_nivel_de_luz"
++- entity_id: sensor.esp32_nodo_ambiente_nivel_de_luz
+ below: 1.5
+-id: "poca_luz"
+-trigger: "numeric_state"
+-- entity_id: "sensor.esp32_nodo_ambiente_nivel_de_luz"
++id: poca_luz
++trigger: numeric_state
++- entity_id: sensor.esp32_nodo_ambiente_nivel_de_luz
+ above: 2.2
+-id: "mucha_luz"
+-trigger: "numeric_state"
+-- entity_id: "input_select.estado_habitacion"
+-to: "Estudio"
+-id: "entra_estudio"
+-trigger: "state"
+-- entity_id: "input_select.estado_habitacion"
+-from: "Estudio"
+-id: "sale_estudio"
+-trigger: "state"
++id: mucha_luz
++trigger: numeric_state
++- entity_id: input_select.estado_habitacion
++to: Estudio
++id: entra_estudio
++trigger: state
++- entity_id: input_select.estado_habitacion
++from: Estudio
++id: sale_estudio
++trigger: state
+ conditions: []
+ actions: 
+ - choose: 
+ - conditions: 
+-- condition: "state"
+-entity_id: "input_select.estado_habitacion"
+-state: "Estudio"
+-- condition: "numeric_state"
+-entity_id: "sensor.esp32_nodo_ambiente_nivel_de_luz"
++- condition: state
++entity_id: input_select.estado_habitacion
++state: Estudio
++- condition: numeric_state
++entity_id: sensor.esp32_nodo_ambiente_nivel_de_luz
+ below: 1.5
+-- condition: "or"
++- condition: or
+ conditions: 
+-- condition: "trigger"
+-id: "poca_luz"
+-- condition: "trigger"
+-id: "entra_estudio"
++- condition: trigger
++id: poca_luz
++- condition: trigger
++id: entra_estudio
+ sequence: 
+ - target: 
+-entity_id: "switch.esp32_nodo_ambiente_rele_principal"
+-action: "switch.turn_on"
++entity_id: switch.esp32_nodo_ambiente_rele_principal
++action: switch.turn_on
+ - conditions: 
+-- condition: "or"
++- condition: or
+ conditions: 
+-- condition: "trigger"
+-id: "mucha_luz"
+-- condition: "trigger"
+-id: "sale_estudio"
+-- condition: "not"
++- condition: trigger
++id: mucha_luz
++- condition: trigger
++id: sale_estudio
++- condition: not
+ conditions: 
+-- condition: "state"
+-entity_id: "input_select.estado_habitacion"
+-state: "Estudio"
++- condition: state
++entity_id: input_select.estado_habitacion
++state: Estudio
+ sequence: 
+ - target: 
+-entity_id: "switch.esp32_nodo_ambiente_rele_principal"
+-action: "switch.turn_off"
+-mode: "restart"
++entity_id: switch.esp32_nodo_ambiente_rele_principal
++action: switch.turn_off
++mode: restart
+
+Checking: Bienestar: Break Dinámico (Pomodoro) (lst:auto_pomodoro)
+DIFFERENCE DETECTED!
+--- LaTeX Document (Normalized)
++++ Backup (Normalized)
+@@ -1,26 +1,27 @@
+ - id: 1779446976418
+ alias: "Bienestar: Break Dinamico (Pomodoro)"
+-description: "Hace parpadear la luz principal y envia una notificacion tras 50 minutos seguidos en estado Estudio."
++description: Hace parpadear la luz principal y envia una notificacion tras 50 minutos
++seguidos en estado Estudio.
+ triggers: 
+-- entity_id: "input_select.estado_habitacion"
+-to: "Estudio"
+-for: "00: 50: 00"
+-trigger: "state"
++- entity_id: input_select.estado_habitacion
++to: Estudio
++for: 00: 50: 00
++trigger: state
+ conditions: []
+ actions: 
+ - data: 
+-title: "Hora de un descanso"
+-message: "Llevas 50 minutos rindiendo. Levantate 5 minutos a estirar las piernas."
+-action: "notify.notify"
++title:  Hora de un descanso!
++message: Llevas 50 minutos rindiendo. Levantate 5 minutos a estirar las piernas.
++action: notify.notify
+ - repeat: 
+ count: 3
+ sequence: 
+ - target: 
+-entity_id: "switch.esp32_nodo_ambiente_rele_principal"
+-action: "switch.turn_on"
+-- delay: "00: 00: 01"
++entity_id: switch.esp32_nodo_ambiente_rele_principal
++action: switch.turn_on
++- delay: 00: 00: 01
+ - target: 
+-entity_id: "switch.esp32_nodo_ambiente_rele_principal"
+-action: "switch.turn_off"
+-- delay: "00: 00: 01"
+-mode: "single"
++entity_id: switch.esp32_nodo_ambiente_rele_principal
++action: switch.turn_off
++- delay: 00: 00: 01
++mode: single
+
+Checking: Contexto: Ausencia Automática por Inactividad (lst:auto_ausencia)
+DIFFERENCE DETECTED!
+--- LaTeX Document (Normalized)
++++ Backup (Normalized)
+@@ -1,21 +1,22 @@
+ - id: 1779447855314
+ alias: "Contexto: Ausencia Automatica por Inactividad"
+-description: "Pasa la habitacion a Ausente si el radar se queda completamente vacio durante 20 minutos."
++description: Pasa la habitacion a Ausente si el radar se queda completamente vacio
++durante 20 minutos.
+ triggers: 
+-- entity_id: "binary_sensor.esp32_zona_escritorio_ocupacion_general"
++- entity_id: binary_sensor.esp32_zona_escritorio_ocupacion_general
+ to: "off"
+-for: "00: 00: 10"
+-trigger: "state"
++for: 00: 00: 10
++trigger: state
+ conditions: 
+-- condition: "not"
++- condition: not
+ conditions: 
+-- condition: "state"
+-entity_id: "input_select.estado_habitacion"
+-state: "Ausente"
++- condition: state
++entity_id: input_select.estado_habitacion
++state: Ausente
+ actions: 
+ - target: 
+-entity_id: "input_select.estado_habitacion"
++entity_id: input_select.estado_habitacion
+ data: 
+-option: "Ausente"
+-action: "input_select.select_option"
+-mode: "single"
++option: Ausente
++action: input_select.select_option
++mode: single

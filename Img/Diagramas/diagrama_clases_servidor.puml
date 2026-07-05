@@ -1,0 +1,35 @@
+@startuml
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam ClassBackgroundColor #F8F9FA
+skinparam ClassBorderColor #343A40
+skinparam ClassHeaderBackgroundColor #E9ECEF
+
+package "Servidor Central (Home Assistant)" {
+  class "MotorContexto" as Motor {
+    - estado_actual : String
+    - tiempo_estudio : int
+    - tiempo_sueno : int
+    + procesar_evento(sensor_id : String, valor : float) : void
+    + evaluar_transiciones() : void
+    + ejecutar_accion(actuador_id : String, cmd : String) : void
+  }
+
+  class "EntidadEstado" as Entidad {
+    - entity_id : String
+    - state : String
+    - attributes : Map
+    + update_state(new_state : String) : void
+  }
+  
+  class "APIComunicaciones" as API {
+    - connection_socket : Socket
+    + send_state(entity_id : String, state : String) : void
+    + receive_command(entity_id : String, command : String) : void
+  }
+  
+  Motor *-- Entidad : "gestiona"
+  Motor ..> API : "usa"
+}
+@endum

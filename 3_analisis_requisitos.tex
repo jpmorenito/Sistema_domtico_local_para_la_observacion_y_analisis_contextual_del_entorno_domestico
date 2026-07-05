@@ -43,14 +43,14 @@ Para el modelado lógico de los casos de uso, se identifican los siguientes acto
         \node[anchor=north, font=\bfseries] at (sys.north) {Sistema Domótico};
 
         % Casos de uso
-        \node[usecase] (cu1) at (0, 1.8) {Calibración y\\Auditoría};
-        \node[usecase] (cu2) at (0, 0) {Generación de\\Telemetría};
-        \node[usecase] (cu3) at (0, -1.8) {Inferencia de\\Estados y Actuación};
+        \node[usecase] (cu1) at (0, 1.8) {Calibración y\\auditoría};
+        \node[usecase] (cu2) at (0, 0) {Generación de\\telemetría};
+        \node[usecase] (cu3) at (0, -1.8) {Inferencia de\\estados y actuación};
 
         % Actores
         \node[actor] (admin) at (-4.5, 1.8) {Admin.};
         \node[actor] (user) at (-4.5, -0.5) {Usuario\\habitual};
-        \node[actor, fill=green!10] (engine) at (4.5, -1.5) {Motor de\\Contexto};
+        \node[actor, fill=green!10] (engine) at (4.5, -1.5) {Motor de\\contexto};
 
         % Conexiones
         \draw[arrow] (admin) -- (cu1);
@@ -97,13 +97,13 @@ El tratamiento de datos derivados de constantes biométricas (frecuencia respira
             firewall/.style={rectangle, draw=red, fill=red!20, thick, minimum width=0.5cm, minimum height=2cm}
         ]
             % Nodos locales
-            \node[box] (sensor) {Nodos Sensores\\(Microcontrolador + Radar)};
-            \node[box, right=of sensor] (broker) {Servidor central Local\\(SBC)};
-            \node[box, below=of sensor] (actuator) {Actuadores\\(Relés)};
+            \node[box] (sensor) {Nodos sensores\\(microcontrolador + radar)};
+            \node[box, right=of sensor] (broker) {Servidor central local\\(SBC)};
+            \node[box, below=of sensor] (actuator) {Actuadores\\(relés)};
             
             % Internet y Cloud
             \node[firewall, right=0.8cm of broker] (fw) {};
-            \node[cloud, right=0.8cm of fw] (internet) {Internet /\\Cloud Externo};
+            \node[cloud, right=0.8cm of fw] (internet) {Internet /\\cloud externo};
      
             % Etiquetas
             \node[anchor=south, font=\bfseries\small, color=red] at ([yshift=0.3cm]fw.north) {Aislamiento (WPA3)};
@@ -124,7 +124,7 @@ El tratamiento de datos derivados de constantes biométricas (frecuencia respira
                 ([xshift=0.5cm, yshift=-0.5cm]broker.south east |- actuator.south);
                 
             \node[color=blue, font=\bfseries, anchor=south west] 
-                at ([xshift=-0.5cm, yshift=0.6cm]sensor.north west) {Red Local (Edge)};
+                at ([xshift=-0.5cm, yshift=0.6cm]sensor.north west) {Red local (edge)};
      
         \end{tikzpicture}
     }
@@ -141,8 +141,6 @@ La trazabilidad metodológica asegura que cada requisito técnico del diseño re
 
 \begin{table}[H]
     \centering
-    \caption{Matriz de trazabilidad entre objetivos específicos y requisitos del sistema.}
-    \label{tab:trazabilidad}
     \begin{tabular}{|l|c|c|}
         \hhline{|-|-|-|}
         \rowcolor[gray]{0.9} 
@@ -153,4 +151,7 @@ La trazabilidad metodológica asegura que cada requisito técnico del diseño re
         \parbox[c]{5cm}{\vspace{0.3cm}\centering OE-4: Automatización y seguridad\vspace{0.3cm}} & RF-04, RF-05 & RNF-02, RNF-03 \\ \hhline{|-|-|-|}
         \parbox[c]{5cm}{\vspace{0.3cm}\centering OE-5: Validación e integración\vspace{0.3cm}} & RF-03 & RNF-03, RNF-04 \\ \hhline{|-|-|-|}
     \end{tabular}
+    \caption{Matriz de trazabilidad entre objetivos específicos y requisitos del sistema.}
+    \label{tab:trazabilidad}
+
 \end{table}

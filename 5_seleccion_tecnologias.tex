@@ -10,7 +10,7 @@ La ingeniería de diseño para entornos residenciales de inteligencia ambiental 
 \subsection{Selección de hardware}
 
 \subsubsection{Unidad central de procesamiento (servidor local)}
-Para el núcleo computacional y de persistencia de datos se seleccionó el microordenador \textbf{Raspberry Pi 4 Model B} en su variante de 1 GB de memoria RAM LPDDR4. Frente a opciones de menor cómputo como su predecesora (Raspberry Pi 3B+) o alternativas de mayor coste y consumo (arquitecturas x86 tradicionales), la Raspberry Pi 4 ofrece un equilibrio óptimo al integrar un procesador ARM Cortex-A72 de cuatro núcleos a 1.5 GHz. Esta capacidad de procesamiento en paralelo es suficiente para ejecutar simultáneamente el entorno de contenedores Docker, la base de datos local y el motor de automatizaciones lógicas, manteniendo un consumo nominal inferior a los 15 vatios bajo carga máxima, lo que facilita el respaldo del sistema ante contingencias eléctricas mediante Sistemas de Alimentación Ininterrumpida (SAI) de baja potencia.
+Para el núcleo computacional y de persistencia de datos se seleccionó el microordenador Raspberry Pi 4 Model B en su variante de 1 GB de memoria RAM LPDDR4. Frente a opciones de menor cómputo como su predecesora (Raspberry Pi 3B+) o alternativas de mayor coste y consumo (arquitecturas x86 tradicionales), la Raspberry Pi 4 ofrece un equilibrio óptimo al integrar un procesador ARM Cortex-A72 de cuatro núcleos a 1.5 GHz. Esta capacidad de procesamiento en paralelo es suficiente para ejecutar simultáneamente el entorno de contenedores Docker, la base de datos local y el motor de automatizaciones lógicas, manteniendo un consumo nominal inferior a los 15 vatios bajo carga máxima, lo que facilita el respaldo del sistema ante contingencias eléctricas mediante Sistemas de Alimentación Ininterrumpida (SAI) de baja potencia.
 
 \begin{table}[H]
     \centering
@@ -35,7 +35,7 @@ Para el núcleo computacional y de persistencia de datos se seleccionó el micro
 A pesar de la superioridad en especificaciones puras de la Orange Pi 5 Plus (recogida en la Tabla~\ref{tab:hw_central}), la Raspberry Pi 4B resulta óptima debido a su eficiencia energética (fundamental para maximizar la autonomía del SAI ante cortes eléctricos) y la estabilidad de su ecosistema de software. Su arquitectura y cantidad de memoria RAM física (1 GB) son suficientes para ejecutar con solvencia los servicios del motor de inferencia y la base de datos en tiempo real, garantizando una alta estabilidad sin necesidad de sobredimensionar los recursos de la infraestructura (\textit{overprovisioning}).
 
 \subsubsection{Microcontroladores de red (nodos de instrumentación)}
-Como elementos de control embebido distribuido se seleccionaron placas de desarrollo basadas en el SoC \textbf{ESP32} de Espressif Systems. Los factores técnicos que justifican esta decisión frente a arquitecturas alternativas (como las plataformas Arduino tradicionales o los microcontroladores PIC) son:
+Como elementos de control embebido distribuido se seleccionaron placas de desarrollo basadas en el SoC ESP32 de Espressif Systems. Los factores técnicos que justifican esta decisión frente a arquitecturas alternativas (como las plataformas Arduino tradicionales o los microcontroladores PIC) son:
 \begin{itemize}
     \item Integración nativa en chip de conectividad inalámbrica Wi-Fi 802.11 b/g/n y Bluetooth v4.2 BR/EDR y BLE.
     \item CPU de doble núcleo Xtensa de 32 bits operando a 240 MHz con 520 KB de SRAM interna, permitiendo la gestión síncrona de interrupciones por hardware de sensores críticos y la serialización asíncrona de tramas de red.
@@ -164,10 +164,10 @@ Tal y como se detalla en la comparativa técnica de la Tabla~\ref{tab:pir_vs_mmw
 \subsection{Selección de software y protocolos}
 
 \subsubsection{Firmware de los nodos perimetrales (ESPHome)}
-Para la programación e instrumentación de los microcontroladores se descartó el desarrollo de código monolítico imperativo en entornos tradicionales en favor de \textbf{ESPHome}. Esta herramienta permite generar firmwares optimizados a partir de archivos de configuración declarativos estructurados en formato YAML. ESPHome compila directamente sobre el framework original del fabricante, abstrayendo la gestión del stack TCP/IP y garantizando la reconexión automática ante pérdidas de señal inalámbrica. El uso de este sistema facilita la monitorización de registros en tiempo real (\textit{logs}) directamente desde el servidor principal y permite actualizaciones inalámbricas seguras (OTA, por sus siglas en inglés).
+Para la programación e instrumentación de los microcontroladores se descartó el desarrollo de código monolítico imperativo en entornos tradicionales en favor de ESPHome. Esta herramienta permite generar firmwares optimizados a partir de archivos de configuración declarativos estructurados en formato YAML. ESPHome compila directamente sobre el framework original del fabricante, abstrayendo la gestión del stack TCP/IP y garantizando la reconexión automática ante pérdidas de señal inalámbrica. El uso de este sistema facilita la monitorización de registros en tiempo real (\textit{logs}) directamente desde el servidor principal y permite actualizaciones inalámbricas seguras (OTA, por sus siglas en inglés).
 
 \subsubsection{Servidor central central y motor de contexto (Home Assistant)}
-El núcleo lógico del sistema se sustenta sobre \textbf{Home Assistant Container} ejecutado en un entorno aislado de contenedores. Se seleccionó esta plataforma de código abierto debido a su arquitectura dirigida por eventos y su capacidad para unificar sistemas heterogéneos bajo una capa común de entidades lógicas. Home Assistant asume el rol de Motor de Contexto, ejecutando las automatizaciones locales complejas, gestionando las máquinas de estado finito de la estancia y aislando por completo la lógica operacional de servidores de terceros en la nube, siguiendo patrones de diseño específicos para la gestión centralizada confiable en el borde \cite{pahl2018trusted}.
+El núcleo lógico del sistema se sustenta sobre Home Assistant Container ejecutado en un entorno aislado de contenedores. Se seleccionó esta plataforma de código abierto debido a su arquitectura dirigida por eventos y su capacidad para unificar sistemas heterogéneos bajo una capa común de entidades lógicas. Home Assistant asume el rol de Motor de Contexto, ejecutando las automatizaciones locales complejas, gestionando las máquinas de estado finito de la estancia y aislando por completo la lógica operacional de servidores de terceros en la nube, siguiendo patrones de diseño específicos para la gestión centralizada confiable en el borde \cite{pahl2018trusted}.
 
 \begin{table}[H]
     \centering
@@ -209,7 +209,7 @@ Home Assistant ofrece cuatro métodos oficiales de instalación. Se debe elegir 
     \label{tab:ha_instalacion}
 \end{table}
 
-De acuerdo con el análisis de la Tabla~\ref{tab:ha_instalacion}, se ha seleccionado el despliegue mediante \textbf{Home Assistant Container (Docker)} sobre Raspberry Pi OS Lite, gestionado visualmente mediante el panel de control \textbf{Portainer}. Esta decisión técnica se fundamenta en:
+De acuerdo con el análisis de la Tabla~\ref{tab:ha_instalacion}, se ha seleccionado el despliegue mediante Home Assistant Container (Docker) sobre Raspberry Pi OS Lite, gestionado visualmente mediante el panel de control Portainer. Esta decisión técnica se fundamenta en:
 \begin{enumerate}
     \item \textbf{Aislamiento de dependencias y portabilidad:} Docker permite ejecutar cada servicio (Home Assistant, ESPHome y Portainer) en contenedores ligeros aislados que comparten el mismo núcleo del sistema operativo. Esto evita conflictos de librerías y facilita la replicación de la infraestructura en cualquier otro hardware compatible.
     \item \textbf{Gestión de microservicios con Docker Compose:} la infraestructura se define en un único archivo declarativo YAML. Esto agiliza la configuración, las actualizaciones y el mantenimiento del stack completo del servidor local.
@@ -252,17 +252,17 @@ De acuerdo con el análisis de la Tabla~\ref{tab:ha_instalacion}, se ha seleccio
     ]
         % Main Node (Raspberry Pi 4)
         \node[node] (rpi) at (0, 0) {};
-        \node[anchor=north west, font=\bfseries\small, text=gray!80] at ([xshift=0.3cm, yshift=-0.3cm]rpi.north west) {Servidor Central: Raspberry Pi 4 (Raspberry Pi OS Lite)};
-        \node[anchor=north west, font=\bfseries\scriptsize\itshape, text=Azul!80] at ([xshift=0.3cm, yshift=-0.7cm]rpi.north west) {Motor de Contenedores Docker};
+        \node[anchor=north west, font=\bfseries\small, text=gray!80] at ([xshift=0.3cm, yshift=-0.3cm]rpi.north west) {Servidor central: Raspberry Pi 4 (Raspberry Pi OS Lite)};
+        \node[anchor=north west, font=\bfseries\scriptsize\itshape, text=Azul!80] at ([xshift=0.3cm, yshift=-0.7cm]rpi.north west) {Motor de contenedores Docker};
 
         % Containers (Portainer, ESPHome, Home Assistant)
-        \node[container, fill=Cyan!15, draw=Cyan!80] (portainer) at (-3.6, -0.2) {Portainer\\(Modo Bridge)\\{\normalfont\tiny Mapeo: 9000:9000}};
-        \node[container, fill=Verde!15, draw=Verde!80] (esphome) at (0, -0.2) {ESPHome\\(Modo Host)\\{\normalfont\tiny Puerto: 6052}};
-        \node[container, fill=Azul!15, draw=Azul!80] (ha) at (3.6, -0.2) {Home Assistant\\(Modo Host)\\{\normalfont\tiny Puerto: 8123}};
+        \node[container, fill=Cyan!15, draw=Cyan!80] (portainer) at (-3.6, -0.2) {Portainer\\(modo bridge)\\{\normalfont\tiny Mapeo: 9000:9000}};
+        \node[container, fill=Verde!15, draw=Verde!80] (esphome) at (0, -0.2) {ESPHome\\(modo host)\\{\normalfont\tiny Puerto: 6052}};
+        \node[container, fill=Azul!15, draw=Azul!80] (ha) at (3.6, -0.2) {Home Assistant\\(modo host)\\{\normalfont\tiny Puerto: 8123}};
 
         % Network lines
-        \draw[net, draw=Cyan!80] (-4.9, -1.8) -- (-2.3, -1.8) node[above, midway, font=\bfseries\tiny, text=Cyan!80] {Bridge (172.17.0.0/16)};
-        \draw[net, draw=Verde!80] (-1.4, -1.8) -- (4.9, -1.8) node[above, midway, font=\bfseries\tiny, text=Verde!80] {Red del Host (Tailscale/LAN)};
+        \draw[net, draw=Cyan!80] (-4.9, -1.8) -- (-2.3, -1.8) node[above, midway, font=\bfseries\tiny, text=Cyan!80] {bridge (172.17.0.0/16)};
+        \draw[net, draw=Verde!80] (-1.4, -1.8) -- (4.9, -1.8) node[above, midway, font=\bfseries\tiny, text=Verde!80] {Red del host (Tailscale/LAN)};
         
         % Connections
         \draw[thick, draw=gray!60] (portainer.south) -- (-3.6, -1.8);
@@ -275,18 +275,18 @@ De acuerdo con el análisis de la Tabla~\ref{tab:ha_instalacion}, se ha seleccio
 \end{figure}
 
 \subsubsection{Red privada virtual y acceso remoto seguro (Tailscale)}
-Para habilitar el acceso remoto al cuadro de mandos de Home Assistant y permitir la administración de la Raspberry Pi de forma segura sin exponer el sistema a internet, se descartó la redirección tradicional de puertos en el enrutador doméstico en favor de la VPN peer-to-peer \textbf{Tailscale}.
+Para habilitar el acceso remoto al cuadro de mandos de Home Assistant y permitir la administración de la Raspberry Pi de forma segura sin exponer el sistema a internet, se descartó la redirección tradicional de puertos en el enrutador doméstico en favor de la VPN peer-to-peer Tailscale.
 
 Los criterios de selección de esta tecnología son:
 \begin{itemize}
-    \item \textbf{Cifrado extremo a extremo:} Tailscale establece una red mallada privada virtual (\textit{overlay network}) basada en el protocolo moderno de VPN \textbf{WireGuard}. Toda la telemetría y el tráfico administrativo viajan cifrados de extremo a extremo, impidiendo que terceros intercepten datos sensibles del hogar.
+    \item \textbf{Cifrado extremo a extremo:} Tailscale establece una red mallada privada virtual (\textit{overlay network}) basada en el protocolo moderno de VPN WireGuard. Toda la telemetría y el tráfico administrativo viajan cifrados de extremo a extremo, impidiendo que terceros intercepten datos sensibles del hogar.
     \item \textbf{Conexión directa peer-to-peer:} a diferencia de otras VPN comerciales que enrutan el tráfico a través de servidores centralizados, Tailscale facilita la conexión directa entre dispositivos usando técnicas de evasión de cortafuegos (NAT traversal). Esto minimiza la latencia de respuesta y optimiza el ancho de banda.
     \item \textbf{Ausencia de puertos abiertos en WAN:} al no requerir la redirección de puertos (como SSH o el puerto de Home Assistant 8123) en el enrutador doméstico, el servidor central permanece invisible a escaneos de puertos y ataques masivos automatizados desde el exterior.
     \item \textbf{Bajo consumo computacional:} la integración de Tailscale en Raspberry Pi OS Lite es sumamente ligera, consumiendo una cantidad de recursos de CPU y RAM prácticamente imperceptible, idónea para el hardware seleccionado de 1 GB.
 \end{itemize}
 
 \subsubsection{Protocolo de comunicaciones (API nativa de ESPHome)}
-Para el intercambio de telemetría y eventos de control entre los nodos instrumentados y el servidor central se seleccionó la \textbf{API nativa de ESPHome} sobre conexiones TCP directas en el puerto 6053. A diferencia de protocolos tradicionales basados en texto o intermediarios de mensajería (como HTTP o MQTT), esta API emplea un canal de sockets binarios optimizado mediante estructuras de serialización ligeras (basadas en Google Protocol Buffers). Adicionalmente, el canal incorpora cifrado local mediante el protocolo Noise, garantizando la privacidad del tráfico de sensores. Esta elección tecnológica asegura tiempos de transmisión de eventos inferiores a los 10 milisegundos y proporciona un mecanismo de comprobación activa del estado del enlace (\textit{keepalive}), capacitando al servidor principal para diagnosticar interrupciones de red de manera determinista y tolerar fallos en el bus local \cite{al2015internet}.
+Para el intercambio de telemetría y eventos de control entre los nodos instrumentados y el servidor central se seleccionó la API nativa de ESPHome sobre conexiones TCP directas en el puerto 6053. A diferencia de protocolos tradicionales basados en texto o intermediarios de mensajería (como HTTP o MQTT), esta API emplea un canal de sockets binarios optimizado mediante estructuras de serialización ligeras (basadas en Google Protocol Buffers). Adicionalmente, el canal incorpora cifrado local mediante el protocolo Noise, garantizando la privacidad del tráfico de sensores. Esta elección tecnológica asegura tiempos de transmisión de eventos inferiores a los 10 milisegundos y proporciona un mecanismo de comprobación activa del estado del enlace (\textit{keepalive}), capacitando al servidor principal para diagnosticar interrupciones de red de manera determinista y tolerar fallos en el bus local \cite{al2015internet}.
 
 \subsection{Integración entre sistemas heterogéneos}
 La cohesión de la arquitectura se logra mediante la estandarización de las interfaces de intercambio de datos. Los nodos ESP32 digitalizan los transductores analógicos e interactúan de forma nativa con los sensores digitales empleando buses serie locales (UART, unifilar). Posteriormente, ESPHome traduce esta telemetría física en variables de estado que son expuestas y actualizadas síncronamente hacia el servidor a través del socket binario de la API.
